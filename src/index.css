@@ -1,0 +1,13 @@
+/* Clean slate - overrides handled by styles/main.css */
+:root {
+  font-family: 'PP Editorial New', Georgia, serif;
+  background-color: #000;
+  color: #fff;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  overflow-x: hidden;
+}

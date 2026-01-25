@@ -1,0 +1,33 @@
+.ys-scrollbar-track {
+    position: fixed;
+    top: 5vh;
+    right: 6px;
+    width: 2px;
+    height: 90vh;
+    z-index: 100000;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    mix-blend-mode: difference;
+    transition: width 0.3s ease;
+}
+
+.ys-scrollbar-thumb {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 80px;
+    /* Minimal rectangle */
+    background: #ffffff;
+    border-radius: 10px;
+    will-change: transform;
+    opacity: 0.4;
+    transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+/* Enable pointer events on hover area if you want to make it draggable later */
+.ys-scrollbar-track:hover {
+    pointer-events: auto;
+}

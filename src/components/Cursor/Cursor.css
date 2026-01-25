@@ -1,0 +1,67 @@
+/* Custom Cursor Styling - High Definition Refinement */
+.ys-cursor-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999999999;
+    /* Absolute top-most priority */
+    overflow: hidden;
+    mix-blend-mode: difference;
+    isolation: auto;
+}
+
+/* The central dot - Surgical precision with knockout effect */
+.ys-cursor-dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10002;
+}
+
+/* The trailing circle / Glass Disk */
+.ys-cursor-follower {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transform: translateZ(0);
+    /* Hardware Acceleration */
+    transform-origin: center center;
+}
+
+/* Label for interactions (VIEW, etc) with Mono styling */
+.ys-cursor-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--void-black);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+    opacity: 0;
+    display: block;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+/* Visibility fix for body */
+body.custom-cursor-active,
+body.custom-cursor-active * {
+    cursor: none !important;
+}
