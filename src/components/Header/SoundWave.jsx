@@ -13,33 +13,32 @@ const SoundWave = ({ isSoundOn }) => {
     const barsRef = useRef([]);
 
     useGSAP(() => {
-        const bars = barsRef.current;
-        if (!bars.length) return;
+        const bars = barsRef.current.filter(Boolean);
+        if (bars.length === 0) return;
 
-        // --- PHASE 1: TRANSITION ---
         if (isSoundOn) {
-            // Wake up the bars
+            // Independent oscillation for a reactive feel
             bars.forEach((bar, i) => {
                 gsap.to(bar, {
-                    scaleY: "random(0.3, 1.3)",
-                    duration: `random(0.4, 0.8)`,
+                    scaleY: "random(0.4, 1.2)",
+                    duration: "random(0.5, 0.9)",
                     repeat: -1,
                     yoyo: true,
                     ease: "sine.inOut",
                     delay: i * 0.1,
-                    transformOrigin: "bottom center"
+                    transformOrigin: "bottom center",
+                    overwrite: "auto"
                 });
             });
         } else {
-            // Flatten the bars
-            bars.forEach((bar) => {
-                gsap.killTweensOf(bar);
-                gsap.to(bar, {
-                    scaleY: 0.15,
-                    duration: 0.6,
-                    ease: "power2.out",
-                    transformOrigin: "bottom center"
-                });
+            // Immediate kill and smooth flatten
+            gsap.killTweensOf(bars);
+            gsap.to(bars, {
+                scaleY: 0.15,
+                duration: 0.6,
+                ease: "expo.out",
+                transformOrigin: "bottom center",
+                overwrite: true
             });
         }
 

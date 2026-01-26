@@ -70,7 +70,7 @@ const Footer = ({ inverted = false }) => {
                             </div>
                         </div>
 
-                        <div className="ys-footer__section" style={{ marginTop: '3rem' }}>
+                        <div className="ys-footer__section">
                             <p className="ys-footer__label">Stay updated</p>
                             <div className="ys-footer__newsletter-wrapper">
                                 <Newsletter inverted={inverted} />

@@ -1181,17 +1181,17 @@ img[loading="lazy"].loaded {
    FOOTER
    ============================================================================= */
 .ys-footer {
-    padding: var(--space-xl) var(--grid-margin) var(--space-md);
+    padding: var(--space-lg) var(--grid-margin) var(--space-md);
     background: #000;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .ys-footer__grid {
     display: grid;
-    grid-template-columns: 1.2fr 1.1fr 1fr 1.3fr;
-    gap: 4rem;
+    grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+    gap: 2.5rem;
     align-items: start;
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-lg);
 }
 
 /* Wordmark Column */
@@ -1213,10 +1213,10 @@ img[loading="lazy"].loaded {
 /* Labels (Titles) */
 .ys-footer__label {
     font-family: var(--font-serif);
-    font-size: 2.2rem;
+    font-size: 2rem;
     line-height: 1.1;
     color: rgba(255, 255, 255, 0.4);
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
     font-weight: 300;
     text-transform: none;
     letter-spacing: -0.02em;
@@ -1258,7 +1258,7 @@ img[loading="lazy"].loaded {
 }
 
 .ys-footer__section {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .ys-footer__links-grid--two-col {
