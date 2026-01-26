@@ -25,13 +25,24 @@ const Home = ({ appReady = true }) => {
 
         const handlePlaying = () => setHasVideoPlayed(true);
 
-        // If already playing (cached)
-        if (video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2) {
-            setHasVideoPlayed(true);
-        }
+        // Intersection Observer to trigger play only when in view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    video.play().catch(err => console.log("Video play blocked until interaction:", err));
+                } else {
+                    video.pause();
+                }
+            });
+        }, { threshold: 0.1 });
+
+        observer.observe(video);
 
         video.addEventListener('playing', handlePlaying);
-        return () => video.removeEventListener('playing', handlePlaying);
+        return () => {
+            observer.disconnect();
+            video.removeEventListener('playing', handlePlaying);
+        };
     }, []);
 
     // 1. CINEMATIC INTRO: Fade in the entire Hero from Black
@@ -55,8 +66,8 @@ const Home = ({ appReady = true }) => {
     };
 
     useGSAP(() => {
-        // LCP Optimization: Text reveals as soon as App is ready
-        if (isAnimating || !appReady) return;
+        // Quad-Lock: Transition Finished + App Ready + Video Frame Painted
+        if (isAnimating || !appReady || !hasVideoPlayed) return;
 
         playIntro();
 
@@ -107,18 +118,17 @@ const Home = ({ appReady = true }) => {
     return (
         <main ref={containerRef} className="ys-home-v2">
             {/* --- HERO SECTION --- */}
-            <section className="ys-hero">
+            <section className={`ys-hero ${appReady && hasVideoPlayed ? 'is-loaded' : ''}`}>
                 <div className="ys-hero__bg">
                     <video
                         ref={videoRef}
                         src="/assets/videos/yasser-animated.mp4"
-                        poster="/assets/images/Yasser Background.webp"
+                        poster="/assets/images/hero-poster.webp"
                         className="ys-hero__video"
                         muted
-                        autoPlay
                         loop
                         playsInline
-                        preload="metadata"
+                        preload="none"
                     />
                     <div className="ys-hero__dark-overlay"></div>
                     {/* Cinematic "Curtain" - Now inside BG to stay UNDER text */}
@@ -127,13 +137,13 @@ const Home = ({ appReady = true }) => {
 
                 <div className="ys-hero__container">
                     <div className="ys-hero__main-header">
-                        <h1 className="ys-hero__title ys-lcp-text" data-ys-reveal="text" data-ys-delay="0.1">Yasser Creatives</h1>
-                        <p className="ys-hero__name ys-lcp-text" data-ys-reveal="text" data-ys-delay="0.3">By Yasser Abdelmotaleb Sebti</p>
+                        <h1 className="ys-hero__title" data-ys-reveal="text" data-ys-delay="0.1">Yasser Creatives</h1>
+                        <p className="ys-hero__name" data-ys-reveal="text" data-ys-delay="0.3">By Yasser Abdelmotaleb Sebti</p>
                     </div>
 
                     <div className="ys-hero__slogan">
-                        <h2 className="ys-hero__slogan-title ys-lcp-text" data-ys-reveal="text" data-ys-delay="0.4">100% Human-Designed Work</h2>
-                        <p className="ys-hero__slogan-sub ys-lcp-text" data-ys-reveal="text" data-ys-delay="0.5">No AI, just pure vision.</p>
+                        <h2 className="ys-hero__slogan-title" data-ys-reveal="text" data-ys-delay="0.4">100% Human-Designed Work</h2>
+                        <p className="ys-hero__slogan-sub" data-ys-reveal="text" data-ys-delay="0.5">No AI, just pure vision.</p>
                     </div>
 
                     <div className="ys-hero__cta" data-ys-reveal="fade-up" data-ys-delay="0.7">

@@ -671,10 +671,9 @@ const Contact = () => {
                                 </div>
                                 <div className="ys-contact__budget-options">
                                     {budgetData[selectedService][currency].map((option, index) => (
-                                        <label key={`${currency}-${index}`} className="ys-contact__budget-option" htmlFor={`budget-${index}`}>
+                                        <label key={`${currency}-${index}`} className="ys-contact__budget-option">
                                             <input
                                                 type="radio"
-                                                id={`budget-${index}`}
                                                 name="budget"
                                                 value={option}
                                                 checked={formData.budget === option}

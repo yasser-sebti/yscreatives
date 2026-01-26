@@ -1,8 +1,8 @@
 /* =============================================================================
-   YASSER CREATIVES - Design System (Pro Max Advanced Clean Minimal)
+   YASSER CREATIVES - Advanced Clean Minimal Design System
    ============================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@200;400;600;800&family=Space+Grotesk:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap');
 
 /* CSS Variables */
 :root {
@@ -13,19 +13,19 @@
     --void-subtle: rgba(255, 255, 255, 0.15);
     --void-accent: #4ade80;
 
-    /* Typography - Pro Max Advanced Clean Minimal */
-    --font-heading: 'Archivo', sans-serif;
-    --font-body: 'Space Grotesk', sans-serif;
-    --font-mono: 'Space Grotesk', monospace;
+    /* Typography */
+    --font-heading: 'PP Editorial New', Georgia, serif;
+    --font-body: 'PP Editorial New', Georgia, serif;
+    --font-mono: 'DM Mono', monospace;
 
-    /* Spacing - Optimized for Minimal Whitespace */
+    /* Spacing */
     --space-xs: 0.5rem;
     --space-sm: 1rem;
     --space-md: 2rem;
-    --space-lg: 5rem;
-    --space-xl: 10rem;
-    --space-section: 15vh;
-    --grid-margin: 8vw;
+    --space-lg: 4rem;
+    --space-xl: 8rem;
+    --space-section: 12vh;
+    --grid-margin: 6vw;
 
     /* Typography Scale - Refined for Impact */
     --text-micro: 0.875rem;
@@ -90,30 +90,14 @@ html {
 
 body {
     font-family: var(--font-body);
-    font-weight: 300;
+    font-weight: 200;
     background: var(--void-black);
     color: var(--void-white);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-/* LCP Optimized Visibility */
-.ys-lcp-text {
-    opacity: 0;
-    animation: lcp-fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes lcp-fade-in {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    /* height: 100%; - REMOVED: Restricts scrollable area */
+    /* overflow: hidden; - REMOVED: Blocks scroll events */
 }
 
 /* Custom Cursor Interaction */
@@ -332,7 +316,7 @@ img[loading="lazy"].loaded {
     display: inline-block;
     font-family: var(--font-heading);
     font-size: 2rem;
-    font-weight: 600;
+    font-weight: 200;
     letter-spacing: -0.02em;
 }
 
@@ -512,6 +496,7 @@ img[loading="lazy"].loaded {
 }
 
 .ys-hero__title {
+    font-family: var(--font-heading);
     font-size: var(--text-display-hero);
     font-weight: 200;
     line-height: 1.1;
@@ -520,6 +505,14 @@ img[loading="lazy"].loaded {
     /* Precise gap matching scroll */
     white-space: nowrap;
     padding: 0.12em 0;
+
+    /* Perceived Instantness - Basic visibility before GSAP */
+    opacity: 0.01;
+    transition: opacity 0.5s ease;
+}
+
+.ys-hero.is-loaded .ys-hero__title {
+    opacity: 1;
 }
 
 .ys-hero__name {
