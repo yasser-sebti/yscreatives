@@ -27,11 +27,11 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
 
         const splits = [];
 
-        // Pre-hide everything immediately
-        gsap.set(fadeUpElements, { opacity: 0, y: 30 });
-        gsap.set(scaleXElements, { scaleX: 0, transformOrigin: "left" });
-        gsap.set(fadeElements, { opacity: 0 });
-        gsap.set(imageElements, { clipPath: "inset(100% 0% 0% 0%)" });
+        // Pre-hide everything immediately - Guarded against missing targets
+        if (fadeUpElements.length > 0) gsap.set(fadeUpElements, { opacity: 0, y: 30 });
+        if (scaleXElements.length > 0) gsap.set(scaleXElements, { scaleX: 0, transformOrigin: "left" });
+        if (fadeElements.length > 0) gsap.set(fadeElements, { opacity: 0 });
+        if (imageElements.length > 0) gsap.set(imageElements, { clipPath: "inset(100% 0% 0% 0%)" });
 
         // Split text early to avoid layout shift during reveal
         textElements.forEach((el) => {
