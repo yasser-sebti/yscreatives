@@ -112,6 +112,9 @@ const Newsletter = ({ inverted = false }) => {
                 <div className="ys-newsletter__group">
                     <input
                         type="email"
+                        id="newsletter-email"
+                        name="email"
+                        autoComplete="email"
                         value={email}
                         onChange={(e) => {
                             setEmail(e.target.value);

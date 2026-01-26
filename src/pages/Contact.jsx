@@ -431,6 +431,7 @@ const Contact = () => {
                                     type="text"
                                     id="name"
                                     name="name"
+                                    autoComplete="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
                                     className={`ys-contact__input ${errors.name ? 'has-error' : ''}`}
@@ -447,6 +448,7 @@ const Contact = () => {
                                     type="text"
                                     id="company"
                                     name="company"
+                                    autoComplete="organization"
                                     value={formData.company}
                                     onChange={handleInputChange}
                                     className={`ys-contact__input ${errors.company ? 'has-error' : ''}`}
@@ -464,6 +466,7 @@ const Contact = () => {
                                     type="email"
                                     id="email"
                                     name="email"
+                                    autoComplete="email"
                                     value={formData.email}
                                     onChange={handleInputChange}
                                     className={`ys-contact__input ${errors.email ? 'has-error' : ''}`}
@@ -480,6 +483,7 @@ const Contact = () => {
                                     type="tel"
                                     id="phone"
                                     name="phone"
+                                    autoComplete="tel"
                                     value={formData.phone}
                                     onChange={handleInputChange}
                                     className={`ys-contact__input ${errors.phone ? 'has-error' : ''}`}
@@ -523,7 +527,7 @@ const Contact = () => {
                                         ))}
                                     </div>
                                 </div>
-                                <input type="hidden" name="country" value={selectedCountry} required />
+                                <input type="hidden" id="contact-country" name="country" value={selectedCountry} required />
                             </div>
 
                             {/* Custom Country Input (Appears only if "Other" is selected) */}
@@ -586,7 +590,7 @@ const Contact = () => {
                                         ))}
                                     </div>
                                 </div>
-                                <input type="hidden" name="referral" value={selectedReferral} />
+                                <input type="hidden" id="contact-referral" name="referral" value={selectedReferral} />
                             </div>
                         </div>
 
@@ -637,7 +641,7 @@ const Contact = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <input type="hidden" name="service" value={selectedService} required />
+                                <input type="hidden" id="contact-service" name="service" value={selectedService} required />
                             </div>
                         </div>
 
@@ -684,11 +688,12 @@ const Contact = () => {
                         )}
 
                         <div className="ys-contact__form-group" data-ys-reveal="fade-up">
-                            <label className="ys-contact__label" htmlFor="message">Additional Message</label>
+                            <label className="ys-contact__label" htmlFor="contact-message">Additional Message</label>
                             <div className="ys-contact__textarea-wrapper">
                                 <textarea
-                                    id="message"
+                                    id="contact-message"
                                     name="message"
+                                    autoComplete="off"
                                     className="ys-contact__textarea"
                                     placeholder="Tell us about your project, goals, and any specific requirements..."
                                     rows="5"

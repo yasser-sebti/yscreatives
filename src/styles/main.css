@@ -789,9 +789,15 @@ img[loading="lazy"].loaded {
 }
 
 .ys-methodology__name {
-    font-size: var(--text-display-md);
+    font-size: clamp(2.7rem, 6.3vw, 5.4rem);
+    /* Decreased by 10% */
     font-weight: 200;
+    line-height: 1;
     letter-spacing: -0.02em;
+    padding-right: 0.1em;
+    /* Safety buffer for italic/wider characters */
+    word-break: break-word;
+    /* Prevents overflow cropping */
 }
 
 .ys-methodology__content {
