@@ -113,6 +113,10 @@ function InnerApp() {
       images: [
         `${baseUrl}assets/images/hero-poster.webp`,
         `${baseUrl}assets/images/Yasser.webp`,
+        `${baseUrl}assets/logos/Pandaify.svg`,
+        `${baseUrl}assets/logos/Eli Network.svg`,
+        `${baseUrl}assets/images/Project1.webp`,
+        `${baseUrl}assets/images/Project2.webp`,
       ],
       videos: [
         `${baseUrl}assets/videos/yasser-animated.mp4`

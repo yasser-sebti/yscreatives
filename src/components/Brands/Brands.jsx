@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, memo } from 'react';
 import { gsap, useGSAP, ScrollTrigger } from '../../gsap';
 
 const LOGOS = [
@@ -78,7 +78,7 @@ const Brands = () => {
                             {LOGOS.map((logo, i) => (
                                 <div key={i} className="ys-brands__item">
                                     <img
-                                        src={`/assets/logos/${logo}`}
+                                        src={`${import.meta.env.BASE_URL}assets/logos/${logo}`}
                                         alt={logo.split('.')[0]}
                                         className="ys-brands__logo"
                                     />
@@ -89,7 +89,7 @@ const Brands = () => {
                             {LOGOS.map((logo, i) => (
                                 <div key={`dup-${i}`} className="ys-brands__item">
                                     <img
-                                        src={`/assets/logos/${logo}`}
+                                        src={`${import.meta.env.BASE_URL}assets/logos/${logo}`}
                                         alt={logo.split('.')[0]}
                                         className="ys-brands__logo"
                                     />
@@ -103,4 +103,4 @@ const Brands = () => {
     );
 };
 
-export default Brands;
+export default memo(Brands);
