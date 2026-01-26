@@ -1,11 +1,35 @@
-import { useRef, useEffect, useState, memo } from 'react';
+import { useRef, useEffect, useState, memo, lazy, Suspense } from 'react';
 import { gsap, useGSAP, SplitText, ScrollTrigger } from '../gsap';
 import { useTransition } from '../context/TransitionContext';
 import TransitionLink from '../components/TransitionLink/TransitionLink';
-import Brands from '../components/Brands/Brands';
-import Portfolio from '../components/Portfolio/Portfolio';
-import CTA from '../components/CTA/CTA';
 import SimpleImage from '../components/Image/SimpleImage';
+import LazySection from '../components/LazySection/LazySection';
+
+// Lazy load non-critical sections
+const Brands = lazy(() => import('../components/Brands/Brands'));
+const Portfolio = lazy(() => import('../components/Portfolio/Portfolio'));
+const CTA = lazy(() => import('../components/CTA/CTA'));
+
+const methodologyPhases = [
+    {
+        step: "Phase 01",
+        name: "Investigation",
+        desc: "Deep diving into the soul of your brand to uncover the core essence and strategic direction through meticulous research and intentional vision.",
+        img: "Image1.webp"
+    },
+    {
+        step: "Phase 02",
+        name: "Design",
+        desc: "Manually crafting every pixel and interaction to ensure a unique, human-centric visual language that creates true emotional resonance.",
+        img: "Image2.webp"
+    },
+    {
+        step: "Phase 03",
+        name: "Delivery",
+        desc: "Finalizing and launching a high-performance digital presence that elevates your brand and secures its position in the modern landscape.",
+        img: "Image3.webp"
+    }
+];
 
 /**
  * HOME PAGE
@@ -188,26 +212,7 @@ const Home = ({ appReady = true }) => {
                 </header>
 
                 <div className="ys-methodology__grid">
-                    {[
-                        {
-                            step: "Phase 01",
-                            name: "Investigation",
-                            desc: "Deep diving into the soul of your brand to uncover the core essence and strategic direction through meticulous research and intentional vision.",
-                            img: "Image1.webp"
-                        },
-                        {
-                            step: "Phase 02",
-                            name: "Design",
-                            desc: "Manually crafting every pixel and interaction to ensure a unique, human-centric visual language that creates true emotional resonance.",
-                            img: "Image2.webp"
-                        },
-                        {
-                            step: "Phase 03",
-                            name: "Delivery",
-                            desc: "Finalizing and launching a high-performance digital presence that elevates your brand and secures its position in the modern landscape.",
-                            img: "Image3.webp"
-                        }
-                    ].map((phase, i) => (
+                    {methodologyPhases.map((phase, i) => (
                         <article key={i} className="ys-methodology__phase">
                             <div className="ys-methodology__image-container ys-image-mask" data-ys-reveal="image">
                                 <SimpleImage
@@ -229,9 +234,17 @@ const Home = ({ appReady = true }) => {
                 </div>
             </section>
 
-            <Brands />
-            <Portfolio />
-            <CTA />
+            <LazySection height="300px">
+                <Brands />
+            </LazySection>
+
+            <LazySection height="800px">
+                <Portfolio />
+            </LazySection>
+
+            <LazySection height="600px">
+                <CTA />
+            </LazySection>
         </main>
     );
 };

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, memo, useCallback } from 'react';
 import { gsap, useGSAP } from '../../gsap';
 import { useTransition } from '../../context/TransitionContext';
 
@@ -79,7 +79,7 @@ const CTA = () => {
 
     }, { scope: containerRef });
 
-    const handleClick = (e) => {
+    const handleClick = useCallback((e) => {
         e.preventDefault();
 
         // --- 3. CLICK ANIMATION ---
@@ -103,7 +103,7 @@ const CTA = () => {
             duration: 0.3,
             ease: "power2.out"
         });
-    };
+    }, [navigateWithTransition]);
 
     return (
         <section className="ys-cta" ref={containerRef}>
@@ -122,4 +122,4 @@ const CTA = () => {
     );
 };
 
-export default CTA;
+export default memo(CTA);

@@ -1,9 +1,27 @@
-import { useRef, useState, useEffect, memo } from 'react';
+import { useRef, useState, useEffect, memo, lazy, Suspense } from 'react';
 import { useTransition } from '../context/TransitionContext';
 import TransitionLink from '../components/TransitionLink/TransitionLink';
 import { gsap, useGSAP, SplitText, ScrollTrigger } from '../gsap';
-import CTA from '../components/CTA/CTA';
+import LazySection from '../components/LazySection/LazySection';
 import '../styles/About.css';
+
+const CTA = lazy(() => import('../components/CTA/CTA'));
+
+const faqData = [
+    { q: "How do you start a project?", a: "Every project begins with a discovery session where we dive deep into your brand's vision, goals, and market landscape." },
+    { q: "What is your typical timeline?", a: "Standard brand identity and web design projects usually span 6 to 10 weeks for meticulous execution." },
+    { q: "Do you handle development as well?", a: "Yes. I build high-performance, GSAP-animated React applications that bring the static vision to life." },
+    { q: "Why focus on 'Human' design?", a: "In an era of AI automation, the human touch creates the true emotional connection necessary for premium brands." }
+];
+
+const testimonialsData = [
+    { name: "Alpha Programming", role: "Tech Company", img: "Alpha Programing.webp", text: "Yasser delivered exceptional results that exceeded our expectations. His attention to detail is unmatched." },
+    { name: "Corochoco", role: "Brand", img: "Corochoco.webp", text: "Working with Yasser was an absolute pleasure. He understood our vision and translated it into a stunning presence." },
+    { name: "Islem Bennebes", role: "Entrepreneur", img: "Islem Bennebes.webp", text: "The level of professionalism Yasser brings to every project is unmatched. Highly recommend for premium work." },
+    { name: "Madjid Lounes", role: "Business Owner", img: "Madjid Lounes.webp", text: "Yasser's work speaks for itself. The website has significantly improved our online presence and engagement." },
+    { name: "Pandaify", role: "SaaS Platform", img: "Pandaify.webp", text: "Incredible design work that captures our brand essence. The animations and UX are absolutely top-tier." },
+    { name: "Rahim Kichene", role: "Creative Director", img: "Rahim Kichene.webp", text: "As a fellow creative, I appreciate Yasser's meticulous approach. Every pixel is intentional and purposeful." }
+];
 
 /**
  * ABOUT PAGE
@@ -140,21 +158,6 @@ const About = () => {
         }
     };
 
-    const faqData = [
-        { q: "How do you start a project?", a: "Every project begins with a discovery session where we dive deep into your brand's vision, goals, and market landscape." },
-        { q: "What is your typical timeline?", a: "Standard brand identity and web design projects usually span 6 to 10 weeks for meticulous execution." },
-        { q: "Do you handle development as well?", a: "Yes. I build high-performance, GSAP-animated React applications that bring the static vision to life." },
-        { q: "Why focus on 'Human' design?", a: "In an era of AI automation, the human touch creates the true emotional connection necessary for premium brands." }
-    ];
-
-    const testimonialsData = [
-        { name: "Alpha Programming", role: "Tech Company", img: "Alpha Programing.webp", text: "Yasser delivered exceptional results that exceeded our expectations. His attention to detail is unmatched." },
-        { name: "Corochoco", role: "Brand", img: "Corochoco.webp", text: "Working with Yasser was an absolute pleasure. He understood our vision and translated it into a stunning presence." },
-        { name: "Islem Bennebes", role: "Entrepreneur", img: "Islem Bennebes.webp", text: "The level of professionalism Yasser brings to every project is unmatched. Highly recommend for premium work." },
-        { name: "Madjid Lounes", role: "Business Owner", img: "Madjid Lounes.webp", text: "Yasser's work speaks for itself. The website has significantly improved our online presence and engagement." },
-        { name: "Pandaify", role: "SaaS Platform", img: "Pandaify.webp", text: "Incredible design work that captures our brand essence. The animations and UX are absolutely top-tier." },
-        { name: "Rahim Kichene", role: "Creative Director", img: "Rahim Kichene.webp", text: "As a fellow creative, I appreciate Yasser's meticulous approach. Every pixel is intentional and purposeful." }
-    ];
 
     return (
         <div ref={containerRef} className="ys-about-page">
@@ -199,72 +202,79 @@ const About = () => {
             </section>
 
             {/* --- TESTIMONIALS SECTION --- */}
-            <section className="ys-testimonials">
-                <header className="ys-testimonials__header">
-                    <h2 className="ys-testimonials__title" data-ys-reveal="text">What Clients Say</h2>
-                </header>
-                <div className="ys-testimonials__marquee">
-                    <div className="ys-testimonials__vignette"></div>
-                    <div className="ys-testimonials__track" ref={testimonialsTrackRef}>
-                        <div className="ys-testimonials__slider">
-                            {testimonialsData.map((item, i) => (
-                                <article className="ys-testimonial-card" key={i}>
-                                    <div className="ys-testimonial-card__bubble">
-                                        <p className="ys-testimonial-card__text">{item.text}</p>
-                                        <div className="ys-testimonial-card__pointer"></div>
-                                    </div>
-                                    <div className="ys-testimonial-card__author">
-                                        <img src={`${import.meta.env.BASE_URL}assets/images/${item.img}`} alt={item.name} className="ys-testimonial-card__avatar" />
-                                        <div className="ys-testimonial-card__info">
-                                            <span className="ys-testimonial-card__name">{item.name}</span>
-                                            <span className="ys-testimonial-card__role">{item.role}</span>
+            <LazySection height="500px">
+                <section className="ys-testimonials">
+                    <header className="ys-testimonials__header">
+                        <h2 className="ys-testimonials__title" data-ys-reveal="text">What Clients Say</h2>
+                    </header>
+                    <div className="ys-testimonials__marquee">
+                        <div className="ys-testimonials__vignette"></div>
+                        <div className="ys-testimonials__track" ref={testimonialsTrackRef}>
+                            <div className="ys-testimonials__slider">
+                                {testimonialsData.map((item, i) => (
+                                    <article className="ys-testimonial-card" key={i}>
+                                        <div className="ys-testimonial-card__bubble">
+                                            <p className="ys-testimonial-card__text">{item.text}</p>
+                                            <div className="ys-testimonial-card__pointer"></div>
                                         </div>
-                                    </div>
-                                </article>
-                            ))}
-                        </div>
-                        {/* Duplicate for seamless infinite feel */}
-                        <div className="ys-testimonials__slider">
-                            {testimonialsData.map((item, i) => (
-                                <article className="ys-testimonial-card" key={`dup-${i}`}>
-                                    <div className="ys-testimonial-card__bubble">
-                                        <p className="ys-testimonial-card__text">{item.text}</p>
-                                        <div className="ys-testimonial-card__pointer"></div>
-                                    </div>
-                                    <div className="ys-testimonial-card__author">
-                                        <img src={`${import.meta.env.BASE_URL}assets/images/${item.img}`} alt={item.name} className="ys-testimonial-card__avatar" />
-                                        <div className="ys-testimonial-card__info">
-                                            <span className="ys-testimonial-card__name">{item.name}</span>
-                                            <span className="ys-testimonial-card__role">{item.role}</span>
+                                        <div className="ys-testimonial-card__author">
+                                            <img src={`${import.meta.env.BASE_URL}assets/images/${item.img}`} alt={item.name} className="ys-testimonial-card__avatar" />
+                                            <div className="ys-testimonial-card__info">
+                                                <span className="ys-testimonial-card__name">{item.name}</span>
+                                                <span className="ys-testimonial-card__role">{item.role}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </article>
-                            ))}
+                                    </article>
+                                ))}
+                            </div>
+                            {/* Duplicate for seamless infinite feel */}
+                            <div className="ys-testimonials__slider">
+                                {testimonialsData.map((item, i) => (
+                                    <article className="ys-testimonial-card" key={`dup-${i}`}>
+                                        <div className="ys-testimonial-card__bubble">
+                                            <p className="ys-testimonial-card__text">{item.text}</p>
+                                            <div className="ys-testimonial-card__pointer"></div>
+                                        </div>
+                                        <div className="ys-testimonial-card__author">
+                                            <img src={`${import.meta.env.BASE_URL}assets/images/${item.img}`} alt={item.name} className="ys-testimonial-card__avatar" />
+                                            <div className="ys-testimonial-card__info">
+                                                <span className="ys-testimonial-card__name">{item.name}</span>
+                                                <span className="ys-testimonial-card__role">{item.role}</span>
+                                            </div>
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </LazySection>
 
             {/* --- FAQ SECTION --- */}
-            <section className="ys-faq">
-                <div className="ys-faq__container">
-                    <h2 className="ys-faq__title" data-ys-reveal="text">Frequently Asked Questions</h2>
-                    <div className="ys-faq__list">
-                        {faqData.map((item, i) => (
-                            <div key={i} className={`ys-faq-item ${activeIndex === i ? 'is-active' : ''}`} onClick={() => toggleFAQ(i)}>
-                                <div className="ys-faq-item__header">
-                                    <h3 className="ys-faq-item__question" data-ys-reveal="text">{item.q}</h3>
-                                    <div className="ys-faq-item__icon"></div>
+            <LazySection height="400px">
+                <section className="ys-faq">
+                    <div className="ys-faq__container">
+                        <h2 className="ys-faq__title" data-ys-reveal="text">Frequently Asked Questions</h2>
+                        <div className="ys-faq__list">
+                            {faqData.map((item, i) => (
+                                <div key={i} className={`ys-faq-item ${activeIndex === i ? 'is-active' : ''}`} onClick={() => toggleFAQ(i)}>
+                                    <div className="ys-faq-item__header">
+                                        <h3 className="ys-faq-item__question" data-ys-reveal="text">{item.q}</h3>
+                                        <div className="ys-faq-item__icon"></div>
+                                    </div>
+                                    <div className="ys-faq-item__answer-wrap">
+                                        <div className="ys-faq-item__answer">{item.a}</div>
+                                    </div>
                                 </div>
-                                <div className="ys-faq-item__answer-wrap">
-                                    <div className="ys-faq-item__answer">{item.a}</div>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
-            </section>
-            <CTA />
+                </section>
+            </LazySection>
+
+            <LazySection height="600px">
+                <CTA />
+            </LazySection>
         </div>
     );
 };
