@@ -55,8 +55,8 @@ const Home = ({ appReady = true }) => {
     };
 
     useGSAP(() => {
-        // Quad-Lock: Transition Finished + App Ready + Video Frame Painted
-        if (isAnimating || !appReady || !hasVideoPlayed) return;
+        // LCP Optimization: Text reveals as soon as App is ready
+        if (isAnimating || !appReady) return;
 
         playIntro();
 
@@ -112,11 +112,13 @@ const Home = ({ appReady = true }) => {
                     <video
                         ref={videoRef}
                         src="/assets/videos/yasser-animated.mp4"
+                        poster="/assets/images/Yasser Background.webp"
                         className="ys-hero__video"
                         muted
                         autoPlay
                         loop
                         playsInline
+                        preload="metadata"
                     />
                     <div className="ys-hero__dark-overlay"></div>
                     {/* Cinematic "Curtain" - Now inside BG to stay UNDER text */}
@@ -125,13 +127,13 @@ const Home = ({ appReady = true }) => {
 
                 <div className="ys-hero__container">
                     <div className="ys-hero__main-header">
-                        <h1 className="ys-hero__title" data-ys-reveal="text" data-ys-delay="0.1">Yasser Creatives</h1>
-                        <p className="ys-hero__name" data-ys-reveal="text" data-ys-delay="0.3">By Yasser Abdelmotaleb Sebti</p>
+                        <h1 className="ys-hero__title ys-lcp-text" data-ys-reveal="text" data-ys-delay="0.1">Yasser Creatives</h1>
+                        <p className="ys-hero__name ys-lcp-text" data-ys-reveal="text" data-ys-delay="0.3">By Yasser Abdelmotaleb Sebti</p>
                     </div>
 
                     <div className="ys-hero__slogan">
-                        <h2 className="ys-hero__slogan-title" data-ys-reveal="text" data-ys-delay="0.4">100% Human-Designed Work</h2>
-                        <p className="ys-hero__slogan-sub" data-ys-reveal="text" data-ys-delay="0.5">No AI, just pure vision.</p>
+                        <h2 className="ys-hero__slogan-title ys-lcp-text" data-ys-reveal="text" data-ys-delay="0.4">100% Human-Designed Work</h2>
+                        <p className="ys-hero__slogan-sub ys-lcp-text" data-ys-reveal="text" data-ys-delay="0.5">No AI, just pure vision.</p>
                     </div>
 
                     <div className="ys-hero__cta" data-ys-reveal="fade-up" data-ys-delay="0.7">

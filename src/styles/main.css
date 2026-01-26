@@ -1,6 +1,8 @@
 /* =============================================================================
-   YASSER CREATIVES - Design System
+   YASSER CREATIVES - Design System (Pro Max Advanced Clean Minimal)
    ============================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@200;400;600;800&family=Space+Grotesk:wght@300;400;500;700&display=swap');
 
 /* CSS Variables */
 :root {
@@ -11,18 +13,19 @@
     --void-subtle: rgba(255, 255, 255, 0.15);
     --void-accent: #4ade80;
 
-    /* Typography */
-    --font-serif: 'PP Editorial New', Georgia, serif;
-    --font-mono: 'SF Mono', 'Fira Code', monospace;
+    /* Typography - Pro Max Advanced Clean Minimal */
+    --font-heading: 'Archivo', sans-serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-mono: 'Space Grotesk', monospace;
 
-    /* Spacing */
+    /* Spacing - Optimized for Minimal Whitespace */
     --space-xs: 0.5rem;
     --space-sm: 1rem;
     --space-md: 2rem;
-    --space-lg: 4rem;
-    --space-xl: 8rem;
-    --space-section: 12vh;
-    --grid-margin: 6vw;
+    --space-lg: 5rem;
+    --space-xl: 10rem;
+    --space-section: 15vh;
+    --grid-margin: 8vw;
 
     /* Typography Scale - Refined for Impact */
     --text-micro: 0.875rem;
@@ -86,15 +89,31 @@ html {
 }
 
 body {
-    font-family: var(--font-serif);
-    font-weight: 200;
+    font-family: var(--font-body);
+    font-weight: 300;
     background: var(--void-black);
     color: var(--void-white);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* height: 100%; - REMOVED: Restricts scrollable area */
-    /* overflow: hidden; - REMOVED: Blocks scroll events */
+}
+
+/* LCP Optimized Visibility */
+.ys-lcp-text {
+    opacity: 0;
+    animation: lcp-fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes lcp-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Custom Cursor Interaction */
@@ -311,9 +330,9 @@ img[loading="lazy"].loaded {
 
 .ys-header__logo a {
     display: inline-block;
-    font-family: var(--font-serif);
+    font-family: var(--font-heading);
     font-size: 2rem;
-    font-weight: 200;
+    font-weight: 600;
     letter-spacing: -0.02em;
 }
 
