@@ -9,6 +9,7 @@ import Scrollbar from './components/Scrollbar/Scrollbar';
 import { TransitionProvider } from './context/TransitionContext';
 import { useTransition } from './context/TransitionContext';
 import { useGlobalReveal } from './hooks/useReveal';
+import { preloadAssets } from './utils/AssetLoader';
 import './styles/main.css';
 
 // Lazy load pages for performance
@@ -105,6 +106,30 @@ function InnerApp() {
 
   const [hasMounted, setHasMounted] = useState(false);
 
+  // --- Asset Preloading Logic ---
+  useEffect(() => {
+    const assetsToLoad = {
+      images: [
+        '/assets/images/hero-poster.webp',
+        '/assets/images/Yasser.webp', // Critical for about page
+      ],
+      videos: [
+        '/assets/videos/yasser-animated.mp4'
+      ],
+      fonts: [
+        'PP Editorial New',
+        'DM Mono'
+      ]
+    };
+
+    preloadAssets(assetsToLoad).then(() => {
+      // Small buffer for rendering engine to settle
+      setTimeout(() => {
+        setHasMounted(true);
+      }, 500);
+    });
+  }, []);
+
   // Activate Surgical Global Reveal System
   useGlobalReveal(wrapperRef, location.pathname, isAnimating, isPendingReveal, hasMounted);
 
@@ -120,9 +145,7 @@ function InnerApp() {
   return (
     <>
       {/* Initial Application Preloader - Only on refresh/first visit */}
-      {!hasMounted && (
-        <LoadingSpinner onFinished={() => setHasMounted(true)} />
-      )}
+      {!hasMounted && <LoadingSpinner />}
 
       {/* Header must be OUTSIDE of smooth-content if it is position: fixed */}
       {hasMounted && (

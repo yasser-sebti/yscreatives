@@ -66,8 +66,8 @@ const Home = ({ appReady = true }) => {
     };
 
     useGSAP(() => {
-        // Quad-Lock: Transition Finished + App Ready + Video Frame Painted
-        if (isAnimating || !appReady || !hasVideoPlayed) return;
+        // App Ready is only true after fonts, video (hero), and critical images are loaded
+        if (!appReady) return;
 
         playIntro();
 
@@ -128,7 +128,7 @@ const Home = ({ appReady = true }) => {
                         muted
                         loop
                         playsInline
-                        preload="none"
+                        preload="auto"
                     />
                     <div className="ys-hero__dark-overlay"></div>
                     {/* Cinematic "Curtain" - Now inside BG to stay UNDER text */}
