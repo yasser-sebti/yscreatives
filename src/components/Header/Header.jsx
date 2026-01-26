@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, memo } from 'react';
 import TransitionLink from '../TransitionLink/TransitionLink';
 import { gsap, useGSAP } from '../../gsap';
 import SoundWave from './SoundWave';
@@ -75,4 +75,4 @@ const Header = ({ isSoundOn, setIsSoundOn, inverted }) => {
     );
 };
 
-export default Header;
+export default memo(Header);

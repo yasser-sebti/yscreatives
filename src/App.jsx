@@ -31,7 +31,7 @@ function InnerApp() {
   // Initialize audio only when requested or after a delay to improve LCP
   useEffect(() => {
     const timer = setTimeout(() => {
-      const a = new Audio('/assets/sounds/background-ost.mp3');
+      const a = new Audio('assets/sounds/background-ost.mp3');
       a.loop = true;
       setAudio(a);
     }, 2000);
@@ -110,11 +110,11 @@ function InnerApp() {
   useEffect(() => {
     const assetsToLoad = {
       images: [
-        '/assets/images/hero-poster.webp',
-        '/assets/images/Yasser.webp', // Critical for about page
+        'assets/images/hero-poster.webp',
+        'assets/images/Yasser.webp', // Critical for about page
       ],
       videos: [
-        '/assets/videos/yasser-animated.mp4'
+        'assets/videos/yasser-animated.mp4'
       ],
       fonts: [
         'PP Editorial New',

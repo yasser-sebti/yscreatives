@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, memo } from 'react';
 import { gsap, useGSAP, SplitText, ScrollTrigger } from '../gsap';
 import { useTransition } from '../context/TransitionContext';
 import TransitionLink from '../components/TransitionLink/TransitionLink';
@@ -122,8 +122,8 @@ const Home = ({ appReady = true }) => {
                 <div className="ys-hero__bg">
                     <video
                         ref={videoRef}
-                        src="/assets/videos/yasser-animated.mp4"
-                        poster="/assets/images/hero-poster.webp"
+                        src="assets/videos/yasser-animated.mp4"
+                        poster="assets/images/hero-poster.webp"
                         className="ys-hero__video"
                         muted
                         loop
@@ -191,7 +191,7 @@ const Home = ({ appReady = true }) => {
                         <article key={i} className="ys-methodology__phase">
                             <div className="ys-methodology__image-container ys-image-mask" data-ys-reveal="image">
                                 <SimpleImage
-                                    src={`/assets/images/${phase.img}`}
+                                    src={`assets/images/${phase.img}`}
                                     alt={phase.name}
                                     loading="lazy"
                                     width={800}
@@ -216,4 +216,4 @@ const Home = ({ appReady = true }) => {
     );
 };
 
-export default Home;
+export default memo(Home);
