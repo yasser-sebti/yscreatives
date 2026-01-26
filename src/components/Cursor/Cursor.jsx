@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, memo } from 'react';
 import { gsap, useGSAP } from '../../gsap';
 import './Cursor.css';
 
@@ -156,4 +156,4 @@ const Cursor = () => {
     );
 };
 
-export default Cursor;
+export default memo(Cursor);

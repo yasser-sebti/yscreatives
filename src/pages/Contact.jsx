@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback, memo } from 'react';
 import { useTransition } from '../context/TransitionContext';
 import { gsap, useGSAP, SplitText, ScrollTrigger, ScrollSmoother } from '../gsap';
 import Newsletter from '../components/Newsletter/Newsletter';
@@ -7,11 +7,10 @@ import '../styles/Contact.css';
 
 // --- Smart Tooltip Component ---
 // Encapsulates its own animation logic and keeps message visible during fade-out
-const Tooltip = ({ message, isVisible }) => {
+const Tooltip = memo(({ message, isVisible }) => {
     const tooltipRef = useRef(null);
     const [displayMessage, setDisplayMessage] = useState(message);
 
-    // Keep the message visible even if the prop is cleared, until fade-out finishes
     useEffect(() => {
         if (message) setDisplayMessage(message);
     }, [message]);
@@ -42,8 +41,109 @@ const Tooltip = ({ message, isVisible }) => {
             {message || displayMessage}
         </div>
     );
+});
+
+
+const countries = [
+    "Algeria", "United States", "United Kingdom", "Canada", "Australia", "Germany",
+    "France", "Spain", "Italy", "Netherlands", "Belgium", "Switzerland",
+    "Sweden", "Norway", "Denmark", "Finland", "Japan", "South Korea",
+    "China", "India", "Brazil", "Mexico", "Argentina", "South Africa",
+    "United Arab Emirates", "Saudi Arabia", "Singapore", "Malaysia",
+    "Indonesia", "Thailand", "Vietnam", "Philippines", "New Zealand",
+    "Ireland", "Portugal", "Austria", "Poland", "Czech Republic",
+    "Greece", "Turkey", "Egypt", "Morocco", "Nigeria", "Kenya", "Other"
+];
+
+const budgetData = {
+    "Logo design": {
+        USD: ["Less than $120", "$120 - $300", "$300 - $650", "$650 - $1,100", "$1,100+"],
+        EUR: ["Less than €110", "€110 - €280", "€280 - €600", "€600 - €1,000", "€1,000+"],
+        DZD: ["Less than 15,000 DZD", "15,000 - 30,000 DZD", "30,000 - 65,000 DZD", "65,000 - 110,000 DZD", "110,000 DZD+"]
+    },
+    "Full Branding": {
+        USD: ["Less than $600", "$600 - $1,500", "$1,500 - $3,500", "$3,500 - $7,000", "$7,000+"],
+        EUR: ["Less than €550", "€550 - €1,380", "€1,380 - €3,220", "€3,220 - €6,450", "€6,450+"],
+        DZD: ["Less than 65,000 DZD", "65,000 - 150,000 DZD", "150,000 - 350,000 DZD", "350,000 - 700,000 DZD", "700,000 DZD+"]
+    },
+    "Social Media packages": {
+        USD: ["Less than $250", "$250 - $600", "$600 - $1,200", "$1,200 - $2,500", "$2,500+"],
+        EUR: ["Less than €230", "€230 - €550", "€550 - €1,100", "€1,100 - €2,300", "€2,300+"],
+        DZD: ["Less than 25,000 DZD", "25,000 - 60,000 DZD", "60,000 - 120,000 DZD", "120,000 - 250,000 DZD", "250,000 DZD+"]
+    },
+    "Other": {
+        USD: ["Less than $300", "$300 - $1,000", "$1,000 - $5,000", "$5,000+"],
+        EUR: ["Less than €280", "€280 - €920", "€920 - €4,600", "€4,600+"],
+        DZD: ["Less than 30,000 DZD", "30,000 - 100,000 DZD", "100,000 - 500,000 DZD", "500,000 DZD+"]
+    }
 };
 
+const referralOptions = [
+    "Social Media (Instagram, LinkedIn)",
+    "Google Search",
+    "Recommendation / Word of Mouth",
+    "Portfolio Website (Awwwards, Behance)",
+    "Previous Client",
+    "Other"
+];
+
+const serviceOptions = [
+    "Logo design",
+    "Full Branding",
+    "Social Media packages"
+];
+
+// --- Validation Helpers ---
+const isMashing = (val) => {
+    if (!val || val.length < 4) return false;
+    const repeated = /(.)\1{3,}/.test(val);
+    const noVowels = /^[^aeiouy]{5,}$/i.test(val);
+    const qwerty = /asdf|sdfg|dfgh|fghj|ghjk|hjkl|qwerty|qwer|asdfgh|zxcvbn/i.test(val);
+    return repeated || noVowels || qwerty;
+};
+
+const validateEmail = (val) => {
+    if (!val) return "Enter your email..";
+    if (val.includes(' ')) return "No spaces allowed";
+    const parts = val.split('@');
+    if (parts.length === 1) return "Missing '@' symbol";
+    if (parts.length > 2) return "Multiple '@' symbols detected";
+    const local = parts[0];
+    const domain = parts[1];
+    if (!local) return "Missing local part before '@'";
+    if (!domain) return "Missing provider after '@'";
+    if (val.startsWith('.') || val.endsWith('.')) return "Cannot start or end with a dot";
+    if (val.includes('..')) return "Consecutive dots not allowed";
+    if (!domain.includes('.')) return "Missing domain (e.g. .com)";
+    const domainDots = domain.split('.');
+    if (domainDots.length > 0 && domainDots[domainDots.length - 1].length < 2) return "Domain extension too short";
+    return null;
+};
+
+const validateField = (name, value, selectedCountry) => {
+    switch (name) {
+        case 'name':
+            if (!value.trim()) return "Full name is required";
+            if (value.length < 2) return "Name is too short";
+            if (isMashing(value)) return "Looks like a typo / mashing";
+            return null;
+        case 'company':
+            if (!value.trim()) return "Company is required";
+            if (value.length < 2) return "Company is too short";
+            if (isMashing(value)) return "Looks like a typo / mashing";
+            return null;
+        case 'email':
+            return validateEmail(value);
+        case 'phone':
+            if (!value.trim()) return "Phone is required";
+            const digits = value.replace(/\D/g, '');
+            if (digits.length < 7) return "Phone number too short";
+            if (selectedCountry === 'Algeria' && digits.startsWith('0') && digits.length !== 10) return "Algerian numbers: 10 digits";
+            return null;
+        default:
+            return null;
+    }
+};
 
 const Contact = () => {
     const containerRef = useRef(null);
@@ -79,124 +179,6 @@ const Contact = () => {
     const [status, setStatus] = useState('idle'); // idle, submitting, success, error
 
     const charLimit = 1000;
-
-    // --- Validation Intelligence ---
-
-    const isMashing = (val) => {
-        if (!val || val.length < 4) return false;
-        // Patterns of mashing: 4+ identical chars, or lacks vowels in 5+ chars, or regex for common qwerty row mashing
-        const repeated = /(.)\1{3,}/.test(val);
-        const noVowels = /^[^aeiouy]{5,}$/i.test(val);
-        const qwerty = /asdf|sdfg|dfgh|fghj|ghjk|hjkl|qwerty|qwer|asdfgh|zxcvbn/i.test(val);
-        return repeated || noVowels || qwerty;
-    };
-
-    const validateEmail = (val) => {
-        if (!val) return "Enter your email..";
-        if (val.includes(' ')) return "No spaces allowed";
-        const parts = val.split('@');
-        if (parts.length === 1) return "Missing '@' symbol";
-        if (parts.length > 2) return "Multiple '@' symbols detected";
-        const local = parts[0];
-        const domain = parts[1];
-        if (!local) return "Missing local part before '@'";
-        if (!domain) return "Missing provider after '@'";
-        if (val.startsWith('.') || val.endsWith('.')) return "Cannot start or end with a dot";
-        if (val.includes('..')) return "Consecutive dots not allowed";
-        if (!domain.includes('.')) return "Missing domain (e.g. .com)";
-        const domainDots = domain.split('.');
-        if (domainDots.length > 0 && domainDots[domainDots.length - 1].length < 2) return "Domain extension too short";
-        return null;
-    };
-
-    const validateField = (name, value) => {
-        switch (name) {
-            case 'name':
-                if (!value.trim()) return "Full name is required";
-                if (value.length < 2) return "Name is too short";
-                if (isMashing(value)) return "Looks like a typo / mashing";
-                return null;
-            case 'company':
-                if (!value.trim()) return "Company is required";
-                if (value.length < 2) return "Company is too short";
-                if (isMashing(value)) return "Looks like a typo / mashing";
-                return null;
-            case 'email':
-                return validateEmail(value);
-            case 'phone':
-                if (!value.trim()) return "Phone is required";
-                const digits = value.replace(/\D/g, '');
-                if (digits.length < 7) return "Phone number too short";
-                if (selectedCountry === 'Algeria' && digits.startsWith('0') && digits.length !== 10) return "Algerian numbers: 10 digits";
-                return null;
-            default:
-                return null;
-        }
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-        // Clear error on change
-        if (errors[name]) {
-            setErrors(prev => {
-                const newErrs = { ...prev };
-                delete newErrs[name];
-                return newErrs;
-            });
-        }
-    };
-
-    // Country list (with Algeria added)
-    const countries = [
-        "Algeria", "United States", "United Kingdom", "Canada", "Australia", "Germany",
-        "France", "Spain", "Italy", "Netherlands", "Belgium", "Switzerland",
-        "Sweden", "Norway", "Denmark", "Finland", "Japan", "South Korea",
-        "China", "India", "Brazil", "Mexico", "Argentina", "South Africa",
-        "United Arab Emirates", "Saudi Arabia", "Singapore", "Malaysia",
-        "Indonesia", "Thailand", "Vietnam", "Philippines", "New Zealand",
-        "Ireland", "Portugal", "Austria", "Poland", "Czech Republic",
-        "Greece", "Turkey", "Egypt", "Morocco", "Nigeria", "Kenya", "Other"
-    ];
-
-    // Budget tiers based on service and currency (Refined Pricing)
-    const budgetData = {
-        "Logo design": {
-            USD: ["Less than $120", "$120 - $300", "$300 - $650", "$650 - $1,100", "$1,100+"],
-            EUR: ["Less than €110", "€110 - €280", "€280 - €600", "€600 - €1,000", "€1,000+"],
-            DZD: ["Less than 15,000 DZD", "15,000 - 30,000 DZD", "30,000 - 65,000 DZD", "65,000 - 110,000 DZD", "110,000 DZD+"]
-        },
-        "Full Branding": {
-            USD: ["Less than $600", "$600 - $1,500", "$1,500 - $3,500", "$3,500 - $7,000", "$7,000+"],
-            EUR: ["Less than €550", "€550 - €1,380", "€1,380 - €3,220", "€3,220 - €6,450", "€6,450+"],
-            DZD: ["Less than 65,000 DZD", "65,000 - 150,000 DZD", "150,000 - 350,000 DZD", "350,000 - 700,000 DZD", "700,000 DZD+"]
-        },
-        "Social Media packages": {
-            USD: ["Less than $250", "$250 - $600", "$600 - $1,200", "$1,200 - $2,500", "$2,500+"],
-            EUR: ["Less than €230", "€230 - €550", "€550 - €1,100", "€1,100 - €2,300", "€2,300+"],
-            DZD: ["Less than 25,000 DZD", "25,000 - 60,000 DZD", "60,000 - 120,000 DZD", "120,000 - 250,000 DZD", "250,000 DZD+"]
-        },
-        "Other": {
-            USD: ["Less than $300", "$300 - $1,000", "$1,000 - $5,000", "$5,000+"],
-            EUR: ["Less than €280", "€280 - €920", "€920 - €4,600", "€4,600+"],
-            DZD: ["Less than 30,000 DZD", "30,000 - 100,000 DZD", "100,000 - 500,000 DZD", "500,000 DZD+"]
-        }
-    };
-
-    const referralOptions = [
-        "Social Media (Instagram, LinkedIn)",
-        "Google Search",
-        "Recommendation / Word of Mouth",
-        "Portfolio Website (Awwwards, Behance)",
-        "Previous Client",
-        "Other"
-    ];
-
-    const serviceOptions = [
-        "Logo design",
-        "Full Branding",
-        "Social Media packages"
-    ];
 
     // 1. Initial Load Animations
     useGSAP((context, contextSafe) => {
@@ -242,7 +224,7 @@ const Contact = () => {
 
         // Validate inputs
         ['name', 'company', 'email', 'phone'].forEach(field => {
-            const err = validateField(field, formData[field]);
+            const err = validateField(field, formData[field], selectedCountry);
             if (err) newErrors[field] = err;
         });
 
@@ -388,19 +370,19 @@ const Contact = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const toggleCurrency = (cur) => {
+    const toggleCurrency = useCallback((cur) => {
         setCurrency(cur);
-    };
+    }, []);
 
-    const handleCountrySelect = (country) => {
+    const handleCountrySelect = useCallback((country) => {
         setSelectedCountry(country);
         setIsCountryOpen(false);
-    };
+    }, []);
 
-    const handleServiceSelect = (service) => {
+    const handleServiceSelect = useCallback((service) => {
         setSelectedService(service);
         setIsServiceOpen(false);
-    };
+    }, []);
 
     return (
         <>
@@ -764,4 +746,4 @@ const Contact = () => {
     );
 };
 
-export default Contact;
+export default memo(Contact);

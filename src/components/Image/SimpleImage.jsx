@@ -170,4 +170,4 @@ const SimpleImage = ({
     );
 };
 
-export default SimpleImage;
+export default memo(SimpleImage);
