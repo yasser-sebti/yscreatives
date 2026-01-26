@@ -49,22 +49,15 @@ const Home = ({ appReady = true }) => {
 
         const handlePlaying = () => setHasVideoPlayed(true);
 
-        // Intersection Observer to trigger play only when in view
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    video.play().catch(err => console.log("Video play blocked until interaction:", err));
-                } else {
-                    video.pause();
-                }
-            });
-        }, { threshold: 0.1 });
-
-        observer.observe(video);
+        // We already have autoPlay on the tag, but we force it here too for reliability
+        video.play().catch(err => {
+            console.log("Video auto-play failed, usually waiting for user interaction:", err);
+            // If it fails, we still want to show the content eventually
+            setHasVideoPlayed(true);
+        });
 
         video.addEventListener('playing', handlePlaying);
         return () => {
-            observer.disconnect();
             video.removeEventListener('playing', handlePlaying);
         };
     }, []);
@@ -73,10 +66,12 @@ const Home = ({ appReady = true }) => {
     const playIntro = () => {
         const tl = gsap.timeline();
 
-        // Ensure we start from absolute black
+        // Ensure we start from absolute black for the background only
         gsap.set(".ys-hero__cover", { opacity: 1 });
         gsap.set(".ys-hero__video", { opacity: 1 });
-        gsap.set(".ys-hero__main-header", { opacity: 0, y: 30 });
+        // Main header stays visible but we can still do a subtle slide up if needed, 
+        // but the user wants it "not affected", so let's keep it clean.
+        gsap.set(".ys-hero__main-header", { y: 20, opacity: 1 });
         gsap.set(".ys-hero__slogan", { opacity: 0 });
         gsap.set(".ys-hero__cta", { opacity: 0 });
 
@@ -87,11 +82,10 @@ const Home = ({ appReady = true }) => {
             delay: 0.3
         })
             .to(".ys-hero__main-header", {
-                opacity: 1,
                 y: 0,
                 duration: 1.5,
                 ease: "power3.out"
-            }, "-=1.2")
+            }, "-=1.5")
             .to(".ys-hero__slogan", {
                 opacity: 1,
                 duration: 1,
@@ -169,6 +163,7 @@ const Home = ({ appReady = true }) => {
                         src={`${import.meta.env.BASE_URL}assets/videos/yasser-animated.mp4`}
                         poster={`${import.meta.env.BASE_URL}assets/images/hero-poster.webp`}
                         className="ys-hero__video"
+                        autoPlay
                         muted
                         loop
                         playsInline

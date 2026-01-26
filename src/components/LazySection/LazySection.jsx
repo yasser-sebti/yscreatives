@@ -6,7 +6,7 @@ import '../../styles/LazySection.css';
  * IntersectionObserver based wrapper for high-performance section-level lazy loading.
  * Features a "Pro Max" minimal aesthetic skeleton loader.
  */
-const LazySection = ({ children, height = "400px", offset = "200px" }) => {
+const LazySection = ({ children, height = "400px", offset = "600px" }) => {
     const [isVisible, setIsVisible] = useState(false);
     const sectionRef = useRef(null);
 
@@ -54,6 +54,8 @@ const SectionSkeleton = ({ height }) => (
         <div className="ys-section-skeleton__content">
             <div className="ys-section-skeleton__line ys-section-skeleton__line--lg"></div>
             <div className="ys-section-skeleton__line ys-section-skeleton__line--md"></div>
+            <div className="ys-section-skeleton__line ys-section-skeleton__line--lg" style={{ width: '80%' }}></div>
+            <div className="ys-section-skeleton__line ys-section-skeleton__line--sm" style={{ width: '30%', height: '10px' }}></div>
         </div>
     </div>
 );

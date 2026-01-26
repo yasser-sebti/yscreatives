@@ -360,7 +360,7 @@ img[loading="lazy"].loaded {
 .ys-header__link--special {
     opacity: 1;
     padding: 0.6rem 1.5rem;
-    border: 0.5px solid var(--void-white);
+    border: 1px solid var(--void-white);
     background: transparent;
     transition: background 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo), opacity 0.4s var(--ease-out-expo);
     border-radius: 0;
@@ -408,7 +408,7 @@ img[loading="lazy"].loaded {
     bottom: -4px;
     left: 0;
     width: 0;
-    height: 0.5px;
+    height: 1px;
     background: currentColor;
     transition: width 0.4s var(--ease-out-expo);
 }
@@ -507,8 +507,8 @@ img[loading="lazy"].loaded {
     padding: 0.12em 0;
 
     /* Perceived Instantness - Basic visibility before GSAP */
-    opacity: 0.01;
-    transition: opacity 0.5s ease;
+    opacity: 1;
+    transition: transform 0.8s var(--ease-out-expo);
 }
 
 .ys-hero.is-loaded .ys-hero__title {
