@@ -360,7 +360,7 @@ img[loading="lazy"].loaded {
 .ys-header__link--special {
     opacity: 1;
     padding: 0.6rem 1.5rem;
-    border: 1px solid var(--void-white);
+    border: 0.5px solid var(--void-white);
     background: transparent;
     transition: background 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo), opacity 0.4s var(--ease-out-expo);
     border-radius: 0;
@@ -408,7 +408,7 @@ img[loading="lazy"].loaded {
     bottom: -4px;
     left: 0;
     width: 0;
-    height: 1px;
+    height: 0.5px;
     background: currentColor;
     transition: width 0.4s var(--ease-out-expo);
 }

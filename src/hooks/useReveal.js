@@ -75,38 +75,39 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
             const img = el.querySelector('img') || el.querySelector('.ys-simple-image');
             const delay = parseFloat(el.getAttribute('data-ys-delay')) || 0;
 
-            // Advanced Reveal: Vertical shutter + Scale down for depth
+            // Advanced "Line-style" Image Masking:
+            // Container acts as the window, image slides UP into view.
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: el,
-                    start: "top 95%", // Earlier reveal for better flow
+                    start: "top 90%", // Reveal begins slightly early for flow
                     toggleActions: "play none none none"
                 }
             });
 
-            // Initial state for image containers using clipPath for a refined mask reveal
-            // We use 'inset(0% 0% 100% 0%)' to reveal from bottom to top, or 
-            // 'inset(100% 0% 0% 0%)' for top to bottom.
+            // 1. Open the mask window cleanly
             tl.to(el, {
                 clipPath: "inset(0% 0% 0% 0%)",
-                duration: 1.6,
-                ease: "expo.inOut", // Sophisticated acceleration/deceleration
+                duration: 1.4,
+                ease: "power4.inOut",
                 delay: delay
             });
 
             if (img) {
+                // 2. The physical image slides UP from behind the mask line
+                // Removed blur and brightness filters per request
                 tl.fromTo(img,
                     {
-                        scale: 1.4,
-                        filter: "brightness(0.5) blur(10px)" // Atmospheric entrance
+                        yPercent: 40, // Subtle slide-up for a clean, minimal look
+                        scale: 1.1    // Slight scale for depth
                     },
                     {
+                        yPercent: 0,
                         scale: 1,
-                        filter: "brightness(1) blur(0px)",
-                        duration: 2.2,
-                        ease: "power2.out"
+                        duration: 1.8,
+                        ease: "expo.out"
                     },
-                    "<" // Start simultaneously with the mask reveal
+                    "<" // Sync with mask opening
                 );
             }
         });
