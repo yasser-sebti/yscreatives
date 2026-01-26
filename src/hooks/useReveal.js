@@ -75,28 +75,39 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
             const img = el.querySelector('img') || el.querySelector('.ys-simple-image');
             const delay = parseFloat(el.getAttribute('data-ys-delay')) || 0;
 
-            gsap.to(el, {
-                clipPath: "inset(0% 0% 0% 0%)",
-                duration: 1.5,
-                ease: "power3.out",
+            // Advanced Reveal: Vertical shutter + Scale down for depth
+            const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: el,
-                    start: "top 100%"
-                },
+                    start: "top 95%", // Earlier reveal for better flow
+                    toggleActions: "play none none none"
+                }
+            });
+
+            // Initial state for image containers using clipPath for a refined mask reveal
+            // We use 'inset(0% 0% 100% 0%)' to reveal from bottom to top, or 
+            // 'inset(100% 0% 0% 0%)' for top to bottom.
+            tl.to(el, {
+                clipPath: "inset(0% 0% 0% 0%)",
+                duration: 1.6,
+                ease: "expo.inOut", // Sophisticated acceleration/deceleration
                 delay: delay
             });
 
             if (img) {
-                gsap.fromTo(img, { scale: 1.2 }, {
-                    scale: 1,
-                    duration: 2,
-                    ease: "power2.out",
-                    scrollTrigger: {
-                        trigger: el,
-                        start: "top 100%"
+                tl.fromTo(img,
+                    {
+                        scale: 1.4,
+                        filter: "brightness(0.5) blur(10px)" // Atmospheric entrance
                     },
-                    delay: delay
-                });
+                    {
+                        scale: 1,
+                        filter: "brightness(1) blur(0px)",
+                        duration: 2.2,
+                        ease: "power2.out"
+                    },
+                    "<" // Start simultaneously with the mask reveal
+                );
             }
         });
 
