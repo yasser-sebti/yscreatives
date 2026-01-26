@@ -6,6 +6,7 @@ import Brands from '../components/Brands/Brands';
 import Portfolio from '../components/Portfolio/Portfolio';
 import CTA from '../components/CTA/CTA';
 import SimpleImage from '../components/Image/SimpleImage';
+import { usePageReveal } from '../hooks/useReveal';
 
 /**
  * HOME PAGE
@@ -16,8 +17,10 @@ const Home = ({ appReady = true }) => {
     const videoRef = useRef(null);
     const { isAnimating } = useTransition();
 
-    // Video Sync state
     const [hasVideoPlayed, setHasVideoPlayed] = useState(false);
+
+    // Surgical Reveal
+    usePageReveal(containerRef);
 
     useEffect(() => {
         const video = videoRef.current;

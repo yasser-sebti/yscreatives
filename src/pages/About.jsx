@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useCallback, memo } from 'react';
 import { useTransition } from '../context/TransitionContext';
 import TransitionLink from '../components/TransitionLink/TransitionLink';
 import { gsap, useGSAP, SplitText, ScrollTrigger } from '../gsap';
+import { usePageReveal } from '../hooks/useReveal';
 import CTA from '../components/CTA/CTA';
 import '../styles/About.css';
 
@@ -31,9 +32,8 @@ const About = () => {
     const [activeIndex, setActiveIndex] = useState(null);
     const { isAnimating, revealPage } = useTransition();
 
-    useEffect(() => {
-        // Global Reveal is handled by TransitionContext
-    }, []);
+    // Surgical Reveal
+    usePageReveal(containerRef);
 
     // Handle Spotlight Tracking (for image effects in CSS)
     useEffect(() => {

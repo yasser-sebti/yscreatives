@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useCallback, memo } from 'react';
 import { useTransition } from '../context/TransitionContext';
 import { gsap, useGSAP, SplitText, ScrollTrigger, ScrollSmoother } from '../gsap';
+import { usePageReveal } from '../hooks/useReveal';
 import Newsletter from '../components/Newsletter/Newsletter';
 import MessageSentOverlay from '../components/MessageSentOverlay/MessageSentOverlay';
 import '../styles/Contact.css';
@@ -164,9 +165,8 @@ const Contact = () => {
     const subtitleRef = useRef(null);
     const { isAnimating, revealPage } = useTransition();
 
-    useEffect(() => {
-        // Global Reveal is handled by TransitionContext
-    }, []);
+    // Surgical Reveal
+    usePageReveal(containerRef);
 
     const [formData, setFormData] = useState({
         name: '',

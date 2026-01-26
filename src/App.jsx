@@ -6,9 +6,7 @@ import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import LoadingSpinner from './components/Loading/LoadingSpinner';
 import Scrollbar from './components/Scrollbar/Scrollbar';
-import { TransitionProvider } from './context/TransitionContext';
-import { useTransition } from './context/TransitionContext';
-import { useGlobalReveal } from './hooks/useReveal';
+import { TransitionProvider, useTransition } from './context/TransitionContext';
 import { preloadAssets } from './utils/AssetLoader';
 import './styles/main.css';
 
@@ -137,8 +135,7 @@ function InnerApp() {
     });
   }, []);
 
-  // Activate Surgical Global Reveal System
-  useGlobalReveal(wrapperRef, location.pathname, isAnimating, isPendingReveal, hasMounted);
+  // Reveal system moved to pages
 
   // Global refresh on window load
   useEffect(() => {
