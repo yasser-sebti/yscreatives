@@ -1,19 +1,24 @@
 import { useGSAP, gsap, ScrollTrigger, SplitText } from '../gsap';
-import { useTransition } from '../context/TransitionContext';
 
 /**
- * usePageReveal Hook
- * Surgical reveal system for lazy-loaded pages.
- * Ensures animations only trigger once the component is mounted 
- * and the transition shutters have opened.
+ * Global Reveal System v2 - Optimized for seamless transitions
+ * 
+ * Features:
+ * 1. Immediate Preparation: Elements are hidden as soon as the path changes.
+ * 2. Deferred Activation: Animations only start after the transition shutters open.
+ * 3. Layout Sync: Automatically handles SplitText and ScrollTrigger refresh.
  */
-export const usePageReveal = (containerRef) => {
-    const { isAnimating, isPendingReveal } = useTransition();
+export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal, appReady = true) => {
 
     useGSAP(() => {
         if (!containerRef.current) return;
 
         // --- 1. PREPARATION PHASE ---
+        // We only want to hide/prepare elements for the NEW page. 
+        // If the shutters are just STARTING to close (animating but not pending reveal), 
+        // we keep the current content visible so it's covered properly.
+        if (isAnimating && !isPendingReveal) return;
+
         const textElements = gsap.utils.toArray("[data-ys-reveal='text']", containerRef.current);
         const imageElements = gsap.utils.toArray("[data-ys-reveal='image']", containerRef.current);
         const fadeUpElements = gsap.utils.toArray("[data-ys-reveal='fade-up']", containerRef.current);
@@ -23,20 +28,27 @@ export const usePageReveal = (containerRef) => {
         const splits = [];
 
         // Pre-hide everything immediately - Guarded against missing targets
-        gsap.set(fadeUpElements, { opacity: 0, y: 30 });
-        gsap.set(scaleXElements, { scaleX: 0, transformOrigin: "left" });
-        gsap.set(fadeElements, { opacity: 0 });
-        gsap.set(imageElements, { clipPath: "inset(100% 0% 0% 0%)" });
+        if (fadeUpElements.length > 0) gsap.set(fadeUpElements, { opacity: 0, y: 30 });
+        if (scaleXElements.length > 0) gsap.set(scaleXElements, { scaleX: 0, transformOrigin: "left" });
+        if (fadeElements.length > 0) gsap.set(fadeElements, { opacity: 0 });
+        if (imageElements.length > 0) gsap.set(imageElements, { clipPath: "inset(100% 0% 0% 0%)" });
 
+        // Split text early to avoid layout shift during reveal
         textElements.forEach((el) => {
-            const split = new SplitText(el, { type: "lines", linesClass: "ys-reveal-line" });
+            const split = new SplitText(el, { type: "lines", mask: "lines" });
             splits.push(split);
             gsap.set(split.lines, { yPercent: 100, opacity: 0 });
         });
 
         // --- 2. ACTIVATION PHASE ---
-        // We wait until transition is done.
-        if (isAnimating || isPendingReveal) return;
+        // Only proceed to reveal if:
+        // 1. Page is NOT pending anymore (Shuffler signal received)
+        // 2. App preloader is finished
+        // We REMOVE 'isAnimating' here so reveal starts WHILE shutters are opening.
+        if (isPendingReveal || !appReady) return;
+
+        // Force a total refresh to sync ScrollTrigger with the new page's layout
+        ScrollTrigger.refresh();
 
         // Reveal Logic
         textElements.forEach((el, i) => {
@@ -44,34 +56,36 @@ export const usePageReveal = (containerRef) => {
             const delay = parseFloat(el.getAttribute('data-ys-delay')) || 0;
             const split = splits[i];
 
-            if (split && split.lines.length > 0) {
-                gsap.to(split.lines, {
-                    yPercent: 0,
-                    opacity: 1,
-                    duration: 1.2,
-                    stagger: 0.1,
-                    ease: "power4.out",
-                    scrollTrigger: {
-                        trigger: el,
-                        start: "top 100%",
-                        toggleActions: "play none none none"
-                    },
-                    delay: delay
-                });
-            }
+            gsap.to(split.lines, {
+                yPercent: 0,
+                opacity: 1,
+                duration: 1.2,
+                stagger: 0.1,
+                ease: "power4.out",
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 100%",
+                    toggleActions: "play none none none"
+                },
+                delay: delay
+            });
         });
 
         imageElements.forEach((el) => {
             const img = el.querySelector('img') || el.querySelector('.ys-simple-image');
             const delay = parseFloat(el.getAttribute('data-ys-delay')) || 0;
+
+            // Advanced "Line-style" Image Masking:
+            // Container acts as the window, image slides UP into view.
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: el,
-                    start: "top 90%",
+                    start: "top 90%", // Reveal begins slightly early for flow
                     toggleActions: "play none none none"
                 }
             });
 
+            // 1. Open the mask window cleanly
             tl.to(el, {
                 clipPath: "inset(0% 0% 0% 0%)",
                 duration: 1.4,
@@ -80,10 +94,20 @@ export const usePageReveal = (containerRef) => {
             });
 
             if (img) {
+                // 2. The physical image slides UP from behind the mask line
+                // Removed blur and brightness filters per request
                 tl.fromTo(img,
-                    { yPercent: 40, scale: 1.1 },
-                    { yPercent: 0, scale: 1, duration: 1.8, ease: "expo.out" },
-                    "<"
+                    {
+                        yPercent: 40, // Subtle slide-up for a clean, minimal look
+                        scale: 1.1    // Slight scale for depth
+                    },
+                    {
+                        yPercent: 0,
+                        scale: 1,
+                        duration: 1.8,
+                        ease: "expo.out"
+                    },
+                    "<" // Sync with mask opening
                 );
             }
         });
@@ -137,5 +161,5 @@ export const usePageReveal = (containerRef) => {
             splits.forEach(s => s.revert());
         };
 
-    }, { scope: containerRef, dependencies: [isAnimating, isPendingReveal] });
+    }, { scope: containerRef, dependencies: [path, isAnimating, isPendingReveal, appReady] });
 };

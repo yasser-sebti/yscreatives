@@ -6,7 +6,9 @@ import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import LoadingSpinner from './components/Loading/LoadingSpinner';
 import Scrollbar from './components/Scrollbar/Scrollbar';
-import { TransitionProvider, useTransition } from './context/TransitionContext';
+import { TransitionProvider } from './context/TransitionContext';
+import { useTransition } from './context/TransitionContext';
+import { useGlobalReveal } from './hooks/useReveal';
 import { preloadAssets } from './utils/AssetLoader';
 import './styles/main.css';
 
@@ -97,7 +99,7 @@ function InnerApp() {
         // Final safety jump to absolute zero
         smootherRef.current.scrollTop(0);
       }
-    }, 400);
+    }, 150);
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
@@ -135,7 +137,8 @@ function InnerApp() {
     });
   }, []);
 
-  // Reveal system moved to pages
+  // Activate Surgical Global Reveal System
+  useGlobalReveal(wrapperRef, location.pathname, isAnimating, isPendingReveal, hasMounted);
 
   // Global refresh on window load
   useEffect(() => {

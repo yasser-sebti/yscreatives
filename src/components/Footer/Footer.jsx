@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, memo } from 'react';
+import { useState, useEffect } from 'react';
 import TransitionLink from '../TransitionLink/TransitionLink';
 import Newsletter from '../Newsletter/Newsletter';
 
@@ -10,14 +10,14 @@ const Footer = ({ inverted = false }) => {
         return () => clearInterval(timer);
     }, []);
 
-    const formatTime = useCallback((date) => {
+    const formatTime = (date) => {
         return date.toLocaleTimeString('en-US', {
             hour12: true,
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
         });
-    }, []);
+    };
 
     return (
         <footer className={`ys-footer ${inverted ? 'ys-footer--inverted' : ''}`} data-ys-skip="true">
@@ -100,4 +100,4 @@ const Footer = ({ inverted = false }) => {
     );
 };
 
-export default memo(Footer);
+export default Footer;

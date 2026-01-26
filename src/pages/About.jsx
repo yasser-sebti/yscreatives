@@ -1,8 +1,7 @@
-import { useRef, useState, useEffect, useCallback, memo } from 'react';
+import { useRef, useState, useEffect, memo } from 'react';
 import { useTransition } from '../context/TransitionContext';
 import TransitionLink from '../components/TransitionLink/TransitionLink';
 import { gsap, useGSAP, SplitText, ScrollTrigger } from '../gsap';
-import { usePageReveal } from '../hooks/useReveal';
 import CTA from '../components/CTA/CTA';
 import '../styles/About.css';
 
@@ -10,30 +9,15 @@ import '../styles/About.css';
  * ABOUT PAGE
  * A refined, editorial architectural design celebrating the human touch in digital craft.
  */
-const faqData = [
-    { q: "How do you start a project?", a: "Every project begins with a discovery session where we dive deep into your brand's vision, goals, and market landscape." },
-    { q: "What is your typical timeline?", a: "Standard brand identity and web design projects usually span 6 to 10 weeks for meticulous execution." },
-    { q: "Do you handle development as well?", a: "Yes. I build high-performance, GSAP-animated React applications that bring the static vision to life." },
-    { q: "Why focus on 'Human' design?", a: "In an era of AI automation, the human touch creates the true emotional connection necessary for premium brands." }
-];
-
-const testimonialsData = [
-    { name: "Alpha Programming", role: "Tech Company", img: "Alpha Programing.webp", text: "Yasser delivered exceptional results that exceeded our expectations. His attention to detail is unmatched." },
-    { name: "Corochoco", role: "Brand", img: "Corochoco.webp", text: "Working with Yasser was an absolute pleasure. He understood our vision and translated it into a stunning presence." },
-    { name: "Islem Bennebes", role: "Entrepreneur", img: "Islem Bennebes.webp", text: "The level of professionalism Yasser brings to every project is unmatched. Highly recommend for premium work." },
-    { name: "Madjid Lounes", role: "Business Owner", img: "Madjid Lounes.webp", text: "Yasser's work speaks for itself. The website has significantly improved our online presence and engagement." },
-    { name: "Pandaify", role: "SaaS Platform", img: "Pandaify.webp", text: "Incredible design work that captures our brand essence. The animations and UX are absolutely top-tier." },
-    { name: "Rahim Kichene", role: "Creative Director", img: "Rahim Kichene.webp", text: "As a fellow creative, I appreciate Yasser's meticulous approach. Every pixel is intentional and purposeful." }
-];
-
 const About = () => {
     const containerRef = useRef(null);
     const testimonialsTrackRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(null);
     const { isAnimating, revealPage } = useTransition();
 
-    // Surgical Reveal
-    usePageReveal(containerRef);
+    useEffect(() => {
+        revealPage();
+    }, []);
 
     // Handle Spotlight Tracking (for image effects in CSS)
     useEffect(() => {
@@ -127,7 +111,7 @@ const About = () => {
     }, { scope: containerRef, dependencies: [isAnimating] });
 
     // FAQ Accordion Logic
-    const toggleFAQ = useCallback((index) => {
+    const toggleFAQ = (index) => {
         const wrappers = gsap.utils.toArray(".ys-faq-item__answer-wrap");
         const currentWrapper = wrappers[index];
         const currentAnswer = currentWrapper.querySelector(".ys-faq-item__answer");
@@ -154,8 +138,23 @@ const About = () => {
 
             setActiveIndex(index);
         }
-    }, [activeIndex]);
+    };
 
+    const faqData = [
+        { q: "How do you start a project?", a: "Every project begins with a discovery session where we dive deep into your brand's vision, goals, and market landscape." },
+        { q: "What is your typical timeline?", a: "Standard brand identity and web design projects usually span 6 to 10 weeks for meticulous execution." },
+        { q: "Do you handle development as well?", a: "Yes. I build high-performance, GSAP-animated React applications that bring the static vision to life." },
+        { q: "Why focus on 'Human' design?", a: "In an era of AI automation, the human touch creates the true emotional connection necessary for premium brands." }
+    ];
+
+    const testimonialsData = [
+        { name: "Alpha Programming", role: "Tech Company", img: "Alpha Programing.webp", text: "Yasser delivered exceptional results that exceeded our expectations. His attention to detail is unmatched." },
+        { name: "Corochoco", role: "Brand", img: "Corochoco.webp", text: "Working with Yasser was an absolute pleasure. He understood our vision and translated it into a stunning presence." },
+        { name: "Islem Bennebes", role: "Entrepreneur", img: "Islem Bennebes.webp", text: "The level of professionalism Yasser brings to every project is unmatched. Highly recommend for premium work." },
+        { name: "Madjid Lounes", role: "Business Owner", img: "Madjid Lounes.webp", text: "Yasser's work speaks for itself. The website has significantly improved our online presence and engagement." },
+        { name: "Pandaify", role: "SaaS Platform", img: "Pandaify.webp", text: "Incredible design work that captures our brand essence. The animations and UX are absolutely top-tier." },
+        { name: "Rahim Kichene", role: "Creative Director", img: "Rahim Kichene.webp", text: "As a fellow creative, I appreciate Yasser's meticulous approach. Every pixel is intentional and purposeful." }
+    ];
 
     return (
         <div ref={containerRef} className="ys-about-page">

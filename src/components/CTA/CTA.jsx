@@ -1,4 +1,4 @@
-import { useRef, useCallback, memo } from 'react';
+import { useRef } from 'react';
 import { gsap, useGSAP } from '../../gsap';
 import { useTransition } from '../../context/TransitionContext';
 
@@ -79,9 +79,11 @@ const CTA = () => {
 
     }, { scope: containerRef });
 
-    const handleClick = useCallback((e) => {
+    const handleClick = (e) => {
         e.preventDefault();
 
+        // --- 3. CLICK ANIMATION ---
+        // Quick scale down and fade out effect
         const tl = gsap.timeline({
             onComplete: () => {
                 navigateWithTransition('/contact');
@@ -101,7 +103,7 @@ const CTA = () => {
             duration: 0.3,
             ease: "power2.out"
         });
-    }, [navigateWithTransition]);
+    };
 
     return (
         <section className="ys-cta" ref={containerRef}>
@@ -120,4 +122,4 @@ const CTA = () => {
     );
 };
 
-export default memo(CTA);
+export default CTA;
