@@ -100,11 +100,7 @@ body {
     /* overflow: hidden; - REMOVED: Blocks scroll events */
 }
 
-/* Custom Cursor Interaction */
-body.custom-cursor-active,
-body.custom-cursor-active * {
-    cursor: none !important;
-}
+
 
 a {
     color: inherit;

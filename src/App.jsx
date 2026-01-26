@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { gsap, useGSAP, ScrollTrigger, ScrollSmoother } from './gsap';
-import Cursor from './components/Cursor/Cursor';
+
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import LoadingSpinner from './components/Loading/LoadingSpinner';
@@ -186,7 +186,7 @@ export default function App() {
   return (
     <Router basename={import.meta.env.BASE_URL}>
       <TransitionProvider>
-        <Cursor />
+
         <Scrollbar />
         <InnerApp />
       </TransitionProvider>
