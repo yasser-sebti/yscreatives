@@ -108,13 +108,14 @@ function InnerApp() {
 
   // --- Asset Preloading Logic ---
   useEffect(() => {
+    const baseUrl = import.meta.env.BASE_URL || '/';
     const assetsToLoad = {
       images: [
-        'assets/images/hero-poster.webp',
-        'assets/images/Yasser.webp', // Critical for about page
+        `${baseUrl}assets/images/hero-poster.webp`,
+        `${baseUrl}assets/images/Yasser.webp`,
       ],
       videos: [
-        'assets/videos/yasser-animated.mp4'
+        `${baseUrl}assets/videos/yasser-animated.mp4`
       ],
       fonts: [
         'PP Editorial New',
@@ -126,7 +127,9 @@ function InnerApp() {
       // Small buffer for rendering engine to settle
       setTimeout(() => {
         setHasMounted(true);
-      }, 500);
+        // Refresh ScrollTrigger after mounting to prevent "footer stuck" issues
+        ScrollTrigger.refresh();
+      }, 600);
     });
   }, []);
 
@@ -158,11 +161,13 @@ function InnerApp() {
 
       <div id="smooth-wrapper" ref={wrapperRef} style={{ visibility: hasMounted ? 'visible' : 'hidden' }}>
         <div id="smooth-content" ref={contentRef}>
-          <Suspense fallback={<LoadingSpinner onFinished={() => { }} />}>
+          <Suspense fallback={<LoadingSpinner />}>
             <Routes>
               <Route path="/" element={<Home appReady={hasMounted} />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              {/* Force redirect to home if route not found */}
+              <Route path="*" element={<Home appReady={hasMounted} />} />
             </Routes>
           </Suspense>
 
@@ -175,7 +180,7 @@ function InnerApp() {
 
 export default function App() {
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <TransitionProvider>
         <Cursor />
         <Scrollbar />

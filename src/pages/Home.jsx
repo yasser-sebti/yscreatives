@@ -51,18 +51,38 @@ const Home = ({ appReady = true }) => {
 
         // Ensure we start from absolute black
         gsap.set(".ys-hero__cover", { opacity: 1 });
-        gsap.set(".ys-hero__video", { opacity: 1 }); // Ensure video is also visible
+        gsap.set(".ys-hero__video", { opacity: 1 });
+        gsap.set(".ys-hero__main-header", { opacity: 0, y: 30 });
+        gsap.set(".ys-hero__slogan", { opacity: 0 });
+        gsap.set(".ys-hero__cta", { opacity: 0 });
 
         tl.to(".ys-hero__cover", {
             opacity: 0,
-            duration: 1.8,
+            duration: 2,
             ease: "power2.inOut",
-            delay: 0.2 // Small buffer for GPU to stabilize
-        }).fromTo(".ys-hero__bg",
-            { scale: 1.15 },
-            { scale: 1, duration: 2.5, ease: "power3.out" },
-            "<"
-        );
+            delay: 0.3
+        })
+            .to(".ys-hero__main-header", {
+                opacity: 1,
+                y: 0,
+                duration: 1.5,
+                ease: "power3.out"
+            }, "-=1.2")
+            .to(".ys-hero__slogan", {
+                opacity: 1,
+                duration: 1,
+                ease: "power2.out"
+            }, "-=0.8")
+            .to(".ys-hero__cta", {
+                opacity: 1,
+                duration: 1,
+                ease: "power2.out"
+            }, "-=0.8")
+            .fromTo(".ys-hero__bg",
+                { scale: 1.15 },
+                { scale: 1, duration: 3, ease: "power3.out" },
+                0
+            );
     };
 
     useGSAP(() => {
@@ -122,8 +142,8 @@ const Home = ({ appReady = true }) => {
                 <div className="ys-hero__bg">
                     <video
                         ref={videoRef}
-                        src="assets/videos/yasser-animated.mp4"
-                        poster="assets/images/hero-poster.webp"
+                        src={`${import.meta.env.BASE_URL}assets/videos/yasser-animated.mp4`}
+                        poster={`${import.meta.env.BASE_URL}assets/images/hero-poster.webp`}
                         className="ys-hero__video"
                         muted
                         loop
@@ -191,7 +211,7 @@ const Home = ({ appReady = true }) => {
                         <article key={i} className="ys-methodology__phase">
                             <div className="ys-methodology__image-container ys-image-mask" data-ys-reveal="image">
                                 <SimpleImage
-                                    src={`assets/images/${phase.img}`}
+                                    src={`${import.meta.env.BASE_URL}assets/images/${phase.img}`}
                                     alt={phase.name}
                                     loading="lazy"
                                     width={800}

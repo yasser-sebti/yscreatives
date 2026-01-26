@@ -176,7 +176,7 @@ const About = () => {
                             <div className="ys-corner-decoration ys-corner-tl" data-ys-reveal="fade" data-ys-delay="0.9"></div>
                             <div className="ys-corner-decoration ys-corner-br" data-ys-reveal="fade" data-ys-delay="1.0"></div>
                             <div className="ys-about-intro__image-container" data-ys-reveal="image">
-                                <img src="assets/images/Yasser.webp" alt="Yasser Sebti" loading="lazy" />
+                                <img src={`${import.meta.env.BASE_URL}assets/images/Yasser.webp`} alt="Yasser Sebti" loading="lazy" />
                             </div>
                         </div>
 
@@ -214,7 +214,7 @@ const About = () => {
                                         <div className="ys-testimonial-card__pointer"></div>
                                     </div>
                                     <div className="ys-testimonial-card__author">
-                                        <img src={`assets/images/${item.img}`} alt={item.name} className="ys-testimonial-card__avatar" />
+                                        <img src={`${import.meta.env.BASE_URL}assets/images/${item.img}`} alt={item.name} className="ys-testimonial-card__avatar" />
                                         <div className="ys-testimonial-card__info">
                                             <span className="ys-testimonial-card__name">{item.name}</span>
                                             <span className="ys-testimonial-card__role">{item.role}</span>
@@ -232,7 +232,7 @@ const About = () => {
                                         <div className="ys-testimonial-card__pointer"></div>
                                     </div>
                                     <div className="ys-testimonial-card__author">
-                                        <img src={`assets/images/${item.img}`} alt={item.name} className="ys-testimonial-card__avatar" />
+                                        <img src={`${import.meta.env.BASE_URL}assets/images/${item.img}`} alt={item.name} className="ys-testimonial-card__avatar" />
                                         <div className="ys-testimonial-card__info">
                                             <span className="ys-testimonial-card__name">{item.name}</span>
                                             <span className="ys-testimonial-card__role">{item.role}</span>
