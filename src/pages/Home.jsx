@@ -1,11 +1,36 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, memo, lazy, Suspense } from 'react';
 import { gsap, useGSAP, SplitText, ScrollTrigger } from '../gsap';
 import { useTransition } from '../context/TransitionContext';
 import TransitionLink from '../components/TransitionLink/TransitionLink';
-import Brands from '../components/Brands/Brands';
-import Portfolio from '../components/Portfolio/Portfolio';
-import CTA from '../components/CTA/CTA';
 import SimpleImage from '../components/Image/SimpleImage';
+import LazySection from '../components/LazySection/LazySection';
+import { useMagnetic } from '../hooks/useMagnetic';
+
+// Lazy load non-critical sections
+const Brands = lazy(() => import('../components/Brands/Brands'));
+const Portfolio = lazy(() => import('../components/Portfolio/Portfolio'));
+const CTA = lazy(() => import('../components/CTA/CTA'));
+
+const methodologyPhases = [
+    {
+        step: "Phase 01",
+        name: "Investigation",
+        desc: "Deep diving into the soul of your brand to uncover the core essence and strategic direction through meticulous research and intentional vision.",
+        img: "Image1.webp"
+    },
+    {
+        step: "Phase 02",
+        name: "Design",
+        desc: "Manually crafting every pixel and interaction to ensure a unique, human-centric visual language that creates true emotional resonance.",
+        img: "Image2.webp"
+    },
+    {
+        step: "Phase 03",
+        name: "Delivery",
+        desc: "Finalizing and launching a high-performance digital presence that elevates your brand and secures its position in the modern landscape.",
+        img: "Image3.webp"
+    }
+];
 
 /**
  * HOME PAGE
@@ -25,22 +50,15 @@ const Home = ({ appReady = true }) => {
 
         const handlePlaying = () => setHasVideoPlayed(true);
 
-        // Intersection Observer to trigger play only when in view
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    video.play().catch(err => console.log("Video play blocked until interaction:", err));
-                } else {
-                    video.pause();
-                }
-            });
-        }, { threshold: 0.1 });
-
-        observer.observe(video);
+        // We already have autoPlay on the tag, but we force it here too for reliability
+        video.play().catch(err => {
+            console.log("Video auto-play failed, usually waiting for user interaction:", err);
+            // If it fails, we still want to show the content eventually
+            setHasVideoPlayed(true);
+        });
 
         video.addEventListener('playing', handlePlaying);
         return () => {
-            observer.disconnect();
             video.removeEventListener('playing', handlePlaying);
         };
     }, []);
@@ -49,25 +67,48 @@ const Home = ({ appReady = true }) => {
     const playIntro = () => {
         const tl = gsap.timeline();
 
-        // Ensure we start from absolute black
+        // Ensure we start from absolute black for the background only
         gsap.set(".ys-hero__cover", { opacity: 1 });
-        gsap.set(".ys-hero__video", { opacity: 1 }); // Ensure video is also visible
+        gsap.set(".ys-hero__video", { opacity: 1 });
+        // Main header stays visible but we can still do a subtle slide up if needed, 
+        // but the user wants it "not affected", so let's keep it clean.
+        gsap.set(".ys-hero__main-header", { y: 20, opacity: 1 });
+        gsap.set(".ys-hero__slogan", { opacity: 0 });
+        gsap.set(".ys-hero__cta", { opacity: 0 });
 
         tl.to(".ys-hero__cover", {
             opacity: 0,
-            duration: 1.8,
+            duration: 2,
             ease: "power2.inOut",
-            delay: 0.2 // Small buffer for GPU to stabilize
-        }).fromTo(".ys-hero__bg",
-            { scale: 1.15 },
-            { scale: 1, duration: 2.5, ease: "power3.out" },
-            "<"
-        );
+            delay: 0.3
+        })
+            .to(".ys-hero__main-header", {
+                y: 0,
+                duration: 1.5,
+                ease: "power3.out"
+            }, "-=1.5")
+            .to(".ys-hero__slogan", {
+                opacity: 1,
+                duration: 1,
+                ease: "power2.out"
+            }, "-=0.8")
+            .to(".ys-hero__cta", {
+                opacity: 1,
+                duration: 1,
+                ease: "power2.out"
+            }, "-=0.8")
+            .fromTo(".ys-hero__bg",
+                { scale: 1.15 },
+                { scale: 1, duration: 3, ease: "power3.out" },
+                0
+            );
     };
 
+    useMagnetic(containerRef, ".ys-magnetic", 0.4);
+
     useGSAP(() => {
-        // Quad-Lock: Transition Finished + App Ready + Video Frame Painted
-        if (isAnimating || !appReady || !hasVideoPlayed) return;
+        // App Ready is only true after fonts, video (hero), and critical images are loaded
+        if (!appReady) return;
 
         playIntro();
 
@@ -89,30 +130,6 @@ const Home = ({ appReady = true }) => {
             { y: "100%", duration: 2, repeat: -1, ease: "power1.inOut" }
         );
 
-        // 6. MAGNETIC INTERACTION: Applied to buttons
-        const magneticElements = gsap.utils.toArray(".ys-magnetic");
-        magneticElements.forEach((el) => {
-            const xTo = gsap.quickTo(el, "x", { duration: 1, ease: "elastic.out(1, 0.3)" });
-            const yTo = gsap.quickTo(el, "y", { duration: 1, ease: "elastic.out(1, 0.3)" });
-
-            const onMove = (e) => {
-                const { clientX, clientY } = e;
-                const { height, width, left, top } = el.getBoundingClientRect();
-                const x = clientX - (left + width / 2);
-                const y = clientY - (top + height / 2);
-                xTo(x * 0.4);
-                yTo(y * 0.4);
-            };
-
-            const onLeave = () => {
-                xTo(0);
-                yTo(0);
-            };
-
-            el.addEventListener("mousemove", onMove);
-            el.addEventListener("mouseleave", onLeave);
-        });
-
     }, { scope: containerRef, dependencies: [isAnimating, appReady] });
 
     return (
@@ -122,13 +139,14 @@ const Home = ({ appReady = true }) => {
                 <div className="ys-hero__bg">
                     <video
                         ref={videoRef}
-                        src="/assets/videos/yasser-animated.mp4"
-                        poster="/assets/images/hero-poster.webp"
+                        src={`${import.meta.env.BASE_URL}assets/videos/yasser-animated.mp4`}
+                        poster={`${import.meta.env.BASE_URL}assets/images/hero-poster.webp`}
                         className="ys-hero__video"
+                        autoPlay
                         muted
                         loop
                         playsInline
-                        preload="none"
+                        preload="auto"
                     />
                     <div className="ys-hero__dark-overlay"></div>
                     {/* Cinematic "Curtain" - Now inside BG to stay UNDER text */}
@@ -168,30 +186,11 @@ const Home = ({ appReady = true }) => {
                 </header>
 
                 <div className="ys-methodology__grid">
-                    {[
-                        {
-                            step: "Phase 01",
-                            name: "Investigation",
-                            desc: "Deep diving into the soul of your brand to uncover the core essence and strategic direction through meticulous research and intentional vision.",
-                            img: "Image1.webp"
-                        },
-                        {
-                            step: "Phase 02",
-                            name: "Design",
-                            desc: "Manually crafting every pixel and interaction to ensure a unique, human-centric visual language that creates true emotional resonance.",
-                            img: "Image2.webp"
-                        },
-                        {
-                            step: "Phase 03",
-                            name: "Delivery",
-                            desc: "Finalizing and launching a high-performance digital presence that elevates your brand and secures its position in the modern landscape.",
-                            img: "Image3.webp"
-                        }
-                    ].map((phase, i) => (
+                    {methodologyPhases.map((phase, i) => (
                         <article key={i} className="ys-methodology__phase">
                             <div className="ys-methodology__image-container ys-image-mask" data-ys-reveal="image">
                                 <SimpleImage
-                                    src={`/assets/images/${phase.img}`}
+                                    src={`${import.meta.env.BASE_URL}assets/images/${phase.img}`}
                                     alt={phase.name}
                                     loading="lazy"
                                     width={800}
@@ -209,11 +208,19 @@ const Home = ({ appReady = true }) => {
                 </div>
             </section>
 
-            <Brands />
-            <Portfolio />
-            <CTA />
+            <LazySection height="300px">
+                <Brands />
+            </LazySection>
+
+            <LazySection height="800px">
+                <Portfolio />
+            </LazySection>
+
+            <LazySection height="600px">
+                <CTA />
+            </LazySection>
         </main>
     );
 };
 
-export default Home;
+export default memo(Home);

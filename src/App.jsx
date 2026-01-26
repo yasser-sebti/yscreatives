@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { gsap, useGSAP, ScrollTrigger, ScrollSmoother } from './gsap';
-import Cursor from './components/Cursor/Cursor';
+
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import LoadingSpinner from './components/Loading/LoadingSpinner';
@@ -9,6 +9,7 @@ import Scrollbar from './components/Scrollbar/Scrollbar';
 import { TransitionProvider } from './context/TransitionContext';
 import { useTransition } from './context/TransitionContext';
 import { useGlobalReveal } from './hooks/useReveal';
+import { preloadAssets } from './utils/AssetLoader';
 import './styles/main.css';
 
 // Lazy load pages for performance
@@ -30,7 +31,7 @@ function InnerApp() {
   // Initialize audio only when requested or after a delay to improve LCP
   useEffect(() => {
     const timer = setTimeout(() => {
-      const a = new Audio('/assets/sounds/background-ost.mp3');
+      const a = new Audio('assets/sounds/background-ost.mp3');
       a.loop = true;
       setAudio(a);
     }, 2000);
@@ -105,6 +106,37 @@ function InnerApp() {
 
   const [hasMounted, setHasMounted] = useState(false);
 
+  // --- Asset Preloading Logic ---
+  useEffect(() => {
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    const assetsToLoad = {
+      images: [
+        `${baseUrl}assets/images/hero-poster.webp`,
+        `${baseUrl}assets/images/Yasser.webp`,
+        `${baseUrl}assets/logos/Pandaify.svg`,
+        `${baseUrl}assets/logos/Eli Network.svg`,
+        `${baseUrl}assets/images/Project1.webp`,
+        `${baseUrl}assets/images/Project2.webp`,
+      ],
+      videos: [
+        `${baseUrl}assets/videos/yasser-animated.mp4`
+      ],
+      fonts: [
+        'PP Editorial New',
+        'DM Mono'
+      ]
+    };
+
+    preloadAssets(assetsToLoad).then(() => {
+      // Small buffer for rendering engine to settle
+      setTimeout(() => {
+        setHasMounted(true);
+        // Refresh ScrollTrigger after mounting to prevent "footer stuck" issues
+        ScrollTrigger.refresh();
+      }, 600);
+    });
+  }, []);
+
   // Activate Surgical Global Reveal System
   useGlobalReveal(wrapperRef, location.pathname, isAnimating, isPendingReveal, hasMounted);
 
@@ -120,9 +152,7 @@ function InnerApp() {
   return (
     <>
       {/* Initial Application Preloader - Only on refresh/first visit */}
-      {!hasMounted && (
-        <LoadingSpinner onFinished={() => setHasMounted(true)} />
-      )}
+      {!hasMounted && <LoadingSpinner />}
 
       {/* Header must be OUTSIDE of smooth-content if it is position: fixed */}
       {hasMounted && (
@@ -135,11 +165,13 @@ function InnerApp() {
 
       <div id="smooth-wrapper" ref={wrapperRef} style={{ visibility: hasMounted ? 'visible' : 'hidden' }}>
         <div id="smooth-content" ref={contentRef}>
-          <Suspense fallback={<LoadingSpinner onFinished={() => { }} />}>
+          <Suspense fallback={<LoadingSpinner />}>
             <Routes>
               <Route path="/" element={<Home appReady={hasMounted} />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              {/* Force redirect to home if route not found */}
+              <Route path="*" element={<Home appReady={hasMounted} />} />
             </Routes>
           </Suspense>
 
@@ -152,9 +184,9 @@ function InnerApp() {
 
 export default function App() {
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <TransitionProvider>
-        <Cursor />
+
         <Scrollbar />
         <InnerApp />
       </TransitionProvider>

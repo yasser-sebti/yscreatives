@@ -1,31 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from '../../gsap';
 
-const LoadingSpinner = ({ onFinished }) => {
-    const loaderRef = useRef(null);
-
-    useEffect(() => {
-        // Simulate a small delay for page settling if needed, 
-        // or just fire when mount is confirmed.
-        const timer = setTimeout(() => {
-            if (loaderRef.current) {
-                gsap.to(loaderRef.current, {
-                    opacity: 0,
-                    duration: 0.8,
-                    ease: "power2.inOut",
-                    onComplete: () => {
-                        if (onFinished) onFinished();
-                    }
-                });
-            }
-        }, 1200); // 1.2s minimum visibility for brand impact
-
-        return () => clearTimeout(timer);
-    }, [onFinished]);
-
+const LoadingSpinner = () => {
     return (
-        <div className="ys-loader" ref={loaderRef}>
+        <div className="ys-loader">
             <div className="ys-loader__content">
+                <div className="ys-loader__logo">YS</div>
                 <svg className="ys-loader__svg" viewBox="0 0 50 50">
                     <circle
                         className="ys-loader__circle"
@@ -33,9 +13,10 @@ const LoadingSpinner = ({ onFinished }) => {
                         cy="25"
                         r="20"
                         fill="none"
-                        strokeWidth="2"
+                        strokeWidth="1.5"
                     ></circle>
                 </svg>
+                <div className="ys-loader__text">Loading Experience</div>
             </div>
             <style>{`
                 .ys-loader {
@@ -44,7 +25,7 @@ const LoadingSpinner = ({ onFinished }) => {
                     align-items: center;
                     height: 100vh;
                     width: 100vw;
-                    background-color: var(--void-black, #000000);
+                    background-color: #000000;
                     position: fixed;
                     top: 0;
                     left: 0;
@@ -54,25 +35,40 @@ const LoadingSpinner = ({ onFinished }) => {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    gap: 20px;
+                    gap: 24px;
+                }
+                .ys-loader__logo {
+                    font-family: 'PP Editorial New', serif;
+                    font-size: 2rem;
+                    color: #fff;
+                    letter-spacing: -0.05em;
                 }
                 .ys-loader__svg {
-                    width: 40px;
-                    height: 40px;
+                    width: 32px;
+                    height: 32px;
                     animation: ys-rotate 2s linear infinite;
                 }
                 .ys-loader__circle {
                     stroke: #ffffff;
+                    stroke-opacity: 0.2;
                     stroke-linecap: round;
-                    animation: ys-dash 1.5s ease-in-out infinite;
+                    stroke-dasharray: 90, 150;
+                    stroke-dashoffset: -35;
+                }
+                .ys-loader__text {
+                    font-family: 'DM Mono', monospace;
+                    font-size: 0.7rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.3em;
+                    color: rgba(255,255,255,0.4);
+                    animation: ys-pulse 2s ease-in-out infinite;
                 }
                 @keyframes ys-rotate {
                     100% { transform: rotate(360deg); }
                 }
-                @keyframes ys-dash {
-                    0% { stroke-dasharray: 1, 150; stroke-dashoffset: 0; }
-                    50% { stroke-dasharray: 90, 150; stroke-dashoffset: -35; }
-                    100% { stroke-dasharray: 90, 150; stroke-dashoffset: -124; }
+                @keyframes ys-pulse {
+                    0%, 100% { opacity: 0.3; }
+                    50% { opacity: 0.7; }
                 }
             `}</style>
         </div>

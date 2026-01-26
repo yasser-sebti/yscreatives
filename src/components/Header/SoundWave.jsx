@@ -58,9 +58,9 @@ const SoundWave = ({ isSoundOn }) => {
                     display: flex;
                     align-items: flex-end;
                     justify-content: space-between;
-                    width: 14px;
-                    height: 12px;
-                    gap: 2px;
+                    width: 18px;
+                    height: 14px;
+                    gap: 3px;
                 }
                 .ys-soundwave-v2__bar {
                     flex: 1;

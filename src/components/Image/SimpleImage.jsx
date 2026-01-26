@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 
 /**
  * Enhanced Image component with progressive loading for first-time visitors
@@ -170,4 +170,4 @@ const SimpleImage = ({
     );
 };
 
-export default SimpleImage;
+export default memo(SimpleImage);

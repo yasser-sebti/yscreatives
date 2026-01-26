@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, memo } from 'react';
 import SimpleImage from '../Image/SimpleImage';
 
 const PROJECTS = [
@@ -25,7 +25,7 @@ const Portfolio = () => {
                     <article key={i} className="ys-portfolio__item">
                         <div className="ys-portfolio__image-container ys-image-mask" data-ys-reveal="image">
                             <SimpleImage
-                                src={`/assets/images/${project.img}`}
+                                src={`${import.meta.env.BASE_URL}assets/images/${project.img}`}
                                 alt={project.title}
                                 className="ys-portfolio__image"
                                 loading="lazy"
@@ -48,4 +48,4 @@ const Portfolio = () => {
     );
 };
 
-export default Portfolio;
+export default memo(Portfolio);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import TransitionLink from '../TransitionLink/TransitionLink';
 import Newsletter from '../Newsletter/Newsletter';
 
@@ -100,4 +100,4 @@ const Footer = ({ inverted = false }) => {
     );
 };
 
-export default Footer;
+export default memo(Footer);
