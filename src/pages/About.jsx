@@ -32,7 +32,7 @@ const About = () => {
     const { isAnimating, revealPage } = useTransition();
 
     useEffect(() => {
-        revealPage();
+        // Global Reveal is handled by TransitionContext
     }, []);
 
     // Handle Spotlight Tracking (for image effects in CSS)

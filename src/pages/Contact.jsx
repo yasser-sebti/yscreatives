@@ -165,7 +165,7 @@ const Contact = () => {
     const { isAnimating, revealPage } = useTransition();
 
     useEffect(() => {
-        revealPage();
+        // Global Reveal is handled by TransitionContext
     }, []);
 
     const [formData, setFormData] = useState({

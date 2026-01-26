@@ -35,7 +35,7 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
 
         // Split text early to avoid layout shift during reveal
         textElements.forEach((el) => {
-            const split = new SplitText(el, { type: "lines", mask: "lines" });
+            const split = new SplitText(el, { type: "lines", linesClass: "ys-reveal-line" });
             splits.push(split);
             gsap.set(split.lines, { yPercent: 100, opacity: 0 });
         });

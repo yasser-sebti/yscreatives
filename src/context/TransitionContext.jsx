@@ -15,35 +15,56 @@ export const TransitionProvider = ({ children }) => {
     // --- AUTOMATION: Global Reveal Trigger ---
     useEffect(() => {
         if (isPendingReveal) {
-            const shutters = shuttersRef.current;
+            const shutters = shuttersRef.current.filter(el => el !== null);
 
-            // 1. Immediately ensure overlay is visible and shutters are at 100%
+            // 0. Safety Catch: Ensure display is flex when starting animation
             gsap.set(overlayRef.current, { display: 'flex' });
+
+            if (shutters.length === 0) {
+                // Should not happen, but prevents permanent black screen
+                setIsPendingReveal(false);
+                setIsAnimating(false);
+                gsap.set(overlayRef.current, { display: 'none' });
+                return;
+            }
+
+            // 1. Immediately reset shutter position
             gsap.set(shutters, { yPercent: 0 });
 
-            // 2. The Premium Opening Sequence (Balanced Overlap)
-            // We use a timeline to precisely trigger the content reveal at 65% of the shuffle.
+            // 2. The Premium Opening Sequence
             const tl = gsap.timeline({
                 onComplete: () => {
                     gsap.set(overlayRef.current, { display: 'none' });
-                    // Final safety unlock
                     setIsAnimating(false);
+                    setIsPendingReveal(false);
                 }
             });
 
             tl.to(shutters, {
                 yPercent: 100,
-                duration: 0.7,
-                stagger: 0.04,
+                duration: 0.8,
+                stagger: 0.05,
                 ease: "expo.inOut"
             })
-                // Trigger the reveal + logic unlock at 65% progress (Advanced Clean Technique)
+                // Unlock logic slightly before visual completion
                 .add(() => {
                     setIsPendingReveal(false);
                     setIsAnimating(false);
-                }, 0.65 * 0.86); // 0.86 is the total calculated duration (0.7 + 4*0.04)
+                }, 0.5);
+
+            // 3. NUCLEAR FAILSAFE: If for any reason GSAP is blocked, force reveal after 3s
+            const failSafe = setTimeout(() => {
+                if (overlayRef.current && overlayRef.current.style.display !== 'none') {
+                    console.warn("Transition Failsafe Triggered");
+                    gsap.set(overlayRef.current, { display: 'none' });
+                    setIsPendingReveal(false);
+                    setIsAnimating(false);
+                }
+            }, 3000);
+
+            return () => clearTimeout(failSafe);
         }
-    }, [location.pathname]);
+    }, [location.pathname, isPendingReveal]);
 
     const navigateWithTransition = (to) => {
         if (location.pathname === to) return;

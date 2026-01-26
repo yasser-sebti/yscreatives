@@ -99,7 +99,7 @@ function InnerApp() {
         // Final safety jump to absolute zero
         smootherRef.current.scrollTop(0);
       }
-    }, 150);
+    }, 400);
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
