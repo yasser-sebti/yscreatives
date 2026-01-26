@@ -5,6 +5,8 @@ import { gsap, useGSAP, SplitText, ScrollTrigger } from '../gsap';
 import LazySection from '../components/LazySection/LazySection';
 import '../styles/About.css';
 
+import { useMagnetic } from '../hooks/useMagnetic';
+
 const CTA = lazy(() => import('../components/CTA/CTA'));
 
 const faqData = [
@@ -50,27 +52,10 @@ const About = () => {
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
 
+    useMagnetic(containerRef, ".ys-magnetic", 0.4);
+
     useGSAP(() => {
         if (isAnimating) return;
-
-        // 1. Magnetic Elements Interaction
-        const magneticElements = gsap.utils.toArray(".ys-magnetic");
-        magneticElements.forEach((el) => {
-            const xTo = gsap.quickTo(el, "x", { duration: 1, ease: "elastic.out(1, 0.3)" });
-            const yTo = gsap.quickTo(el, "y", { duration: 1, ease: "elastic.out(1, 0.3)" });
-
-            el.addEventListener("mousemove", (e) => {
-                const { clientX, clientY } = e;
-                const { height, width, left, top } = el.getBoundingClientRect();
-                xTo((clientX - (left + width / 2)) * 0.4);
-                yTo((clientY - (top + height / 2)) * 0.4);
-            });
-
-            el.addEventListener("mouseleave", () => {
-                xTo(0);
-                yTo(0);
-            });
-        });
 
         // 2. SEAMLESS MARQUEE LOGIC (Recoded from Scratch)
         // We use a high-performance virtualization technique for the marquee

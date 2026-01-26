@@ -3,6 +3,7 @@ import { useTransition } from '../context/TransitionContext';
 import { gsap, useGSAP, SplitText, ScrollTrigger, ScrollSmoother } from '../gsap';
 import Newsletter from '../components/Newsletter/Newsletter';
 import MessageSentOverlay from '../components/MessageSentOverlay/MessageSentOverlay';
+import { useMagnetic } from '../hooks/useMagnetic';
 import '../styles/Contact.css';
 
 // --- Static Data & Helpers ---
@@ -147,7 +148,6 @@ const Tooltip = memo(({ message, isVisible }) => {
 
 const Contact = () => {
     const containerRef = useRef(null);
-    const starsRef = useRef(null);
     const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
     const [currency, setCurrency] = useState('USD');
     const [selectedCountry, setSelectedCountry] = useState('');
@@ -289,38 +289,8 @@ const Contact = () => {
         }
     }, [formData, selectedCountry, customCountry, selectedReferral, selectedService, message]);
 
-    // 1. Initial Load Animations
-    useGSAP((context, contextSafe) => {
-        if (isAnimating) return;
-
-        // Decorative Lines handled via data-ys-reveal="scale-x"
-
-        // Magnetic Elements
-        const magneticElements = gsap.utils.toArray(".ys-magnetic");
-        magneticElements.forEach((el) => {
-            const xTo = gsap.quickTo(el, "x", { duration: 1, ease: "elastic.out(1, 0.3)" });
-            const yTo = gsap.quickTo(el, "y", { duration: 1, ease: "elastic.out(1, 0.3)" });
-
-            const onMove = contextSafe((e) => {
-                const { clientX, clientY } = e;
-                const { height, width, left, top } = el.getBoundingClientRect();
-                const x = clientX - (left + width / 2);
-                const y = clientY - (top + height / 2);
-                xTo(x * 0.5);
-                yTo(y * 0.5);
-            });
-
-            const onLeave = contextSafe(() => {
-                xTo(0);
-                yTo(0);
-            });
-
-            el.addEventListener("mousemove", onMove);
-            el.addEventListener("mouseleave", onLeave);
-        });
-
-    }, { scope: containerRef, dependencies: [isAnimating] });
-
+    // Apply useMagnetic hook
+    useMagnetic(containerRef, ".ys-magnetic", 0.5);
 
     // Close dropdowns on click outside
     useEffect(() => {
@@ -476,14 +446,7 @@ const Contact = () => {
                                             <div
                                                 key={country}
                                                 className={`ys-contact__dropdown-item ${selectedCountry === country ? 'is-selected' : ''}`}
-                                                onClick={() => {
-                                                    handleCountrySelect(country);
-                                                    if (errors.country) setErrors(prev => {
-                                                        const newErrs = { ...prev };
-                                                        delete newErrs.country;
-                                                        return newErrs;
-                                                    });
-                                                }}
+                                                onClick={() => handleCountrySelect(country)}
                                             >
                                                 {country}
                                             </div>
@@ -577,28 +540,14 @@ const Contact = () => {
                                             <div
                                                 key={opt}
                                                 className={`ys-contact__dropdown-item ${selectedService === opt ? 'is-selected' : ''}`}
-                                                onClick={() => {
-                                                    handleServiceSelect(opt);
-                                                    if (errors.service) setErrors(prev => {
-                                                        const newErrs = { ...prev };
-                                                        delete newErrs.service;
-                                                        return newErrs;
-                                                    });
-                                                }}
+                                                onClick={() => handleServiceSelect(opt)}
                                             >
                                                 {opt}
                                             </div>
                                         ))}
                                         <div
                                             className={`ys-contact__dropdown-item ${selectedService === 'Other' ? 'is-selected' : ''}`}
-                                            onClick={() => {
-                                                handleServiceSelect('Other');
-                                                if (errors.service) setErrors(prev => {
-                                                    const newErrs = { ...prev };
-                                                    delete newErrs.service;
-                                                    return newErrs;
-                                                });
-                                            }}
+                                            onClick={() => handleServiceSelect('Other')}
                                         >
                                             Other
                                         </div>
@@ -609,7 +558,7 @@ const Contact = () => {
                         </div>
 
                         {/* Budget & Currency Toggles Column - Hidden until service selected */}
-                        {selectedService && (
+                        {selectedService && budgetData[selectedService] && (
                             <div className="ys-contact__form-group ys-contact__form-group--budget">
                                 <div className="ys-contact__label-row">
                                     <div className="ys-contact__label-group">
@@ -700,27 +649,19 @@ const Contact = () => {
             <MessageSentOverlay
                 isVisible={showSuccessOverlay}
                 onClose={() => {
-                    // 1. Immediately signal the UI change
                     setShowSuccessOverlay(false);
                     setStatus('idle');
-
-                    // 2. Clear height lock while shutters are still 100% height (now covered)
                     const container = containerRef.current;
                     if (container) {
                         container.style.minHeight = '0';
                     }
-
-                    // 3. Trigger the refresh IMMEDIATELY while shutters are closed
-                    // This updates the footer position before they start opening
                     ScrollTrigger.refresh();
                     const smoother = ScrollSmoother.get();
                     if (smoother) smoother.refresh();
-
-                    // 4. Final safety refresh after they should be mostly open
                     setTimeout(() => {
                         ScrollTrigger.refresh();
                         if (smoother) smoother.refresh();
-                    }, 500); // Wait for the 0.5s uncovering animation
+                    }, 500);
                 }}
             />
         </>

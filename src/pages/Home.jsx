@@ -4,6 +4,7 @@ import { useTransition } from '../context/TransitionContext';
 import TransitionLink from '../components/TransitionLink/TransitionLink';
 import SimpleImage from '../components/Image/SimpleImage';
 import LazySection from '../components/LazySection/LazySection';
+import { useMagnetic } from '../hooks/useMagnetic';
 
 // Lazy load non-critical sections
 const Brands = lazy(() => import('../components/Brands/Brands'));
@@ -103,6 +104,8 @@ const Home = ({ appReady = true }) => {
             );
     };
 
+    useMagnetic(containerRef, ".ys-magnetic", 0.4);
+
     useGSAP(() => {
         // App Ready is only true after fonts, video (hero), and critical images are loaded
         if (!appReady) return;
@@ -126,30 +129,6 @@ const Home = ({ appReady = true }) => {
             { y: "-100%" },
             { y: "100%", duration: 2, repeat: -1, ease: "power1.inOut" }
         );
-
-        // 6. MAGNETIC INTERACTION: Applied to buttons
-        const magneticElements = gsap.utils.toArray(".ys-magnetic");
-        magneticElements.forEach((el) => {
-            const xTo = gsap.quickTo(el, "x", { duration: 1, ease: "elastic.out(1, 0.3)" });
-            const yTo = gsap.quickTo(el, "y", { duration: 1, ease: "elastic.out(1, 0.3)" });
-
-            const onMove = (e) => {
-                const { clientX, clientY } = e;
-                const { height, width, left, top } = el.getBoundingClientRect();
-                const x = clientX - (left + width / 2);
-                const y = clientY - (top + height / 2);
-                xTo(x * 0.4);
-                yTo(y * 0.4);
-            };
-
-            const onLeave = () => {
-                xTo(0);
-                yTo(0);
-            };
-
-            el.addEventListener("mousemove", onMove);
-            el.addEventListener("mouseleave", onLeave);
-        });
 
     }, { scope: containerRef, dependencies: [isAnimating, appReady] });
 
