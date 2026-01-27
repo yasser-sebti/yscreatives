@@ -58,7 +58,7 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                     el._gsapOuterSplit = outerSplit;
                     el._gsapSplit = innerSplit; // Store for shorthand access
 
-                    gsap.set(innerSplit.lines, { yPercent: 105, opacity: 1 });
+                    gsap.set(innerSplit.lines, { yPercent: 120, opacity: 1 });
                     gsap.set(el, { opacity: 1 });
                     el.classList.add('ys-ready');
                 });

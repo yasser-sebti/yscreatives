@@ -118,7 +118,7 @@ const About = () => {
 
             const split = new SplitText(currentAnswer, { type: "lines", linesClass: "ys-mask" });
             gsap.from(new SplitText(split.lines, { type: "lines" }).lines, {
-                yPercent: 100,
+                yPercent: 120,
                 duration: 0.8,
                 stagger: 0.02,
                 ease: "power3.out",
