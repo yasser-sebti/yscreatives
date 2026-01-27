@@ -4,6 +4,11 @@ import { gsap } from '../gsap';
 
 const TransitionContext = createContext();
 
+// --- Constants ---
+const SHUTTER_COUNT = 5;
+const SHUTTER_DURATION = 0.7;
+const SHUTTER_STAGGER = 0.04;
+
 export const TransitionProvider = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -16,32 +21,31 @@ export const TransitionProvider = ({ children }) => {
     useEffect(() => {
         if (isPendingReveal) {
             const shutters = shuttersRef.current;
+            const totalDuration = SHUTTER_DURATION + (SHUTTER_COUNT - 1) * SHUTTER_STAGGER;
 
-            // 1. Immediately ensure overlay is visible and shutters are at 100%
+            // 1. Reset state
             gsap.set(overlayRef.current, { display: 'flex' });
             gsap.set(shutters, { yPercent: 0 });
 
-            // 2. The Premium Opening Sequence (Balanced Overlap)
-            // We use a timeline to precisely trigger the content reveal at 65% of the shuffle.
+            // 2. Premium Shutter Sequence
             const tl = gsap.timeline({
                 onComplete: () => {
                     gsap.set(overlayRef.current, { display: 'none' });
-                    // Final safety unlock
                     setIsAnimating(false);
                 }
             });
 
             tl.to(shutters, {
                 yPercent: 100,
-                duration: 0.7,
-                stagger: 0.04,
+                duration: SHUTTER_DURATION,
+                stagger: SHUTTER_STAGGER,
                 ease: "expo.inOut"
             })
-                // Trigger the reveal + logic unlock at 65% progress (Advanced Clean Technique)
+                // Unlock page logic at 65% of the total transition duration for a seamless overlap feel
                 .add(() => {
                     setIsPendingReveal(false);
                     setIsAnimating(false);
-                }, 0.65 * 0.86); // 0.86 is the total calculated duration (0.7 + 4*0.04)
+                }, totalDuration * 0.65);
         }
     }, [location.pathname]);
 
@@ -54,20 +58,18 @@ export const TransitionProvider = ({ children }) => {
 
         const tl = gsap.timeline({
             onComplete: () => {
-                // Set pending flag then navigate
                 setIsPendingReveal(true);
                 navigate(to);
             }
         });
 
-        // ANIMATION IN: Close shutters from top to center
         gsap.set(overlayRef.current, { display: 'flex' });
         gsap.set(shutters, { yPercent: -100 });
 
         tl.to(shutters, {
             yPercent: 0,
             duration: 0.5,
-            stagger: 0.04,
+            stagger: SHUTTER_STAGGER,
             ease: "expo.inOut"
         });
     };
@@ -87,7 +89,7 @@ export const TransitionProvider = ({ children }) => {
                     flexDirection: 'row'
                 }}
             >
-                {[0, 1, 2, 3, 4].map(i => (
+                {Array.from({ length: SHUTTER_COUNT }).map((_, i) => (
                     <div
                         key={i}
                         ref={el => (shuttersRef.current[i] = el)}

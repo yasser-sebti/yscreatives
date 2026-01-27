@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, memo } from 'react';
 import { gsap, useGSAP } from '../../gsap';
 
 /**
@@ -75,4 +75,4 @@ const SoundWave = ({ isSoundOn }) => {
     );
 };
 
-export default SoundWave;
+export default memo(SoundWave);

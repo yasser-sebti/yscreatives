@@ -31,6 +31,7 @@ const testimonialsData = [
  */
 const About = () => {
     const containerRef = useRef(null);
+    const imageWrapperRef = useRef(null);
     const testimonialsTrackRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(null);
     const { isAnimating, revealPage } = useTransition();
@@ -39,78 +40,63 @@ const About = () => {
         revealPage();
     }, []);
 
-    // Handle Spotlight Tracking (for image effects in CSS)
-    useEffect(() => {
-        const handleMouseMove = (e) => {
-            const target = document.querySelector('.ys-about-intro__image-wrapper');
-            if (!target) return;
-            const rect = target.getBoundingClientRect();
-            target.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-            target.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+    // 1. PERFORMANCE OPTIMIZED SPOTLIGHT (Focused Listener)
+    useGSAP(() => {
+        const wrapper = imageWrapperRef.current;
+        if (!wrapper) return;
+
+        const handleMove = (e) => {
+            const rect = wrapper.getBoundingClientRect();
+            wrapper.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            wrapper.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
         };
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, []);
+
+        wrapper.addEventListener('mousemove', handleMove);
+        return () => wrapper.removeEventListener('mousemove', handleMove);
+    }, { scope: containerRef });
 
     useMagnetic(containerRef, ".ys-magnetic", 0.4);
 
+    // 2. SEAMLESS MARQUEE & INTERACTION
     useGSAP(() => {
         if (isAnimating) return;
 
-        // 2. SEAMLESS MARQUEE LOGIC (Recoded from Scratch)
-        // We use a high-performance virtualization technique for the marquee
         const track = testimonialsTrackRef.current;
-        if (track) {
-            const slider = track.querySelector(".ys-testimonials__slider");
-            if (slider) {
-                // Calculate actual loop width
-                const loopWidth = slider.offsetWidth;
+        if (!track) return;
 
-                // Set initial state
-                gsap.set(track, { x: 0 });
+        const slider = track.querySelector(".ys-testimonials__slider");
+        if (!slider) return;
 
-                // Create the master loop timeline
-                // We use xPercent: -50 for mathematically perfect sub-pixel rendering
-                const loop = gsap.to(track, {
-                    xPercent: -50,
-                    duration: 40,
-                    ease: "none",
-                    repeat: -1,
-                    force3D: true // Hardware acceleration
-                });
+        // Set hardware acceleration layer
+        gsap.set(track, { x: 0, willChange: "transform" });
 
-                // HIGH-END HOVER LOGIC
-                // Smooth deceleration to 15% speed for sub-pixel fluidity
-                const handleEnter = () => {
-                    gsap.to(loop, {
-                        timeScale: 0.15,
-                        duration: 1.5,
-                        ease: "sine.out"
-                    });
-                };
+        const loop = gsap.to(track, {
+            xPercent: -50,
+            duration: 40,
+            ease: "none",
+            repeat: -1,
+            force3D: true
+        });
 
-                const handleLeave = () => {
-                    gsap.to(loop, {
-                        timeScale: 1,
-                        duration: 2.0,
-                        ease: "sine.inOut"
-                    });
-                };
+        // Precision Hover Control
+        const onEnter = () => gsap.to(loop, { timeScale: 0.15, duration: 1.5, ease: "sine.out" });
+        const onLeave = () => gsap.to(loop, { timeScale: 1, duration: 2.0, ease: "sine.inOut" });
 
-                track.addEventListener("mouseenter", handleEnter);
-                track.addEventListener("mouseleave", handleLeave);
+        track.addEventListener("mouseenter", onEnter);
+        track.addEventListener("mouseleave", onLeave);
 
-                // PERFORMANCE: Pause when not in viewport
-                ScrollTrigger.create({
-                    trigger: ".ys-testimonials",
-                    start: "top bottom",
-                    end: "bottom top",
-                    onToggle: self => self.isActive ? loop.play() : loop.pause()
-                });
-            }
-        }
+        // Performance Gate
+        ScrollTrigger.create({
+            trigger: ".ys-testimonials",
+            start: "top bottom",
+            end: "bottom top",
+            onToggle: self => self.isActive ? loop.play() : loop.pause()
+        });
 
-        ScrollTrigger.refresh();
+        return () => {
+            track.removeEventListener("mouseenter", onEnter);
+            track.removeEventListener("mouseleave", onLeave);
+        };
     }, { scope: containerRef, dependencies: [isAnimating] });
 
     // FAQ Accordion Logic
@@ -160,7 +146,7 @@ const About = () => {
                     </header>
 
                     <div className="ys-about-intro__layout">
-                        <div className="ys-about-intro__image-wrapper" data-ys-reveal="fade">
+                        <div className="ys-about-intro__image-wrapper" ref={imageWrapperRef} data-ys-reveal="fade">
                             <div className="ys-corner-decoration ys-corner-tl" data-ys-reveal="fade" data-ys-delay="0.9"></div>
                             <div className="ys-corner-decoration ys-corner-br" data-ys-reveal="fade" data-ys-delay="1.0"></div>
                             <div className="ys-about-intro__image-container" data-ys-reveal="image">

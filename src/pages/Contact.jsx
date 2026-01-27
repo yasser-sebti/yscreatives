@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { useTransition } from '../context/TransitionContext';
 import { gsap, useGSAP, SplitText, ScrollTrigger, ScrollSmoother } from '../gsap';
-import Newsletter from '../components/Newsletter/Newsletter';
+
 import MessageSentOverlay from '../components/MessageSentOverlay/MessageSentOverlay';
 import { useMagnetic } from '../hooks/useMagnetic';
 import '../styles/Contact.css';
@@ -357,7 +357,7 @@ const Contact = () => {
                     {/* Contact Form */}
                     <form className="ys-contact__form" onSubmit={handleSubmit} noValidate>
                         <div className="ys-contact__form-row">
-                            <div className="ys-contact__form-group" data-ys-reveal="fade-up">
+                            <div className="ys-contact__form-group">
                                 <label className="ys-contact__label" htmlFor="name">Full Name</label>
                                 <Tooltip message={errors.name} isVisible={status === 'error' && !!errors.name} />
                                 <input
@@ -374,7 +374,7 @@ const Contact = () => {
                                 />
                             </div>
 
-                            <div className="ys-contact__form-group" data-ys-reveal="fade-up">
+                            <div className="ys-contact__form-group">
                                 <label className="ys-contact__label" htmlFor="company">Company / Business Name</label>
                                 <Tooltip message={errors.company} isVisible={status === 'error' && !!errors.company} />
                                 <input
@@ -392,7 +392,7 @@ const Contact = () => {
                         </div>
 
                         <div className="ys-contact__form-row">
-                            <div className="ys-contact__form-group" data-ys-reveal="fade-up">
+                            <div className="ys-contact__form-group">
                                 <label className="ys-contact__label" htmlFor="email">Email Address</label>
                                 <Tooltip message={errors.email} isVisible={status === 'error' && !!errors.email} />
                                 <input
@@ -409,7 +409,7 @@ const Contact = () => {
                                 />
                             </div>
 
-                            <div className="ys-contact__form-group" data-ys-reveal="fade-up">
+                            <div className="ys-contact__form-group">
                                 <label className="ys-contact__label" htmlFor="phone">Phone Number</label>
                                 <Tooltip message={errors.phone} isVisible={status === 'error' && !!errors.phone} />
                                 <input
@@ -428,13 +428,13 @@ const Contact = () => {
 
                         <div className="ys-contact__form-row">
                             {/* Custom Country Dropdown */}
-                            <div className="ys-contact__form-group" ref={dropdownRef} data-ys-reveal="fade-up">
+                            <div className="ys-contact__form-group" ref={dropdownRef}>
                                 <label className="ys-contact__label">Country</label>
                                 <Tooltip message={errors.country} isVisible={status === 'error' && !!errors.country} />
                                 <div className={`ys-contact__custom-dropdown ${isCountryOpen ? 'is-open' : ''} ${errors.country ? 'has-error' : ''}`}>
                                     <div
                                         className="ys-contact__dropdown-trigger"
-                                        onClick={() => setIsCountryOpen(!isCountryOpen)}
+                                        onClick={(e) => { e.stopPropagation(); setIsCountryOpen(!isCountryOpen); }}
                                     >
                                         <span>{selectedCountry || "Select your country"}</span>
                                         <svg className="ys-contact__dropdown-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -458,7 +458,7 @@ const Contact = () => {
 
                             {/* Custom Country Input (Appears only if "Other" is selected) */}
                             {selectedCountry === 'Other' && (
-                                <div className="ys-contact__form-group ys-contact__form-group--full" data-ys-reveal="fade-up">
+                                <div className="ys-contact__form-group ys-contact__form-group--full">
                                     <label className="ys-contact__label" htmlFor="customCountry">Type your country</label>
                                     <Tooltip message={errors.customCountry} isVisible={status === 'error' && !!errors.customCountry} />
                                     <input
@@ -483,13 +483,13 @@ const Contact = () => {
                             )}
 
                             {/* Referral Dropdown */}
-                            <div className="ys-contact__form-group" ref={referralRef} data-ys-reveal="fade-up">
+                            <div className="ys-contact__form-group" ref={referralRef}>
                                 <label className="ys-contact__label">How did you hear about us?</label>
                                 <Tooltip message={errors.referral} isVisible={status === 'error' && !!errors.referral} />
                                 <div className={`ys-contact__custom-dropdown ${isReferralOpen ? 'is-open' : ''} ${errors.referral ? 'has-error' : ''}`}>
                                     <div
                                         className="ys-contact__dropdown-trigger"
-                                        onClick={() => setIsReferralOpen(!isReferralOpen)}
+                                        onClick={(e) => { e.stopPropagation(); setIsReferralOpen(!isReferralOpen); }}
                                     >
                                         <span>{selectedReferral || "Choose one..."}</span>
                                         <svg className="ys-contact__dropdown-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -522,13 +522,13 @@ const Contact = () => {
 
                         {/* Services Section - Full Width Row */}
                         <div className="ys-contact__form-row ys-contact__form-row--single">
-                            <div className="ys-contact__form-group" ref={serviceRef} data-ys-reveal="fade-up">
+                            <div className="ys-contact__form-group" ref={serviceRef}>
                                 <label className="ys-contact__label">What do you need?</label>
                                 <Tooltip message={errors.service} isVisible={status === 'error' && !!errors.service} />
                                 <div className={`ys-contact__custom-dropdown ${isServiceOpen ? 'is-open' : ''} ${errors.service ? 'has-error' : ''}`}>
                                     <div
                                         className="ys-contact__dropdown-trigger"
-                                        onClick={() => setIsServiceOpen(!isServiceOpen)}
+                                        onClick={(e) => { e.stopPropagation(); setIsServiceOpen(!isServiceOpen); }}
                                     >
                                         <span>{selectedService || "Choose a service"}</span>
                                         <svg className="ys-contact__dropdown-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -599,7 +599,7 @@ const Contact = () => {
                             </div>
                         )}
 
-                        <div className="ys-contact__form-group" data-ys-reveal="fade-up">
+                        <div className="ys-contact__form-group">
                             <label className="ys-contact__label" htmlFor="contact-message">Additional Message</label>
                             <div className="ys-contact__textarea-wrapper">
                                 <textarea

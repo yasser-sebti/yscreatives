@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { gsap, useGSAP, SplitText } from '../../gsap';
 import './MessageSentOverlay.css';
@@ -159,4 +159,4 @@ const MessageSentOverlay = ({ isVisible, onClose }) => {
     );
 };
 
-export default MessageSentOverlay;
+export default memo(MessageSentOverlay);

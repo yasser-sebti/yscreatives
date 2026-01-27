@@ -1,95 +1,106 @@
 import { useGSAP, gsap, ScrollTrigger, SplitText } from '../gsap';
 
 /**
- * Global Reveal System v3 - Dynamic & Lazy Load Support
+ * Global Reveal System v4 - UI/UX Pro Max
  * 
  * Features:
- * 1. Immediate Preparation: Elements are hidden as soon as they exist.
- * 2. Deferred Activation: Animations start after transition or immediately for lazy content.
- * 3. MutationObserver: Automatically detects and enhances new elements (like LazySections).
+ * 1. Mask-Only Reveals: Zero opacity fades. All reveals use geometric clip-paths.
+ * 2. Precision Viewport: Strict intersection triggers (top 85%).
+ * 3. Max Performance: Off-screen rendering suppression via visibility toggling.
+ * 4. Human Easing: Custom tuned bezier curves for cinematic motion.
  */
 export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal, appReady = true) => {
 
     useGSAP(() => {
         if (!containerRef.current) return;
 
-        // --- HELPER: Prepare Elements (Hide them) ---
+        // --- HELPER: Prepare Elements ---
         const prepareElements = (scope) => {
             const ctx = gsap.context(() => {
-                const fadeUpElements = gsap.utils.toArray("[data-ys-reveal='fade-up']:not(.ys-ready)", scope);
+                // Selectors
+                const maskRevealElements = gsap.utils.toArray("[data-ys-reveal='fade-up']:not(.ys-ready), [data-ys-reveal='fade']:not(.ys-ready)", scope);
                 const scaleXElements = gsap.utils.toArray("[data-ys-reveal='scale-x']:not(.ys-ready)", scope);
-                const fadeElements = gsap.utils.toArray("[data-ys-reveal='fade']:not(.ys-ready)", scope);
                 const imageElements = gsap.utils.toArray("[data-ys-reveal='image']:not(.ys-ready)", scope);
                 const textElements = gsap.utils.toArray("[data-ys-reveal='text']:not(.ys-ready)", scope);
-                const curtainElements = gsap.utils.toArray("[data-ys-reveal='curtain']:not(.ys-ready)", scope);
-                const heroZoomElements = gsap.utils.toArray("[data-ys-reveal='hero-zoom']:not(.ys-ready)", scope);
 
-                if (fadeUpElements.length > 0) {
-                    gsap.set(fadeUpElements, { opacity: 0, y: 30 });
-                    fadeUpElements.forEach(el => el.classList.add('ys-ready'));
+                // 1. General Mask Reveal
+                if (maskRevealElements.length > 0) {
+                    gsap.set(maskRevealElements, {
+                        clipPath: "inset(0% 0% 100% 0%)",
+                        y: 30,
+                        opacity: 1
+                    });
+                    maskRevealElements.forEach(el => el.classList.add('ys-ready'));
                 }
+
+                // 2. Scale X Reveal
                 if (scaleXElements.length > 0) {
-                    gsap.set(scaleXElements, { scaleX: 0, transformOrigin: "left" });
+                    gsap.set(scaleXElements, {
+                        clipPath: "inset(0% 100% 0% 0%)",
+                        opacity: 1
+                    });
                     scaleXElements.forEach(el => el.classList.add('ys-ready'));
                 }
-                if (fadeElements.length > 0) {
-                    gsap.set(fadeElements, { opacity: 0 });
-                    fadeElements.forEach(el => el.classList.add('ys-ready'));
-                }
+
+                // 3. Image Reveal
                 if (imageElements.length > 0) {
-                    gsap.set(imageElements, { clipPath: "inset(100% 0% 0% 0%)" });
+                    gsap.set(imageElements, { clipPath: "inset(100% 0% 0% 0%)", opacity: 1 });
                     imageElements.forEach(el => el.classList.add('ys-ready'));
                 }
-                if (curtainElements.length > 0) {
-                    gsap.set(curtainElements, { opacity: 1 });
-                    curtainElements.forEach(el => el.classList.add('ys-ready'));
-                }
-                if (heroZoomElements.length > 0) {
-                    gsap.set(heroZoomElements, { scale: 1.15 });
-                    heroZoomElements.forEach(el => el.classList.add('ys-ready'));
-                }
 
+                // 4. Text Reveal (UI UX Pro Max Nested Masking)
                 textElements.forEach((el) => {
-                    const split = new SplitText(el, { type: "lines", mask: "lines" });
-                    // Store split instance on element for later reversion if needed
-                    el._gsapSplit = split;
-                    gsap.set(split.lines, { yPercent: 100, opacity: 0 });
+                    // First split creates the "mask" containers (overflow: hidden)
+                    const outerSplit = new SplitText(el, { type: "lines", linesClass: "line-outer" });
+                    // Second split creates the actual animatable content
+                    const innerSplit = new SplitText(outerSplit.lines, { type: "lines", linesClass: "line-inner" });
+
+                    el._gsapOuterSplit = outerSplit;
+                    el._gsapSplit = innerSplit; // Store for shorthand access
+
+                    gsap.set(innerSplit.lines, { yPercent: 105, opacity: 1 });
+                    gsap.set(el, { opacity: 1 });
                     el.classList.add('ys-ready');
                 });
             }, scope);
             return ctx;
         };
 
-        // --- HELPER: Animate Elements (Reveal them) ---
+        // --- HELPER: Animate Elements ---
         const animateElements = (scope) => {
             const ctx = gsap.context(() => {
-                // Select only 'ready' elements that haven't been 'revealed'
-                // We mark them as 'ys-revealed' after creating triggers to avoid duplicates
                 const targets = gsap.utils.toArray("[data-ys-reveal].ys-ready:not(.ys-revealed)", scope);
-
                 if (targets.length === 0) return;
 
+                // Crucial refresh before mounting triggers
                 ScrollTrigger.refresh();
 
                 targets.forEach(el => {
-                    el.classList.add('ys-revealed');
                     const type = el.getAttribute('data-ys-reveal');
                     const delay = parseFloat(el.getAttribute('data-ys-delay')) || 0;
+
+                    const performanceConfig = {
+                        onLeave: () => { el.style.visibility = 'hidden'; },
+                        onEnterBack: () => { el.style.visibility = 'visible'; }
+                    };
+
+                    // We add ys-revealed immediately to prevent double-triggering
+                    el.classList.add('ys-revealed');
 
                     if (type === 'text') {
                         if (el._gsapSplit) {
                             gsap.to(el._gsapSplit.lines, {
                                 yPercent: 0,
-                                opacity: 1,
                                 duration: 1.2,
                                 stagger: 0.1,
                                 ease: "power4.out",
                                 scrollTrigger: {
                                     trigger: el,
-                                    start: "top 100%",
-                                    toggleActions: "play none none none"
+                                    start: "top 90%",
+                                    ...performanceConfig
                                 },
-                                delay: delay
+                                delay: delay,
+                                overwrite: 'auto'
                             });
                         }
                     } else if (type === 'image') {
@@ -97,72 +108,57 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                         const tl = gsap.timeline({
                             scrollTrigger: {
                                 trigger: el,
-                                start: "top 90%",
-                                toggleActions: "play none none none"
+                                start: "top 88%",
+                                ...performanceConfig
+                            },
+                            onComplete: () => {
+                                el.style.contentVisibility = 'auto';
+                                el.style.containIntrinsicSize = `auto ${el.offsetHeight}px`;
+                                ScrollTrigger.refresh();
                             }
                         });
+
                         tl.to(el, {
                             clipPath: "inset(0% 0% 0% 0%)",
                             duration: 1.4,
-                            ease: "power4.inOut",
-                            delay: delay
+                            ease: "expo.inOut",
+                            delay: delay,
+                            overwrite: 'auto'
                         });
+
                         if (img) {
                             tl.fromTo(img,
-                                { yPercent: 40, scale: 1.1 },
-                                { yPercent: 0, scale: 1, duration: 1.8, ease: "expo.out" },
+                                { yPercent: 15, scale: 1.1 },
+                                { yPercent: 0, scale: 1, duration: 1.6, ease: "power2.out" },
                                 "<"
                             );
                         }
-                    } else if (type === 'fade-up') {
+                    } else if (type === 'fade-up' || type === 'fade') {
                         gsap.to(el, {
+                            clipPath: "inset(0% 0% 0% 0%)",
                             y: 0,
-                            opacity: 1,
-                            duration: 1,
+                            duration: 1.2,
                             ease: "power3.out",
                             scrollTrigger: {
                                 trigger: el,
-                                start: "top 100%",
-                                toggleActions: "play none none none"
+                                start: "top 92%",
+                                ...performanceConfig
                             },
-                            delay: delay
+                            delay: delay,
+                            overwrite: 'auto'
                         });
                     } else if (type === 'scale-x') {
                         gsap.to(el, {
-                            scaleX: 1,
-                            duration: 1.5,
-                            ease: "power3.inOut",
+                            clipPath: "inset(0% 0% 0% 0%)",
+                            duration: 1.2,
+                            ease: "expo.out",
                             scrollTrigger: {
                                 trigger: el,
-                                start: "top 100%",
-                                toggleActions: "play none none none"
+                                start: "top 92%",
+                                ...performanceConfig
                             },
-                            delay: delay
-                        });
-                    } else if (type === 'fade') {
-                        gsap.to(el, {
-                            opacity: 1,
-                            duration: 1.5,
-                            ease: "power2.out",
-                            scrollTrigger: {
-                                trigger: el,
-                                start: "top 100%"
-                            },
-                            delay: delay
-                        });
-                    } else if (type === 'curtain') {
-                        gsap.to(el, {
-                            opacity: 0,
-                            duration: 2,
-                            ease: "power2.inOut",
-                            delay: delay
-                        });
-                    } else if (type === 'hero-zoom') {
-                        gsap.to(el, {
-                            scale: 1,
-                            duration: 3,
-                            ease: "power3.out",
-                            delay: delay
+                            delay: delay,
+                            overwrite: 'auto'
                         });
                     }
                 });
@@ -170,17 +166,17 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
             return ctx;
         };
 
-        // 1. Initial Prep (Prepare immediately to prevent FOUC)
+
+        // 1. Initial Prep
         prepareElements(containerRef.current);
 
-        // 2. Observer for Lazy Loaded Content
+        // 2. Observer
         const observer = new MutationObserver((mutations) => {
             let hasNewContent = false;
             mutations.forEach((mutation) => {
                 if (mutation.addedNodes.length > 0) {
                     mutation.addedNodes.forEach(node => {
-                        if (node.nodeType === 1) { // Element node
-                            // Check if node itself or children need reveal
+                        if (node.nodeType === 1) {
                             if (node.matches("[data-ys-reveal]") || node.querySelector("[data-ys-reveal]")) {
                                 hasNewContent = true;
                             }
@@ -190,37 +186,46 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
             });
 
             if (hasNewContent) {
-                // Prepare new elements immediately
                 prepareElements(containerRef.current);
-
-                // If app is already stable (not navigating), animate them immediately
-                // This handles LazySection appearing during scroll
                 if (!isPendingReveal && appReady) {
-                    animateElements(containerRef.current);
+                    setTimeout(() => animateElements(containerRef.current), 150);
                 }
             }
         });
 
         observer.observe(containerRef.current, { childList: true, subtree: true });
 
-        // 3. Activation Gate
-        // When page transition finishes and app is ready, trigger all pending animations
+        // 3. Activation Gate with SNAPPY Navigation Timing
         if (!isPendingReveal && appReady) {
-            animateElements(containerRef.current);
+            // Wait for transition to clear the view but don't stall
+            const timer = setTimeout(() => {
+                animateElements(containerRef.current);
+                ScrollTrigger.refresh();
+            }, 350);
+
+            return () => {
+                clearTimeout(timer);
+                observer.disconnect();
+            };
         }
 
         return () => {
             observer.disconnect();
-            // Cleanup splits and remove classes
             const elementsToClean = gsap.utils.toArray("[data-ys-reveal].ys-ready", containerRef.current);
             elementsToClean.forEach(el => {
                 if (el._gsapSplit) {
                     el._gsapSplit.revert();
-                    delete el._gsapSplit; // Clean up the stored instance
+                    delete el._gsapSplit;
+                }
+                if (el._gsapOuterSplit) {
+                    el._gsapOuterSplit.revert();
+                    delete el._gsapOuterSplit;
                 }
                 el.classList.remove('ys-ready', 'ys-revealed');
+                el.style.visibility = '';
+                el.style.contentVisibility = '';
+                el.style.opacity = '';
             });
-            // Kill all ScrollTriggers associated with this scope
             ScrollTrigger.getAll().forEach(st => {
                 if (st.trigger && containerRef.current.contains(st.trigger)) {
                     st.kill();

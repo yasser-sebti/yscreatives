@@ -89,7 +89,7 @@ html {
 }
 
 body {
-    font-family: var(--font-body);
+    font-family: var(--font-heading);
     font-weight: 200;
     background: var(--void-black);
     color: var(--void-white);
@@ -244,6 +244,16 @@ img[loading="lazy"].loaded {
 
 .ys-reveal-image img {
     will-change: transform;
+    opacity: 1;
+}
+
+/* --- Reveal System Base --- */
+[data-ys-reveal] {
+    opacity: 0;
+    will-change: clip-path, transform, opacity;
+}
+
+[data-ys-reveal].ys-ready {
     opacity: 1;
 }
 
@@ -885,11 +895,6 @@ img[loading="lazy"].loaded {
     border: 1px solid var(--void-subtle);
 }
 
-.ys-portfolio__image-container {
-    position: relative;
-    overflow: hidden;
-}
-
 
 .ys-portfolio__image-container img {
     width: 100%;
@@ -1210,7 +1215,7 @@ img[loading="lazy"].loaded {
 
 /* Wordmark Column */
 .ys-footer__wordmark {
-    font-family: var(--font-serif);
+    font-family: var(--font-heading);
     font-size: 4.5rem;
     font-weight: 200;
     /* Explicitly use light style */
@@ -1226,7 +1231,7 @@ img[loading="lazy"].loaded {
 
 /* Labels (Titles) */
 .ys-footer__label {
-    font-family: var(--font-serif);
+    font-family: var(--font-heading);
     font-size: 2rem;
     line-height: 1.1;
     color: rgba(255, 255, 255, 0.4);
@@ -1397,7 +1402,7 @@ img[loading="lazy"].loaded {
 }
 
 .ys-text-body {
-    font-family: var(--font-serif);
+    font-family: var(--font-heading);
     font-size: var(--text-body);
     font-weight: 200;
     line-height: var(--line-height-body);

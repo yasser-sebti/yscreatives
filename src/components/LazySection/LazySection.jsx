@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense, memo } from 'react';
 import '../../styles/LazySection.css';
 
 /**
@@ -60,4 +60,4 @@ const SectionSkeleton = ({ height }) => (
     </div>
 );
 
-export default LazySection;
+export default memo(LazySection);

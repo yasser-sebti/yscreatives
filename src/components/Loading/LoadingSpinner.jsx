@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 import { gsap } from '../../gsap';
 
 const LoadingSpinner = () => {
@@ -75,4 +75,4 @@ const LoadingSpinner = () => {
     );
 };
 
-export default LoadingSpinner;
+export default memo(LoadingSpinner);

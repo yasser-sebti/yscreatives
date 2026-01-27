@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTransition } from '../../context/TransitionContext';
 
 // Drop-in replacement for <Link> or <a href>
@@ -5,23 +6,25 @@ const TransitionLink = ({ to, children, className, ...props }) => {
     const { navigateWithTransition } = useTransition();
 
     const handleClick = (e) => {
-        e.preventDefault();
-
-        // Handle anchor links (hashes) properly
+        // Handle anchor links (hashes) properly via ScrollSmoother
         if (to.startsWith('#')) {
-            const element = document.querySelector(to);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
+            e.preventDefault();
+            const smoother = ScrollSmoother.get();
+            if (smoother) {
+                smoother.scrollTo(to, true, "top top");
+            } else {
+                const element = document.querySelector(to);
+                if (element) element.scrollIntoView({ behavior: 'smooth' });
             }
             return;
         }
 
-        // Handle external links
-        if (to.startsWith('http')) {
-            window.open(to, '_blank');
+        // Handle external links (let browser handle standard behavior)
+        if (to.startsWith('http') || to.startsWith('mailto:') || to.startsWith('tel:')) {
             return;
         }
 
+        e.preventDefault();
         navigateWithTransition(to);
     };
 
@@ -32,4 +35,4 @@ const TransitionLink = ({ to, children, className, ...props }) => {
     );
 };
 
-export default TransitionLink;
+export default memo(TransitionLink);

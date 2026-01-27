@@ -38,19 +38,116 @@ const methodologyPhases = [
  */
 const Home = ({ appReady = true }) => {
     const containerRef = useRef(null);
+    const videoPrimaryRef = useRef(null);
+    const videoSecondaryRef = useRef(null);
     const { isAnimating } = useTransition();
 
     useMagnetic(containerRef, ".ys-magnetic", 0.4);
 
+    // --- 1. SEAMLESS DUAL-VIDEO CROSSFADE (UI UX Pro Max) ---
+    useEffect(() => {
+        if (!appReady) return;
+        const v1 = videoPrimaryRef.current;
+        const v2 = videoSecondaryRef.current;
+        if (!v1 || !v2) return;
+
+        let activeVideo = v1;
+        let inactiveVideo = v2;
+        let isFading = false;
+
+        const checkCrossfade = () => {
+            if (isFading || !activeVideo.duration) return;
+
+            const fadePoint = activeVideo.duration - 0.6;
+            if (activeVideo.currentTime >= fadePoint) {
+                isFading = true;
+                inactiveVideo.currentTime = 0;
+                inactiveVideo.play();
+
+                gsap.to(activeVideo, { opacity: 0, duration: 0.6, ease: "none" });
+                gsap.to(inactiveVideo, {
+                    opacity: 1,
+                    duration: 0.6,
+                    ease: "none",
+                    onComplete: () => {
+                        activeVideo.pause();
+                        [activeVideo, inactiveVideo] = [inactiveVideo, activeVideo];
+                        isFading = false;
+                    }
+                });
+            }
+        };
+
+        gsap.ticker.add(checkCrossfade);
+        return () => gsap.ticker.remove(checkCrossfade);
+    }, [appReady]);
+
     useGSAP(() => {
-        // App Ready is only true after fonts, video (hero), and critical images are loaded
         if (!appReady) return;
 
-        // 4. PARALLAX: Video subtle movement on scroll
+        // 2. MANUAL CINEMATIC INTRO (Optimized Speed - UI UX Pro Max)
+        const tl = gsap.timeline();
+
+        // Initial States
+        gsap.set(".ys-hero__cover", { opacity: 1 });
+        gsap.set(".ys-hero__bg", { scale: 1.1 }); // Reduced initial scale for snappier feel
+        gsap.set(".ys-hero__title", { y: 60, opacity: 0 }); // Reduced distance
+        gsap.set(".ys-hero__name", { y: 20, opacity: 0 });
+        gsap.set(".ys-hero__slogan-title", { opacity: 0, y: 15 });
+        gsap.set(".ys-hero__slogan-sub", { opacity: 0 });
+        gsap.set(".ys-hero__cta", { opacity: 0, y: 10 });
+        gsap.set(".ys-hero__scroll-indicator", { opacity: 0 });
+
+        tl.to(".ys-hero__cover", {
+            opacity: 0,
+            duration: 1.2, // Faster (was 2)
+            ease: "power2.inOut",
+            delay: 0.2
+        })
+            .to(".ys-hero__bg", {
+                scale: 1,
+                duration: 2, // Faster (was 3)
+                ease: "power3.out"
+            }, 0.2)
+            .to(".ys-hero__title", {
+                y: 0,
+                opacity: 1,
+                duration: 1.2, // Faster (was 1.5)
+                ease: "expo.out" // Snappier ease
+            }, "-=1.0")
+            .to(".ys-hero__name", {
+                y: 0,
+                opacity: 1,
+                duration: 1.2,
+                ease: "expo.out"
+            }, "-=1.0")
+            .to(".ys-hero__slogan-title", {
+                y: 0,
+                opacity: 1,
+                duration: 0.8,
+                ease: "power2.out"
+            }, "-=0.8")
+            .to(".ys-hero__slogan-sub", {
+                opacity: 1,
+                duration: 0.8,
+                ease: "power2.out"
+            }, "-=0.6")
+            .to(".ys-hero__cta", {
+                y: 0,
+                opacity: 1,
+                duration: 0.8,
+                ease: "power2.out"
+            }, "-=0.4")
+            .to(".ys-hero__scroll-indicator", {
+                opacity: 1,
+                duration: 0.8,
+                ease: "power2.out"
+            }, "-=0.2");
+
+        // 3. PARALLAX
         gsap.to(".ys-hero__bg", {
-            yPercent: 15,
+            yPercent: 12,
             ease: "none",
-            willChange: "transform", // Optimize to prevent stutter
             scrollTrigger: {
                 trigger: ".ys-hero",
                 start: "top top",
@@ -59,52 +156,65 @@ const Home = ({ appReady = true }) => {
             }
         });
 
-        // 5. SCROLL INDICATOR: Looping pulse
+        // 4. SCROLL PULSE LOOP
         gsap.fromTo(".ys-hero__scroll-pulse",
             { y: "-100%" },
-            { y: "100%", duration: 2, repeat: -1, ease: "power1.inOut" }
+            {
+                y: "100%",
+                duration: 1.5,
+                repeat: -1,
+                ease: "power1.inOut"
+            }
         );
 
-    }, { scope: containerRef, dependencies: [isAnimating, appReady] });
+    }, { scope: containerRef, dependencies: [appReady] });
 
     return (
         <main ref={containerRef} className="ys-home-v2">
             {/* --- HERO SECTION --- */}
             <section className={`ys-hero ${appReady ? 'is-loaded' : ''}`}>
-                <div className="ys-hero__bg" data-ys-reveal="hero-zoom">
+                <div className="ys-hero__bg">
                     <video
+                        ref={videoPrimaryRef}
                         src={`${import.meta.env.BASE_URL}assets/videos/yasser-animated.mp4`}
                         className="ys-hero__video"
                         autoPlay
                         muted
-                        loop
                         playsInline
                         preload="auto"
                     />
+                    <video
+                        ref={videoSecondaryRef}
+                        src={`${import.meta.env.BASE_URL}assets/videos/yasser-animated.mp4`}
+                        className="ys-hero__video"
+                        muted
+                        playsInline
+                        preload="auto"
+                        style={{ opacity: 0 }}
+                    />
                     <div className="ys-hero__dark-overlay"></div>
-                    {/* Cinematic "Curtain" - Now inside BG to stay UNDER text */}
-                    <div className="ys-hero__cover" data-ys-reveal="curtain" data-ys-delay="0.3"></div>
+                    <div className="ys-hero__cover"></div>
                 </div>
 
                 <div className="ys-hero__container">
-                    <div className="ys-hero__main-header" data-ys-reveal="fade-up" data-ys-delay="1.2">
-                        <h1 className="ys-hero__title" data-ys-reveal="text" data-ys-delay="1.3">Yasser Creatives</h1>
-                        <p className="ys-hero__name" data-ys-reveal="text" data-ys-delay="1.5">By Yasser Abdelmotaleb Sebti</p>
+                    <div className="ys-hero__main-header">
+                        <h1 className="ys-hero__title">Yasser Creatives</h1>
+                        <p className="ys-hero__name">By Yasser Abdelmotaleb Sebti</p>
                     </div>
 
                     <div className="ys-hero__slogan">
-                        <h2 className="ys-hero__slogan-title" data-ys-reveal="text" data-ys-delay="1.6">100% Human-Designed Work</h2>
-                        <p className="ys-hero__slogan-sub" data-ys-reveal="text" data-ys-delay="1.7">No AI, just pure vision.</p>
+                        <h2 className="ys-hero__slogan-title">100% Human-Designed Work</h2>
+                        <p className="ys-hero__slogan-sub">No AI, just pure vision.</p>
                     </div>
 
-                    <div className="ys-hero__cta" data-ys-reveal="fade-up" data-ys-delay="1.9">
+                    <div className="ys-hero__cta">
                         <TransitionLink to="/about" className="ys-hero__button ys-magnetic">
                             About me
                         </TransitionLink>
                     </div>
                 </div>
 
-                <div className="ys-hero__scroll-indicator" data-ys-reveal="fade-up" data-ys-delay="0.9">
+                <div className="ys-hero__scroll-indicator">
                     <span className="ys-hero__scroll-label">Scroll</span>
                     <div className="ys-hero__scroll-track">
                         <div className="ys-hero__scroll-pulse"></div>

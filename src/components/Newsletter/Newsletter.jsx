@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, memo } from 'react';
 import { gsap, useGSAP } from '../../gsap';
 
 
@@ -141,4 +141,4 @@ const Newsletter = ({ inverted = false }) => {
     );
 };
 
-export default Newsletter;
+export default memo(Newsletter);
