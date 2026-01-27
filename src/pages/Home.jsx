@@ -38,71 +38,7 @@ const methodologyPhases = [
  */
 const Home = ({ appReady = true }) => {
     const containerRef = useRef(null);
-    const videoRef = useRef(null);
     const { isAnimating } = useTransition();
-
-    // Video Sync state
-    const [hasVideoPlayed, setHasVideoPlayed] = useState(false);
-
-    useEffect(() => {
-        const video = videoRef.current;
-        if (!video) return;
-
-        const handlePlaying = () => setHasVideoPlayed(true);
-
-        // We already have autoPlay on the tag, but we force it here too for reliability
-        video.play().catch(err => {
-            console.log("Video auto-play failed, usually waiting for user interaction:", err);
-            // If it fails, we still want to show the content eventually
-            setHasVideoPlayed(true);
-        });
-
-        video.addEventListener('playing', handlePlaying);
-        return () => {
-            video.removeEventListener('playing', handlePlaying);
-        };
-    }, []);
-
-    // 1. CINEMATIC INTRO: Fade in the entire Hero from Black
-    const playIntro = () => {
-        const tl = gsap.timeline();
-
-        // Ensure we start from absolute black for the background only
-        gsap.set(".ys-hero__cover", { opacity: 1 });
-        gsap.set(".ys-hero__video", { opacity: 1 });
-        // Main header stays visible but we can still do a subtle slide up if needed, 
-        // but the user wants it "not affected", so let's keep it clean.
-        gsap.set(".ys-hero__main-header", { y: 20, opacity: 1 });
-        gsap.set(".ys-hero__slogan", { opacity: 0 });
-        gsap.set(".ys-hero__cta", { opacity: 0 });
-
-        tl.to(".ys-hero__cover", {
-            opacity: 0,
-            duration: 2,
-            ease: "power2.inOut",
-            delay: 0.3
-        })
-            .to(".ys-hero__main-header", {
-                y: 0,
-                duration: 1.5,
-                ease: "power3.out"
-            }, "-=1.5")
-            .to(".ys-hero__slogan", {
-                opacity: 1,
-                duration: 1,
-                ease: "power2.out"
-            }, "-=0.8")
-            .to(".ys-hero__cta", {
-                opacity: 1,
-                duration: 1,
-                ease: "power2.out"
-            }, "-=0.8")
-            .fromTo(".ys-hero__bg",
-                { scale: 1.15 },
-                { scale: 1, duration: 3, ease: "power3.out" },
-                0
-            );
-    };
 
     useMagnetic(containerRef, ".ys-magnetic", 0.4);
 
@@ -110,12 +46,11 @@ const Home = ({ appReady = true }) => {
         // App Ready is only true after fonts, video (hero), and critical images are loaded
         if (!appReady) return;
 
-        playIntro();
-
         // 4. PARALLAX: Video subtle movement on scroll
         gsap.to(".ys-hero__bg", {
             yPercent: 15,
             ease: "none",
+            willChange: "transform", // Optimize to prevent stutter
             scrollTrigger: {
                 trigger: ".ys-hero",
                 start: "top top",
@@ -135,10 +70,9 @@ const Home = ({ appReady = true }) => {
     return (
         <main ref={containerRef} className="ys-home-v2">
             {/* --- HERO SECTION --- */}
-            <section className={`ys-hero ${appReady && hasVideoPlayed ? 'is-loaded' : ''}`}>
-                <div className="ys-hero__bg">
+            <section className={`ys-hero ${appReady ? 'is-loaded' : ''}`}>
+                <div className="ys-hero__bg" data-ys-reveal="hero-zoom">
                     <video
-                        ref={videoRef}
                         src={`${import.meta.env.BASE_URL}assets/videos/yasser-animated.mp4`}
                         className="ys-hero__video"
                         autoPlay
@@ -149,21 +83,21 @@ const Home = ({ appReady = true }) => {
                     />
                     <div className="ys-hero__dark-overlay"></div>
                     {/* Cinematic "Curtain" - Now inside BG to stay UNDER text */}
-                    <div className="ys-hero__cover"></div>
+                    <div className="ys-hero__cover" data-ys-reveal="curtain" data-ys-delay="0.3"></div>
                 </div>
 
                 <div className="ys-hero__container">
-                    <div className="ys-hero__main-header">
-                        <h1 className="ys-hero__title" data-ys-reveal="text" data-ys-delay="0.1">Yasser Creatives</h1>
-                        <p className="ys-hero__name" data-ys-reveal="text" data-ys-delay="0.3">By Yasser Abdelmotaleb Sebti</p>
+                    <div className="ys-hero__main-header" data-ys-reveal="fade-up" data-ys-delay="1.2">
+                        <h1 className="ys-hero__title" data-ys-reveal="text" data-ys-delay="1.3">Yasser Creatives</h1>
+                        <p className="ys-hero__name" data-ys-reveal="text" data-ys-delay="1.5">By Yasser Abdelmotaleb Sebti</p>
                     </div>
 
                     <div className="ys-hero__slogan">
-                        <h2 className="ys-hero__slogan-title" data-ys-reveal="text" data-ys-delay="0.4">100% Human-Designed Work</h2>
-                        <p className="ys-hero__slogan-sub" data-ys-reveal="text" data-ys-delay="0.5">No AI, just pure vision.</p>
+                        <h2 className="ys-hero__slogan-title" data-ys-reveal="text" data-ys-delay="1.6">100% Human-Designed Work</h2>
+                        <p className="ys-hero__slogan-sub" data-ys-reveal="text" data-ys-delay="1.7">No AI, just pure vision.</p>
                     </div>
 
-                    <div className="ys-hero__cta" data-ys-reveal="fade-up" data-ys-delay="0.7">
+                    <div className="ys-hero__cta" data-ys-reveal="fade-up" data-ys-delay="1.9">
                         <TransitionLink to="/about" className="ys-hero__button ys-magnetic">
                             About me
                         </TransitionLink>

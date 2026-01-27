@@ -25,13 +25,20 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
         const scaleXElements = gsap.utils.toArray("[data-ys-reveal='scale-x']", containerRef.current);
         const fadeElements = gsap.utils.toArray("[data-ys-reveal='fade']", containerRef.current);
 
+        const curtainElements = gsap.utils.toArray("[data-ys-reveal='curtain']", containerRef.current);
+        const heroZoomElements = gsap.utils.toArray("[data-ys-reveal='hero-zoom']", containerRef.current);
+
         const splits = [];
 
-        // Pre-hide everything immediately - Guarded against missing targets
+        // Pre-hide everything immediately
         if (fadeUpElements.length > 0) gsap.set(fadeUpElements, { opacity: 0, y: 30 });
         if (scaleXElements.length > 0) gsap.set(scaleXElements, { scaleX: 0, transformOrigin: "left" });
         if (fadeElements.length > 0) gsap.set(fadeElements, { opacity: 0 });
         if (imageElements.length > 0) gsap.set(imageElements, { clipPath: "inset(100% 0% 0% 0%)" });
+
+        // Hero Specific Prep
+        if (curtainElements.length > 0) gsap.set(curtainElements, { opacity: 1 }); // Start covering
+        if (heroZoomElements.length > 0) gsap.set(heroZoomElements, { scale: 1.15 });
 
         // Split text early to avoid layout shift during reveal
         textElements.forEach((el) => {
@@ -51,6 +58,29 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
         ScrollTrigger.refresh();
 
         // Reveal Logic
+
+        // 1. Hero Curtain Reveal
+        curtainElements.forEach((el) => {
+            const delay = parseFloat(el.getAttribute('data-ys-delay')) || 0;
+            gsap.to(el, {
+                opacity: 0,
+                duration: 2,
+                ease: "power2.inOut",
+                delay: delay
+            });
+        });
+
+        // 2. Hero Zoom Reveal
+        heroZoomElements.forEach((el) => {
+            const delay = parseFloat(el.getAttribute('data-ys-delay')) || 0;
+            gsap.to(el, {
+                scale: 1,
+                duration: 3,
+                ease: "power3.out",
+                delay: delay
+            });
+        });
+
         textElements.forEach((el, i) => {
             if (el.getAttribute('data-ys-skip') === 'true') return;
             const delay = parseFloat(el.getAttribute('data-ys-delay')) || 0;
