@@ -140,7 +140,6 @@ const Home = ({ appReady = true }) => {
                     <video
                         ref={videoRef}
                         src={`${import.meta.env.BASE_URL}assets/videos/yasser-animated.mp4`}
-                        poster={`${import.meta.env.BASE_URL}assets/images/hero-poster.webp`}
                         className="ys-hero__video"
                         autoPlay
                         muted

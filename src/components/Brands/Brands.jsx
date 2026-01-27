@@ -2,7 +2,7 @@ import { useRef, memo } from 'react';
 import { gsap, useGSAP, ScrollTrigger } from '../../gsap';
 
 const LOGOS = [
-    'Eli Network.svg', 'Pandaify.svg', 'Order.svg', 'Tech Trendy.svg', 'Oldy.svg',
+    'Eli_Network.svg', 'Pandaify.svg', 'Order.svg', 'Tech Trendy.svg', 'Oldy.svg',
     'Turbo Reprog.svg', 'Crochoco.svg', 'Aqua Health.svg', 'Farmazone.svg', 'Iliya.svg',
     'Mercy.svg', 'Sinjar.svg', 'Tawazun.svg', 'Algerian Salon.svg', 'Yahia Boussadi.svg'
 ];

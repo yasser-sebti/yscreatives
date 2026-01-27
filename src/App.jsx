@@ -30,8 +30,9 @@ function InnerApp() {
 
   // Initialize audio only when requested or after a delay to improve LCP
   useEffect(() => {
+    const baseUrl = import.meta.env.BASE_URL || '/';
     const timer = setTimeout(() => {
-      const a = new Audio('assets/sounds/background-ost.mp3');
+      const a = new Audio(`${baseUrl}assets/sounds/background-ost.mp3`);
       a.loop = true;
       setAudio(a);
     }, 2000);
@@ -111,10 +112,8 @@ function InnerApp() {
     const baseUrl = import.meta.env.BASE_URL || '/';
     const assetsToLoad = {
       images: [
-        `${baseUrl}assets/images/hero-poster.webp`,
         `${baseUrl}assets/images/Yasser.webp`,
         `${baseUrl}assets/logos/Pandaify.svg`,
-        `${baseUrl}assets/logos/Eli Network.svg`,
         `${baseUrl}assets/images/Project1.webp`,
         `${baseUrl}assets/images/Project2.webp`,
       ],
@@ -127,14 +126,20 @@ function InnerApp() {
       ]
     };
 
-    preloadAssets(assetsToLoad).then(() => {
-      // Small buffer for rendering engine to settle
-      setTimeout(() => {
+    preloadAssets(assetsToLoad)
+      .then(() => {
+        // Small buffer for rendering engine to settle
+        setTimeout(() => {
+          setHasMounted(true);
+          // Refresh ScrollTrigger after mounting to prevent "footer stuck" issues
+          ScrollTrigger.refresh();
+        }, 600);
+      })
+      .catch((err) => {
+        console.error("Asset preloading failed:", err);
+        // Fallback: Show app anyway
         setHasMounted(true);
-        // Refresh ScrollTrigger after mounting to prevent "footer stuck" issues
-        ScrollTrigger.refresh();
-      }, 600);
-    });
+      });
   }, []);
 
   // Activate Surgical Global Reveal System

@@ -10,11 +10,11 @@ export const preloadAssets = (assets = {}) => {
     if (total === 0) return Promise.resolve();
 
     return new Promise((resolve) => {
-        // Fail-safe timeout: 8 seconds
+        // Fail-safe timeout: 3 seconds
         const timeout = setTimeout(() => {
             console.warn("Asset preloading timed out. Proceeding with partially loaded assets.");
             resolve();
-        }, 8000);
+        }, 3000);
 
         const checkDone = () => {
             loaded++;
