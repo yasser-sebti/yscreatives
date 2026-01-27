@@ -192,7 +192,7 @@ const About = () => {
                     <header className="ys-testimonials__header">
                         <h2 className="ys-testimonials__title" data-ys-reveal="text">What Clients Say</h2>
                     </header>
-                    <div className="ys-testimonials__marquee">
+                    <div className="ys-testimonials__marquee" data-ys-reveal="fade" data-ys-delay="0.2">
                         <div className="ys-testimonials__vignette"></div>
                         <div className="ys-testimonials__track" ref={testimonialsTrackRef}>
                             <div className="ys-testimonials__slider">

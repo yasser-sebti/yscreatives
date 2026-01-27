@@ -115,6 +115,8 @@ const CTA = () => {
                 className="ys-cta-magnetic ys-cta__title"
                 ref={textRef}
                 onClick={handleClick}
+                data-ys-reveal="fade-up"
+                data-ys-delay="0.2"
             >
                 Let's work together
             </a>

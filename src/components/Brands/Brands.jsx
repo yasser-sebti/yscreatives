@@ -70,7 +70,7 @@ const Brands = () => {
                     <h2 className="ys-brands__title" data-ys-reveal="text">Brands We Build</h2>
                 </header>
 
-                <div className="ys-brands__marquee" ref={trackRef}>
+                <div className="ys-brands__marquee" ref={trackRef} data-ys-reveal="fade" data-ys-delay="0.2">
                     <div className="ys-brands__vignette"></div>
                     <div className="ys-brands__track">
                         {/* Double the logos for a seamless loop */}
