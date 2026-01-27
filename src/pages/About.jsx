@@ -1,28 +1,20 @@
-import { useRef, useState, useEffect, memo, lazy, Suspense } from 'react';
+import { useRef, useState, useEffect, memo, lazy } from 'react';
 import { useTransition } from '../context/TransitionContext';
 import TransitionLink from '../components/TransitionLink/TransitionLink';
-import { gsap, useGSAP, SplitText, ScrollTrigger } from '../gsap';
+import { gsap, useGSAP, SplitText } from '../gsap';
 import LazySection from '../components/LazySection/LazySection';
 import '../styles/About.css';
 
 import { useMagnetic } from '../hooks/useMagnetic';
 
 const CTA = lazy(() => import('../components/CTA/CTA'));
+const Testimonials = lazy(() => import('../components/Testimonials/Testimonials'));
 
 const faqData = [
     { q: "How do you start a project?", a: "Every project begins with a discovery session where we dive deep into your brand's vision, goals, and market landscape." },
     { q: "What is your typical timeline?", a: "Standard brand identity and web design projects usually span 6 to 10 weeks for meticulous execution." },
     { q: "Do you handle development as well?", a: "Yes. I build high-performance, GSAP-animated React applications that bring the static vision to life." },
     { q: "Why focus on 'Human' design?", a: "In an era of AI automation, the human touch creates the true emotional connection necessary for premium brands." }
-];
-
-const testimonialsData = [
-    { name: "Alpha Programming", role: "Tech Company", img: "Alpha Programing.webp", text: "Yasser delivered exceptional results that exceeded our expectations. His attention to detail is unmatched." },
-    { name: "Corochoco", role: "Brand", img: "Corochoco.webp", text: "Working with Yasser was an absolute pleasure. He understood our vision and translated it into a stunning presence." },
-    { name: "Islem Bennebes", role: "Entrepreneur", img: "Islem Bennebes.webp", text: "The level of professionalism Yasser brings to every project is unmatched. Highly recommend for premium work." },
-    { name: "Madjid Lounes", role: "Business Owner", img: "Madjid Lounes.webp", text: "Yasser's work speaks for itself. The website has significantly improved our online presence and engagement." },
-    { name: "Pandaify", role: "SaaS Platform", img: "Pandaify.webp", text: "Incredible design work that captures our brand essence. The animations and UX are absolutely top-tier." },
-    { name: "Rahim Kichene", role: "Creative Director", img: "Rahim Kichene.webp", text: "As a fellow creative, I appreciate Yasser's meticulous approach. Every pixel is intentional and purposeful." }
 ];
 
 /**
@@ -32,9 +24,8 @@ const testimonialsData = [
 const About = () => {
     const containerRef = useRef(null);
     const imageWrapperRef = useRef(null);
-    const testimonialsTrackRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(null);
-    const { isAnimating, revealPage } = useTransition();
+    const { revealPage } = useTransition();
 
     useEffect(() => {
         revealPage();
@@ -56,48 +47,6 @@ const About = () => {
     }, { scope: containerRef });
 
     useMagnetic(containerRef, ".ys-magnetic", 0.4);
-
-    // 2. SEAMLESS MARQUEE & INTERACTION
-    useGSAP(() => {
-        if (isAnimating) return;
-
-        const track = testimonialsTrackRef.current;
-        if (!track) return;
-
-        const slider = track.querySelector(".ys-testimonials__slider");
-        if (!slider) return;
-
-        // Set hardware acceleration layer
-        gsap.set(track, { x: 0, willChange: "transform" });
-
-        const loop = gsap.to(track, {
-            xPercent: -50,
-            duration: 40,
-            ease: "none",
-            repeat: -1,
-            force3D: true
-        });
-
-        // Precision Hover Control
-        const onEnter = () => gsap.to(loop, { timeScale: 0.15, duration: 1.5, ease: "sine.out" });
-        const onLeave = () => gsap.to(loop, { timeScale: 1, duration: 2.0, ease: "sine.inOut" });
-
-        track.addEventListener("mouseenter", onEnter);
-        track.addEventListener("mouseleave", onLeave);
-
-        // Performance Gate
-        ScrollTrigger.create({
-            trigger: ".ys-testimonials",
-            start: "top bottom",
-            end: "bottom top",
-            onToggle: self => self.isActive ? loop.play() : loop.pause()
-        });
-
-        return () => {
-            track.removeEventListener("mouseenter", onEnter);
-            track.removeEventListener("mouseleave", onLeave);
-        };
-    }, { scope: containerRef, dependencies: [isAnimating] });
 
     // FAQ Accordion Logic
     const toggleFAQ = (index) => {
@@ -174,51 +123,7 @@ const About = () => {
 
             {/* --- TESTIMONIALS SECTION --- */}
             <LazySection height="500px">
-                <section className="ys-testimonials">
-                    <header className="ys-testimonials__header">
-                        <h2 className="ys-testimonials__title" data-ys-reveal="text">What Clients Say</h2>
-                    </header>
-                    <div className="ys-testimonials__marquee" data-ys-reveal="fade" data-ys-delay="0.2">
-                        <div className="ys-testimonials__vignette"></div>
-                        <div className="ys-testimonials__track" ref={testimonialsTrackRef}>
-                            <div className="ys-testimonials__slider">
-                                {testimonialsData.map((item, i) => (
-                                    <article className="ys-testimonial-card" key={i}>
-                                        <div className="ys-testimonial-card__bubble">
-                                            <p className="ys-testimonial-card__text">{item.text}</p>
-                                            <div className="ys-testimonial-card__pointer"></div>
-                                        </div>
-                                        <div className="ys-testimonial-card__author">
-                                            <img src={`${import.meta.env.BASE_URL}assets/images/${item.img}`} alt={item.name} className="ys-testimonial-card__avatar" />
-                                            <div className="ys-testimonial-card__info">
-                                                <span className="ys-testimonial-card__name">{item.name}</span>
-                                                <span className="ys-testimonial-card__role">{item.role}</span>
-                                            </div>
-                                        </div>
-                                    </article>
-                                ))}
-                            </div>
-                            {/* Duplicate for seamless infinite feel */}
-                            <div className="ys-testimonials__slider">
-                                {testimonialsData.map((item, i) => (
-                                    <article className="ys-testimonial-card" key={`dup-${i}`}>
-                                        <div className="ys-testimonial-card__bubble">
-                                            <p className="ys-testimonial-card__text">{item.text}</p>
-                                            <div className="ys-testimonial-card__pointer"></div>
-                                        </div>
-                                        <div className="ys-testimonial-card__author">
-                                            <img src={`${import.meta.env.BASE_URL}assets/images/${item.img}`} alt={item.name} className="ys-testimonial-card__avatar" />
-                                            <div className="ys-testimonial-card__info">
-                                                <span className="ys-testimonial-card__name">{item.name}</span>
-                                                <span className="ys-testimonial-card__role">{item.role}</span>
-                                            </div>
-                                        </div>
-                                    </article>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                <Testimonials />
             </LazySection>
 
             {/* --- FAQ SECTION --- */}
