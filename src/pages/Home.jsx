@@ -36,13 +36,57 @@ const methodologyPhases = [
  * HOME PAGE
  * Features a seamless looping video background with a cinematic entrance.
  */
-const Home = ({ appReady = true }) => {
+const Home = ({ appReady = true, isSoundOn }) => {
     const containerRef = useRef(null);
     const videoPrimaryRef = useRef(null);
     const videoSecondaryRef = useRef(null);
-    const { isAnimating, isPendingReveal } = useTransition();
+    const swooshRef = useRef(null);
+    const { isAnimating, isPendingReveal, hasIntroPlayed, setHasIntroPlayed } = useTransition();
 
     useMagnetic(containerRef, ".ys-magnetic", 0.4);
+
+    // --- AUDIO: Initialization & Cleanup ---
+    useEffect(() => {
+        const audio = new Audio(`${import.meta.env.BASE_URL}assets/sounds/swoosh-audio.MP3`);
+        audio.volume = 0;
+        swooshRef.current = audio;
+
+        return () => {
+            // Fade out on unmount/navigate
+            if (audio) {
+                gsap.to(audio, {
+                    volume: 0,
+                    duration: 0.5,
+                    onComplete: () => audio.pause()
+                });
+            }
+        };
+    }, []);
+
+    // --- AUDIO: Handle Global Toggle ---
+    useEffect(() => {
+        const audio = swooshRef.current;
+        if (!audio) return;
+
+        if (isSoundOn) {
+            // Fade IN if toggled ON (useful if mid-playback)
+            gsap.to(audio, { volume: 0.6, duration: 0.5 });
+        } else {
+            // Fade OUT if toggled OFF
+            gsap.to(audio, { volume: 0, duration: 0.5 });
+        }
+    }, [isSoundOn]);
+
+    const playSwoosh = () => {
+        const audio = swooshRef.current;
+        if (!audio || !isSoundOn) return;
+
+        audio.currentTime = 0;
+        audio.play().catch(() => { }); // Catch autoplay blocks
+
+        // Quick fade-in for smoothness vs harsh cut
+        gsap.fromTo(audio, { volume: 0 }, { volume: 0.6, duration: 0.3 }); // 0.6 is a good relative mix
+    };
 
     // --- 1. SEAMLESS DUAL-VIDEO CROSSFADE (UI UX Pro Max) ---
     useEffect(() => {
@@ -64,6 +108,10 @@ const Home = ({ appReady = true }) => {
                 inactiveVideo.currentTime = 0;
                 inactiveVideo.play();
 
+                // TRIGGER: Play swoosh 1s after loop starts
+                // Use safe trigger that reads latest ref
+                setTimeout(triggerSwooshSafe, 1000);
+
                 gsap.to(activeVideo, { opacity: 0, duration: 0.6, ease: "none" });
                 gsap.to(inactiveVideo, {
                     opacity: 1,
@@ -80,72 +128,120 @@ const Home = ({ appReady = true }) => {
 
         gsap.ticker.add(checkCrossfade);
         return () => gsap.ticker.remove(checkCrossfade);
-    }, [appReady]);
+    }, [appReady]); // Re-bind if sound setting changes to ensure latest state in closure? No, playSwoosh uses ref/prop, but closure might be stale.
+    // Actually playSwoosh is defined in render scope. useEffect closure captures it.
+    // Best to use a ref for isSoundOn or add it to dependency. Adding isSoundOn to dependency might reset video logic which isn't ideal.
+    // Better: Helper function inside useEffect or Ref for isSoundOn.
+
+    // UI UX Pro Max Optimization: Use Ref for isSoundOn to avoid re-binding video logic
+    const isSoundOnRef = useRef(isSoundOn);
+    useEffect(() => { isSoundOnRef.current = isSoundOn; }, [isSoundOn]);
+
+    // Internal play function - ALWAYS plays, just modulates volume
+    const triggerSwooshSafe = () => {
+        const audio = swooshRef.current;
+        if (!audio) return;
+
+        audio.currentTime = 0;
+        audio.play().catch(() => { });
+
+        // Only audible if sound is currently on
+        const targetVol = isSoundOnRef.current ? 0.6 : 0;
+        gsap.fromTo(audio, { volume: 0 }, { volume: targetVol, duration: 0.3 });
+    };
 
     useGSAP(() => {
         if (!appReady || isPendingReveal) return;
 
         // 2. MANUAL CINEMATIC INTRO (Optimized Speed - UI UX Pro Max)
-        const tl = gsap.timeline();
-
-        // Initial States
-        gsap.set(".ys-hero__cover", { opacity: 1 });
-        gsap.set(".ys-hero__bg", { scale: 1.1 }); // Reduced initial scale for snappier feel
-        gsap.set(".ys-hero__title", { y: 60, opacity: 0 }); // Reduced distance
-        gsap.set(".ys-hero__name", { y: 20, opacity: 0 });
-        gsap.set(".ys-hero__slogan-title", { opacity: 0, y: 15 });
-        gsap.set(".ys-hero__slogan-sub", { opacity: 0 });
-        gsap.set(".ys-hero__cta", { opacity: 0, y: 10 });
-        gsap.set(".ys-hero__scroll-indicator", { opacity: 0 });
-
-        tl.to(".ys-hero__cover", {
-            opacity: 0,
-            duration: 1.2, // Faster (was 2)
-            ease: "power2.inOut",
-            delay: 0.2
-        })
-            .call(() => {
-                videoPrimaryRef.current?.play();
-            }, null, 0.2 + (1.2 * 0.5)) // Play at 50% point of the fade animation (0.2 delay + 0.6s)
-            .to(".ys-hero__bg", {
-                scale: 1,
-                duration: 2, // Faster (was 3)
-                ease: "power3.out"
-            }, 0.2)
-            .to(".ys-hero__title", {
+        if (hasIntroPlayed) {
+            // --- INSTANT STATE (Return Visit) ---
+            // (We don't play sound on instant revisit unless user specifically asks for it, 
+            // but 'intro started playing' implies the animation sequence. 
+            // Logic: Only play if we run the animation keyframes below)
+            gsap.set(".ys-hero__cover", { opacity: 0 });
+            gsap.set(".ys-hero__bg", { scale: 1 });
+            gsap.set([
+                ".ys-hero__title",
+                ".ys-hero__name",
+                ".ys-hero__slogan-title",
+                ".ys-hero__slogan-sub",
+                ".ys-hero__cta",
+                ".ys-hero__scroll-indicator"
+            ], {
                 y: 0,
-                opacity: 1,
-                duration: 1.2, // Faster (was 1.5)
-                ease: "expo.out" // Snappier ease
-            }, "-=1.0")
-            .to(".ys-hero__name", {
-                y: 0,
-                opacity: 1,
+                opacity: 1
+            });
+            videoPrimaryRef.current?.play();
+        } else {
+            // --- ANIMATION SEQUENCE (First Visit) ---
+            const tl = gsap.timeline({
+                onComplete: () => setHasIntroPlayed(true)
+            });
+
+            // Initial States
+            gsap.set(".ys-hero__cover", { opacity: 1 });
+            gsap.set(".ys-hero__bg", { scale: 1.1 });
+            gsap.set(".ys-hero__title", { y: 60, opacity: 0 });
+            gsap.set(".ys-hero__name", { y: 20, opacity: 0 });
+            gsap.set(".ys-hero__slogan-title", { opacity: 0, y: 15 });
+            gsap.set(".ys-hero__slogan-sub", { opacity: 0 });
+            gsap.set(".ys-hero__cta", { opacity: 0, y: 10 });
+            gsap.set(".ys-hero__scroll-indicator", { opacity: 0 });
+
+            // TRIGGER: Initial Swoosh (1s delay relative to start)
+            // Since we have a delayed start (0.2s delay on first tween), we can just schedule it.
+            setTimeout(triggerSwooshSafe, 1000);
+
+            tl.to(".ys-hero__cover", {
+                opacity: 0,
                 duration: 1.2,
-                ease: "expo.out"
-            }, "-=1.0")
-            .to(".ys-hero__slogan-title", {
-                y: 0,
-                opacity: 1,
-                duration: 0.8,
-                ease: "power2.out"
-            }, "-=0.8")
-            .to(".ys-hero__slogan-sub", {
-                opacity: 1,
-                duration: 0.8,
-                ease: "power2.out"
-            }, "-=0.6")
-            .to(".ys-hero__cta", {
-                y: 0,
-                opacity: 1,
-                duration: 0.8,
-                ease: "power2.out"
-            }, "-=0.4")
-            .to(".ys-hero__scroll-indicator", {
-                opacity: 1,
-                duration: 0.8,
-                ease: "power2.out"
-            }, "-=0.2");
+                ease: "power2.inOut",
+                delay: 0.2
+            })
+                .call(() => {
+                    videoPrimaryRef.current?.play();
+                }, null, 0.2 + (1.2 * 0.5))
+                .to(".ys-hero__bg", {
+                    scale: 1,
+                    duration: 2,
+                    ease: "power3.out"
+                }, 0.2)
+                .to(".ys-hero__title", {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1.2,
+                    ease: "expo.out"
+                }, "-=1.0")
+                .to(".ys-hero__name", {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1.2,
+                    ease: "expo.out"
+                }, "-=1.0")
+                .to(".ys-hero__slogan-title", {
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.8,
+                    ease: "power2.out"
+                }, "-=0.8")
+                .to(".ys-hero__slogan-sub", {
+                    opacity: 1,
+                    duration: 0.8,
+                    ease: "power2.out"
+                }, "-=0.6")
+                .to(".ys-hero__cta", {
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.8,
+                    ease: "power2.out"
+                }, "-=0.4")
+                .to(".ys-hero__scroll-indicator", {
+                    opacity: 1,
+                    duration: 0.8,
+                    ease: "power2.out"
+                }, "-=0.2");
+        }
 
         // 3. PARALLAX
         gsap.to(".ys-hero__bg", {

@@ -28,38 +28,36 @@ function InnerApp() {
   const [audio, setAudio] = useState(null);
   const [isSoundOn, setIsSoundOn] = useState(false);
 
-  // Initialize audio only when requested or after a delay to improve LCP
-  useEffect(() => {
-    const baseUrl = import.meta.env.BASE_URL || '/';
-    const timer = setTimeout(() => {
-      const a = new Audio(`${baseUrl}assets/sounds/background-ost.mp3`);
-      a.loop = true;
-      setAudio(a);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
   // --- Audio Effect Logic ---
   useEffect(() => {
     if (!audio) return;
 
     if (isSoundOn) {
-      audio.play().then(() => {
-        gsap.to(audio, { volume: 0.4, duration: 1.5, ease: "sine.inOut" });
-      }).catch(err => {
-        console.warn("Audio playback blocked or failed:", err);
-      });
+      // Ensure it's playing (in case calls were blocked previously)
+      if (audio.paused) audio.play().catch(e => console.warn(e));
+
+      gsap.to(audio, { volume: 0.4, duration: 1.5, ease: "sine.inOut" });
     } else {
+      // Don't pause, just silence it so it keeps timing
       gsap.to(audio, {
         volume: 0,
         duration: 1,
-        ease: "sine.inOut",
-        onComplete: () => {
-          if (!isSoundOn) audio.pause();
-        }
+        ease: "sine.inOut"
       });
     }
   }, [isSoundOn, audio]);
+
+  useEffect(() => {
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    const timer = setTimeout(() => {
+      const a = new Audio(`${baseUrl}assets/sounds/background-ost.mp3`);
+      a.loop = true;
+      a.volume = 0; // Start silent
+      a.play().catch(() => { }); // Attempt autostart silent
+      setAudio(a);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // 1. Initialize ScrollSmoother ONCE to prevent "blank" frames or crashes during re-creation
   useGSAP(() => {
@@ -172,7 +170,7 @@ function InnerApp() {
         <div id="smooth-content" ref={contentRef}>
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
-              <Route path="/" element={<Home appReady={hasMounted} />} />
+              <Route path="/" element={<Home appReady={hasMounted} isSoundOn={isSoundOn} />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               {/* Force redirect to home if route not found */}

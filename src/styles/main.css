@@ -513,20 +513,22 @@ img[loading="lazy"].loaded {
     padding: 0.12em 0;
 
     /* Perceived Instantness - Basic visibility before GSAP */
-    opacity: 1;
+    opacity: 0; /* Changed from 1 to 0 to prevent FOUC */
     transition: transform 0.8s var(--ease-out-expo);
 }
 
-.ys-hero.is-loaded .ys-hero__title {
+/* .ys-hero.is-loaded .ys-hero__title {
     opacity: 1;
-}
+} REMOVED to prevent flash before GSAP */
 
 .ys-hero__name {
     font-family: var(--font-mono);
     font-size: 1.125rem;
     text-transform: uppercase;
     letter-spacing: 0.3em;
-    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    opacity: 0; /* Changed from 0.7 to 0 */
     margin-top: 0;
 }
 
@@ -548,13 +550,16 @@ img[loading="lazy"].loaded {
     font-size: clamp(2.2rem, 5.5vw, 4rem);
     font-weight: 200;
     letter-spacing: -0.01em;
+    font-weight: 200;
+    letter-spacing: -0.01em;
     margin-bottom: 0.5vh;
+    opacity: 0; /* Init hidden */
 }
 
 .ys-hero__slogan-sub {
     font-family: var(--font-mono);
     font-size: 1rem;
-    opacity: 0.6;
+    opacity: 0; /* Changed from 0.6 to 0 */
     letter-spacing: 0.1em;
 }
 
@@ -578,6 +583,7 @@ img[loading="lazy"].loaded {
 
 .ys-hero__cta {
     margin-top: 1vh;
+    opacity: 0; /* Init hidden */
 }
 
 .ys-hero__scroll-indicator {
@@ -591,7 +597,10 @@ img[loading="lazy"].loaded {
     align-items: center;
     gap: 0.5rem;
     /* Perfectly matches title/name gap now */
+    gap: 0.5rem;
+    /* Perfectly matches title/name gap now */
     z-index: 2;
+    opacity: 0; /* Init hidden */
 }
 
 .ys-hero__scroll-label {

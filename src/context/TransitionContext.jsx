@@ -16,6 +16,7 @@ export const TransitionProvider = ({ children }) => {
     const shuttersRef = useRef([]);
     const [isAnimating, setIsAnimating] = useState(false);
     const [isPendingReveal, setIsPendingReveal] = useState(true);
+    const [hasIntroPlayed, setHasIntroPlayed] = useState(false);
 
     // --- AUTOMATION: Global Reveal Trigger ---
     useEffect(() => {
@@ -59,6 +60,10 @@ export const TransitionProvider = ({ children }) => {
         const tl = gsap.timeline({
             onComplete: () => {
                 setIsPendingReveal(true);
+                // FEATURE: Re-enable intro animation if navigating back to home
+                if (to === '/') {
+                    setHasIntroPlayed(false);
+                }
                 navigate(to);
             }
         });
@@ -77,7 +82,7 @@ export const TransitionProvider = ({ children }) => {
     const revealPage = () => setIsPendingReveal(false);
 
     return (
-        <TransitionContext.Provider value={{ navigateWithTransition, isAnimating, revealPage, isPendingReveal }}>
+        <TransitionContext.Provider value={{ navigateWithTransition, isAnimating, revealPage, isPendingReveal, hasIntroPlayed, setHasIntroPlayed }}>
             {children}
 
             {/* THE MASTER TRANSITION LAYER */}
