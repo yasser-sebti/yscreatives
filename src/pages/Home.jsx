@@ -40,7 +40,7 @@ const Home = ({ appReady = true }) => {
     const containerRef = useRef(null);
     const videoPrimaryRef = useRef(null);
     const videoSecondaryRef = useRef(null);
-    const { isAnimating } = useTransition();
+    const { isAnimating, isPendingReveal } = useTransition();
 
     useMagnetic(containerRef, ".ys-magnetic", 0.4);
 
@@ -83,7 +83,7 @@ const Home = ({ appReady = true }) => {
     }, [appReady]);
 
     useGSAP(() => {
-        if (!appReady) return;
+        if (!appReady || isPendingReveal) return;
 
         // 2. MANUAL CINEMATIC INTRO (Optimized Speed - UI UX Pro Max)
         const tl = gsap.timeline();
@@ -104,6 +104,9 @@ const Home = ({ appReady = true }) => {
             ease: "power2.inOut",
             delay: 0.2
         })
+            .call(() => {
+                videoPrimaryRef.current?.play();
+            }, null, 0.2 + (1.2 * 0.5)) // Play at 50% point of the fade animation (0.2 delay + 0.6s)
             .to(".ys-hero__bg", {
                 scale: 1,
                 duration: 2, // Faster (was 3)
@@ -167,7 +170,7 @@ const Home = ({ appReady = true }) => {
             }
         );
 
-    }, { scope: containerRef, dependencies: [appReady] });
+    }, { scope: containerRef, dependencies: [appReady, isPendingReveal] });
 
     return (
         <main ref={containerRef} className="ys-home-v2">
@@ -178,7 +181,6 @@ const Home = ({ appReady = true }) => {
                         ref={videoPrimaryRef}
                         src={`${import.meta.env.BASE_URL}assets/videos/yasser-animated.mp4`}
                         className="ys-hero__video"
-                        autoPlay
                         muted
                         playsInline
                         preload="auto"
