@@ -1,52 +1,53 @@
-import{u as o,d as i,a as r,j as e,T as c}from"./index-5Bj9CmX4.js";import{r as a}from"./react-vendor-CDLYgQtX.js";import{S as l}from"./SEO-Cr_yVTe3.js";import"./gsap-vendor-DwQni7f4.js";const u=()=>{const t=a.useRef(null),{revealPage:n}=o(),{setIsSoundOn:s}=i();return r(t,".ys-magnetic",.4),a.useEffect(()=>{s(!1),n()},[]),e.jsxs("main",{className:"ys-404",ref:t,children:[e.jsx(l,{title:"Page Not Found"}),e.jsxs("div",{className:"ys-404__content",children:[e.jsx("h1",{className:"ys-404__code","data-ys-reveal":"fade-up",children:"404"}),e.jsx("p",{className:"ys-404__text","data-ys-reveal":"fade-up","data-ys-delay":"0.1",children:"The page you are looking for has vanished into component void."}),e.jsx("div",{className:"ys-404__cta","data-ys-reveal":"fade-up","data-ys-delay":"0.2",children:e.jsx(c,{to:"/",className:"ys-button-special ys-magnetic",children:"Return Home"})})]}),e.jsx("style",{children:`
-                .ys-404 {
+import{u as o,a as i,j as e,T as r}from"./index-MIBIhncj.js";import{r as s}from"./react-vendor-CDLYgQtX.js";import{S as a}from"./SEO-Cr_yVTe3.js";import"./gsap-vendor-DwQni7f4.js";const d=()=>{const t=s.useRef(null),{revealPage:n}=o();return i(t,".ys-magnetic",.4),s.useEffect(()=>{n()},[]),e.jsxs("main",{className:"ys-courses-coming",ref:t,children:[e.jsx(a,{title:"Courses - Coming Soon"}),e.jsxs("div",{className:"ys-courses-coming__content",children:[e.jsx("h1",{className:"ys-courses-coming__title","data-ys-reveal":"fade-up",children:"Coming Soon"}),e.jsx("p",{className:"ys-courses-coming__text","data-ys-reveal":"fade-up","data-ys-delay":"0.1",children:"We are currently working on crafting educational experiences that will elevate your design journey. Stay tuned."}),e.jsx("div",{className:"ys-courses-coming__cta","data-ys-reveal":"fade-up","data-ys-delay":"0.2",children:e.jsx(r,{to:"/",className:"ys-button-special ys-magnetic",children:"Return Home"})})]}),e.jsx("style",{children:`
+                .ys-courses-coming {
                     height: 100vh;
                     width: 100vw;
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    background-color: #000000; /* Pure Black Request */
+                    background-color: #000000;
                     color: #fff;
                     overflow: hidden;
                     position: relative;
                 }
                 
-                .ys-404__content {
+                .ys-courses-coming__content {
                     text-align: center;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    gap: 32px; /* Increased gap */
+                    gap: 32px;
                     position: relative;
                     z-index: 10;
+                    padding: 0 var(--grid-margin);
                 }
 
-                .ys-404__code {
+                .ys-courses-coming__title {
                     font-family: 'PP Editorial New', serif;
-                    font-size: clamp(4rem, 15vw, 10rem); /* Significantly Reduced */
+                    font-size: clamp(3rem, 12vw, 8rem);
                     line-height: 0.8; 
                     font-weight: 200;
                     margin: 0;
                     color: #ffffff;
                     letter-spacing: -0.04em;
                     padding-bottom: 2rem;
+                    text-transform: capitalize;
                 }
 
-                .ys-404__text {
+                .ys-courses-coming__text {
                     font-family: 'DM Mono', monospace;
-                    font-size: 1.25rem; /* Larger Body Text */
+                    font-size: 1.25rem;
                     color: rgba(255, 255, 255, 0.6);
-                    max-width: 480px;
+                    max-width: 580px;
                     line-height: 1.6;
                     margin-bottom: 12px;
                 }
 
-                .ys-404__cta {
+                .ys-courses-coming__cta {
                     display: inline-block;
                     width: fit-content;
                 }
 
-                /* Exact Match: Header 'Courses' Button Style */
                 .ys-button-special {
                     display: inline-flex;
                     align-items: center;
@@ -69,4 +70,4 @@ import{u as o,d as i,a as r,j as e,T as c}from"./index-5Bj9CmX4.js";import{r as 
                     background: #fff;
                     color: #000;
                 }
-            `})]})};export{u as default};
+            `})]})};export{d as default};
