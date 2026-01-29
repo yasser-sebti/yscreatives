@@ -8,14 +8,20 @@ import LoadingSpinner from './components/Loading/LoadingSpinner';
 import Scrollbar from './components/Scrollbar/Scrollbar';
 import { TransitionProvider } from './context/TransitionContext';
 import { useTransition } from './context/TransitionContext';
+import { SoundProvider, useSound } from './context/SoundContext';
 import { useGlobalReveal } from './hooks/useReveal';
+import { useClickSound } from './hooks/useClickSound';
+import { useBackgroundAudio } from './hooks/useBackgroundAudio';
 import { preloadAssets } from './utils/AssetLoader';
 import './styles/main.css';
 
 // Lazy load pages for performance
+import SkipLink from './components/Accessibility/SkipLink';
+
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 function InnerApp() {
   const wrapperRef = useRef(null);
@@ -25,39 +31,13 @@ function InnerApp() {
   const { isAnimating, isPendingReveal } = useTransition();
 
   // --- Audio Logic State ---
-  const [audio, setAudio] = useState(null);
-  const [isSoundOn, setIsSoundOn] = useState(false);
+  const { isSoundOn, setIsSoundOn } = useSound();
 
   // --- Audio Effect Logic ---
-  useEffect(() => {
-    if (!audio) return;
+  // Advanced hook handles Crossfade Loop + Snappy Transitions
+  useBackgroundAudio(isSoundOn);
 
-    if (isSoundOn) {
-      // Ensure it's playing (in case calls were blocked previously)
-      if (audio.paused) audio.play().catch(e => console.warn(e));
 
-      gsap.to(audio, { volume: 0.4, duration: 1.5, ease: "sine.inOut" });
-    } else {
-      // Don't pause, just silence it so it keeps timing
-      gsap.to(audio, {
-        volume: 0,
-        duration: 1,
-        ease: "sine.inOut"
-      });
-    }
-  }, [isSoundOn, audio]);
-
-  useEffect(() => {
-    const baseUrl = import.meta.env.BASE_URL || '/';
-    const timer = setTimeout(() => {
-      const a = new Audio(`${baseUrl}assets/sounds/background-ost.mp3`);
-      a.loop = true;
-      a.volume = 0; // Start silent
-      a.play().catch(() => { }); // Attempt autostart silent
-      setAudio(a);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
 
   // 1. Initialize ScrollSmoother ONCE to prevent "blank" frames or crashes during re-creation
   useGSAP(() => {
@@ -104,6 +84,7 @@ function InnerApp() {
   }, [location.pathname]);
 
   const [hasMounted, setHasMounted] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
 
   // --- Asset Preloading Logic ---
   useEffect(() => {
@@ -128,7 +109,11 @@ function InnerApp() {
       .then(() => {
         // Small buffer for rendering engine to settle
         setTimeout(() => {
-          setHasMounted(true);
+          setHasMounted(true); // Triggers Fade Out
+
+          // Remove from DOM after transition completes
+          setTimeout(() => setShowLoader(false), 800);
+
           // Refresh ScrollTrigger after mounting to prevent "footer stuck" issues
           ScrollTrigger.refresh();
         }, 600);
@@ -143,6 +128,14 @@ function InnerApp() {
   // Activate Surgical Global Reveal System
   useGlobalReveal(wrapperRef, location.pathname, isAnimating, isPendingReveal, hasMounted);
 
+  // 404 is a dark page, so it should NOT use the inverted (white) header/footer.
+  const is404 = !['/', '/about', '/contact'].includes(location.pathname);
+  const isInvertedPage = location.pathname === '/contact';
+
+  // Global Click Sound Effect (Exceptions: Allow clicks on 404 even if sound is off)
+  useClickSound(isSoundOn || is404);
+
+
   // Global refresh on window load
   useEffect(() => {
     const handleLoad = () => ScrollTrigger.refresh();
@@ -150,12 +143,11 @@ function InnerApp() {
     return () => window.removeEventListener('load', handleLoad);
   }, []);
 
-  const isInvertedPage = location.pathname === '/contact';
-
   return (
     <>
-      {/* Initial Application Preloader - Only on refresh/first visit */}
-      {!hasMounted && <LoadingSpinner />}
+      <SkipLink />
+      {/* Initial Application Preloader - Fades out smoothly */}
+      {showLoader && <LoadingSpinner isExiting={hasMounted} />}
 
       {/* Header must be OUTSIDE of smooth-content if it is position: fixed */}
       {hasMounted && (
@@ -168,13 +160,14 @@ function InnerApp() {
 
       <div id="smooth-wrapper" ref={wrapperRef} style={{ visibility: hasMounted ? 'visible' : 'hidden' }}>
         <div id="smooth-content" ref={contentRef}>
+          <div id="main-content" style={{ position: 'absolute', top: 0, left: 0 }} />
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
               <Route path="/" element={<Home appReady={hasMounted} isSoundOn={isSoundOn} />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               {/* Force redirect to home if route not found */}
-              <Route path="*" element={<Home appReady={hasMounted} />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
 
@@ -188,11 +181,12 @@ function InnerApp() {
 export default function App() {
   return (
     <Router basename={import.meta.env.BASE_URL}>
-      <TransitionProvider>
-
-        <Scrollbar />
-        <InnerApp />
-      </TransitionProvider>
+      <SoundProvider>
+        <TransitionProvider>
+          <Scrollbar />
+          <InnerApp />
+        </TransitionProvider>
+      </SoundProvider>
     </Router>
   );
 }

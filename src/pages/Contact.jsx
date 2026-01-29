@@ -3,6 +3,7 @@ import { useTransition } from '../context/TransitionContext';
 import { gsap, useGSAP, SplitText, ScrollTrigger, ScrollSmoother } from '../gsap';
 
 import MessageSentOverlay from '../components/MessageSentOverlay/MessageSentOverlay';
+import SEO from '../components/SEO/SEO';
 import { useMagnetic } from '../hooks/useMagnetic';
 import '../styles/Contact.css';
 
@@ -338,6 +339,7 @@ const Contact = () => {
     return (
         <>
             <main className="ys-contact" ref={containerRef}>
+                <SEO title="Contact" />
                 {/* Decorative Lines */}
                 <div className="ys-contact__line ys-contact__line--top" data-ys-reveal="scale-x"></div>
 

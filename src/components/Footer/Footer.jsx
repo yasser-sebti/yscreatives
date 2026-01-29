@@ -26,8 +26,13 @@ const Footer = ({ inverted = false }) => {
                     {/* Column 1: Wordmark */}
                     <div className="ys-footer__col ys-footer__col--wordmark">
                         <h2 className="ys-footer__wordmark">
-                            <span>Yasser</span>
-                            <span>Creatives</span>
+                            <img
+                                src={`${import.meta.env.BASE_URL}assets/images/${inverted ? 'Logo horizontal black.png' : 'Logo horizontal white.png'}`}
+                                alt="Yasser Creatives"
+                                className="ys-footer__wordmark-img"
+                                width="300"
+                                height="auto"
+                            />
                         </h2>
                     </div>
 

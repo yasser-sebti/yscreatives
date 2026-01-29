@@ -3,6 +3,7 @@ import { useTransition } from '../context/TransitionContext';
 import TransitionLink from '../components/TransitionLink/TransitionLink';
 import { gsap, useGSAP, SplitText } from '../gsap';
 import LazySection from '../components/LazySection/LazySection';
+import SEO from '../components/SEO/SEO';
 import '../styles/About.css';
 
 import { useMagnetic } from '../hooks/useMagnetic';
@@ -81,6 +82,7 @@ const About = () => {
 
     return (
         <div ref={containerRef} className="ys-about-page">
+            <SEO title="About" />
             {/* --- INTRO SECTION --- */}
             <section className="ys-about-intro">
                 <div className="ys-grid-line" data-ys-reveal="scale-x"></div>

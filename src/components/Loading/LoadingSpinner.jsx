@@ -1,11 +1,18 @@
 import React, { useEffect, useRef, memo } from 'react';
 import { gsap } from '../../gsap';
 
-const LoadingSpinner = () => {
+const LoadingSpinner = ({ isExiting }) => {
     return (
-        <div className="ys-loader">
+        <div className={`ys-loader ${isExiting ? 'is-exiting' : ''}`}>
             <div className="ys-loader__content">
-                <div className="ys-loader__logo">YS</div>
+                <div className="ys-loader__logo">
+                    <img
+                        src={`${import.meta.env.BASE_URL}assets/images/Logo White.png`}
+                        alt="YS"
+                        width="80"
+                        height="32"
+                    />
+                </div>
                 <svg className="ys-loader__svg" viewBox="0 0 50 50">
                     <circle
                         className="ys-loader__circle"
@@ -30,6 +37,12 @@ const LoadingSpinner = () => {
                     top: 0;
                     left: 0;
                     z-index: 9999999;
+                    transition: opacity 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+                    opacity: 1;
+                }
+                .ys-loader.is-exiting {
+                    opacity: 0;
+                    pointer-events: none;
                 }
                 .ys-loader__content {
                     display: flex;
@@ -38,10 +51,15 @@ const LoadingSpinner = () => {
                     gap: 24px;
                 }
                 .ys-loader__logo {
-                    font-family: 'PP Editorial New', serif;
-                    font-size: 2rem;
-                    color: #fff;
-                    letter-spacing: -0.05em;
+                    /* Typography styles removed for Image */
+                    width: 90px;
+                    display: flex;
+                    justify-content: center;
+                }
+                .ys-loader__logo img {
+                    width: 100%;
+                    height: auto;
+                    object-fit: contain;
                 }
                 .ys-loader__svg {
                     width: 32px;

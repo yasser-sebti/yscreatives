@@ -11,7 +11,15 @@ const Header = ({ isSoundOn, setIsSoundOn, inverted }) => {
     return (
         <header className={`ys-header ${inverted ? 'is-inverted' : ''}`} ref={headerRef}>
             <div className="ys-header__logo">
-                <TransitionLink to="/" className="ys-magnetic">YC</TransitionLink>
+                <TransitionLink to="/" className="ys-magnetic">
+                    <img
+                        src={`${import.meta.env.BASE_URL}assets/images/${inverted ? 'Logo Black.png' : 'Logo White.png'}`}
+                        alt="Yasser Creatives"
+                        className="ys-header__logo-img"
+                        width="100"
+                        height="40"
+                    />
+                </TransitionLink>
             </div>
             <nav className="ys-header__nav">
                 <div className="ys-header__nav-left">

@@ -320,10 +320,14 @@ img[loading="lazy"].loaded {
 
 .ys-header__logo a {
     display: inline-block;
-    font-family: var(--font-heading);
-    font-size: 2rem;
-    font-weight: 200;
-    letter-spacing: -0.02em;
+    line-height: 0;
+}
+
+.ys-header__logo-img {
+    height: 45px;
+    width: auto;
+    object-fit: contain;
+    will-change: transform;
 }
 
 .ys-header__nav {
@@ -513,7 +517,8 @@ img[loading="lazy"].loaded {
     padding: 0.12em 0;
 
     /* Perceived Instantness - Basic visibility before GSAP */
-    opacity: 0; /* Changed from 1 to 0 to prevent FOUC */
+    opacity: 0;
+    /* Changed from 1 to 0 to prevent FOUC */
     transition: transform 0.8s var(--ease-out-expo);
 }
 
@@ -528,7 +533,8 @@ img[loading="lazy"].loaded {
     letter-spacing: 0.3em;
     text-transform: uppercase;
     letter-spacing: 0.3em;
-    opacity: 0; /* Changed from 0.7 to 0 */
+    opacity: 0;
+    /* Changed from 0.7 to 0 */
     margin-top: 0;
 }
 
@@ -553,13 +559,15 @@ img[loading="lazy"].loaded {
     font-weight: 200;
     letter-spacing: -0.01em;
     margin-bottom: 0.5vh;
-    opacity: 0; /* Init hidden */
+    opacity: 0;
+    /* Init hidden */
 }
 
 .ys-hero__slogan-sub {
     font-family: var(--font-mono);
     font-size: 1rem;
-    opacity: 0; /* Changed from 0.6 to 0 */
+    opacity: 0;
+    /* Changed from 0.6 to 0 */
     letter-spacing: 0.1em;
 }
 
@@ -583,7 +591,8 @@ img[loading="lazy"].loaded {
 
 .ys-hero__cta {
     margin-top: 1vh;
-    opacity: 0; /* Init hidden */
+    opacity: 0;
+    /* Init hidden */
 }
 
 .ys-hero__scroll-indicator {
@@ -600,7 +609,8 @@ img[loading="lazy"].loaded {
     gap: 0.5rem;
     /* Perfectly matches title/name gap now */
     z-index: 2;
-    opacity: 0; /* Init hidden */
+    opacity: 0;
+    /* Init hidden */
 }
 
 .ys-hero__scroll-label {
@@ -1223,19 +1233,23 @@ img[loading="lazy"].loaded {
 }
 
 /* Wordmark Column */
+/* Wordmark Column */
 .ys-footer__wordmark {
-    font-family: var(--font-heading);
-    font-size: 4.5rem;
-    font-weight: 200;
-    /* Explicitly use light style */
-    line-height: 0.85;
-    letter-spacing: -0.03em;
-    color: var(--void-white);
     margin: 0;
     display: flex;
     flex-direction: column;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.ys-footer__wordmark-img {
+    width: 280px;
+    height: auto;
+    object-fit: contain;
+    margin-left: -5px;
+    /* Visual optical alignment */
+    will-change: opacity;
+    transition: opacity 0.3s ease;
 }
 
 /* Labels (Titles) */
@@ -1362,6 +1376,10 @@ img[loading="lazy"].loaded {
 @media (max-width: 992px) {
     .ys-footer__grid {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .ys-footer__wordmark-img {
+        width: 220px;
     }
 }
 

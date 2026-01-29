@@ -100,7 +100,10 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                                     ...performanceConfig
                                 },
                                 delay: delay,
-                                overwrite: 'auto'
+                                overwrite: 'auto',
+                                onComplete: () => {
+                                    // Optional: Clear transforms if needed, but for text usually fine.
+                                }
                             });
                         }
                     } else if (type === 'image') {
@@ -145,7 +148,12 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                                 ...performanceConfig
                             },
                             delay: delay,
-                            overwrite: 'auto'
+                            overwrite: 'auto',
+                            onComplete: () => {
+                                // CRITICAL: Remove clip-path so magnetic elements aren't cropped
+                                el.style.clipPath = '';
+                                el.style.visibility = 'visible';
+                            }
                         });
                     } else if (type === 'scale-x') {
                         gsap.to(el, {

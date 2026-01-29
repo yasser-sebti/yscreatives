@@ -10,6 +10,7 @@ import { useMagnetic } from '../hooks/useMagnetic';
 const Brands = lazy(() => import('../components/Brands/Brands'));
 const Portfolio = lazy(() => import('../components/Portfolio/Portfolio'));
 const CTA = lazy(() => import('../components/CTA/CTA'));
+import SEO from '../components/SEO/SEO';
 
 const methodologyPhases = [
     {
@@ -47,7 +48,15 @@ const Home = ({ appReady = true, isSoundOn }) => {
 
     // --- AUDIO: Initialization & Cleanup ---
     useEffect(() => {
-        const audio = new Audio(`${import.meta.env.BASE_URL}assets/sounds/swoosh-audio.MP3`);
+        const getAssetPath = (path) => {
+            let base = import.meta.env.BASE_URL || '/';
+            if (base === './' || base === '.') base = '/';
+            const cleanBase = base.endsWith('/') ? base : `${base}/`;
+            const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+            return `${cleanBase}${cleanPath}`;
+        };
+
+        const audio = new Audio(getAssetPath('assets/sounds/swoosh-audio.MP3'));
         audio.volume = 0;
         swooshRef.current = audio;
 
@@ -270,6 +279,7 @@ const Home = ({ appReady = true, isSoundOn }) => {
 
     return (
         <main ref={containerRef} className="ys-home-v2">
+            <SEO title="Home" />
             {/* --- HERO SECTION --- */}
             <section className={`ys-hero ${appReady ? 'is-loaded' : ''}`}>
                 <div className="ys-hero__bg">
