@@ -55,10 +55,8 @@ const Footer = ({ inverted = false }) => {
                         <div className="ys-footer__links-grid ys-footer__links-grid--two-col">
                             <TransitionLink to="/" className="ys-footer__link">Home</TransitionLink>
                             <TransitionLink to="/about" className="ys-footer__link">About</TransitionLink>
-                            <TransitionLink to="#work" className="ys-footer__link">Selected work</TransitionLink>
-                            <TransitionLink to="#resources" className="ys-footer__link">Resources</TransitionLink>
-                            <TransitionLink to="#courses" className="ys-footer__link">Courses</TransitionLink>
-                            <TransitionLink to="#pricing" className="ys-footer__link">Pricing</TransitionLink>
+                            <TransitionLink to="/shop" className="ys-footer__link">Shop</TransitionLink>
+                            <TransitionLink to="/courses" className="ys-footer__link">Courses</TransitionLink>
                             <TransitionLink to="#contact" className="ys-footer__link">Contact</TransitionLink>
                         </div>
                     </div>
@@ -68,10 +66,10 @@ const Footer = ({ inverted = false }) => {
                         <div className="ys-footer__section">
                             <p className="ys-footer__label">Connect</p>
                             <div className="ys-footer__links-grid ys-footer__links-grid--two-col">
-                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="ys-footer__link">Instagram</a>
-                                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="ys-footer__link">LinkedIn</a>
-                                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="ys-footer__link">Facebook</a>
-                                <a href="https://behance.net" target="_blank" rel="noopener noreferrer" className="ys-footer__link">Behance</a>
+                                <a href="https://www.instagram.com/yasser.creatives/" target="_blank" rel="noopener noreferrer" className="ys-footer__link">Instagram</a>
+                                <a href="https://dz.linkedin.com/in/yasser-sebti" target="_blank" rel="noopener noreferrer" className="ys-footer__link">LinkedIn</a>
+                                <a href="https://www.facebook.com/Yasser.Abdelmotaleb.Sebti/" target="_blank" rel="noopener noreferrer" className="ys-footer__link">Facebook</a>
+                                <a href="https://www.behance.net/yassersebti" target="_blank" rel="noopener noreferrer" className="ys-footer__link">Behance</a>
                             </div>
                         </div>
 

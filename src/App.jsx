@@ -20,7 +20,9 @@ import SkipLink from './components/Accessibility/SkipLink';
 
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
+const Shop = lazy(() => import('./pages/Shop'));
 const Contact = lazy(() => import('./pages/Contact'));
+const Courses = lazy(() => import('./pages/Courses'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 function InnerApp() {
@@ -129,8 +131,8 @@ function InnerApp() {
   useGlobalReveal(wrapperRef, location.pathname, isAnimating, isPendingReveal, hasMounted);
 
   // 404 is a dark page, so it should NOT use the inverted (white) header/footer.
-  const is404 = !['/', '/about', '/contact'].includes(location.pathname);
-  const isInvertedPage = location.pathname === '/contact';
+  const is404 = !['/', '/about', '/contact', '/shop'].includes(location.pathname);
+  const isInvertedPage = location.pathname === '/contact' || location.pathname === '/shop';
 
   // Global Click Sound Effect (Exceptions: Allow clicks on 404 even if sound is off)
   useClickSound(isSoundOn || is404);
@@ -165,7 +167,9 @@ function InnerApp() {
             <Routes>
               <Route path="/" element={<Home appReady={hasMounted} isSoundOn={isSoundOn} />} />
               <Route path="/about" element={<About />} />
+              <Route path="/shop" element={<Shop />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/courses" element={<Courses />} />
               {/* Force redirect to home if route not found */}
               <Route path="*" element={<NotFound />} />
             </Routes>

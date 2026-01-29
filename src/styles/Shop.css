@@ -1,0 +1,183 @@
+/* =============================================================================
+   SHOP PAGE - Minimalist Grid
+   ============================================================================= */
+
+.ys-shop {
+    background: #f1f1f1;
+    color: var(--void-black);
+    min-height: 100vh;
+    padding: calc(var(--space-lg) + 60px) 0 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Container */
+.ys-shop__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--grid-margin);
+    position: relative;
+    z-index: 1;
+}
+
+/* Header Section */
+.ys-shop__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: var(--space-md);
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.ys-shop__title {
+    font-family: var(--font-serif);
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 200;
+    color: var(--void-black);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin: 0;
+    padding-top: 20px;
+}
+
+/* Currency Toggles */
+.ys-shop__controls {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.ys-shop__currency-btn {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--void-black);
+    background: transparent;
+    border-radius: 0;
+    cursor: pointer;
+    color: var(--void-black);
+    transition: all 0.3s var(--ease-out-expo);
+}
+
+.ys-shop__currency-btn:hover,
+.ys-shop__currency-btn.is-active {
+    background: var(--void-black);
+    color: var(--void-white);
+}
+
+/* Grid Layout */
+.ys-shop__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-md);
+    padding-bottom: var(--space-lg);
+}
+
+/* Shop Item Card */
+.ys-shop-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    cursor: pointer;
+}
+
+.ys-shop-item__image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: #e0e0e0;
+    /* Transformation Masking Fixes */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+.ys-shop-item__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    will-change: transform;
+    /* Anti-Aliasing for Scale */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+/* Details */
+.ys-shop-item__details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Typography Update: Editorial New, Ultra Light, Bigger */
+.ys-shop-item__title {
+    font-family: var(--font-serif);
+    /* Was sans-serif */
+    font-size: 1.6rem;
+    /* Increased size */
+    font-weight: 200;
+    /* Ultra Light */
+    color: var(--void-black);
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.ys-shop-item__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+/* Add to Cart Button */
+.ys-shop-item__cart-btn {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    background: transparent;
+    /* Transparent default */
+    color: var(--void-black);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    border: 1px solid var(--void-black);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(10px);
+    /* Snappy but smooth transition matching other interactive elements */
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ys-shop-item:hover .ys-shop-item__cart-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ys-shop-item__cart-btn:hover {
+    background: var(--void-black);
+    color: var(--void-white);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ys-shop__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .ys-shop-item__cart-btn {
+        opacity: 1;
+        /* Always show button on mobile */
+        transform: translateY(0);
+    }
+}

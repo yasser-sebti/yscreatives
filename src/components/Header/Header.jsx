@@ -23,15 +23,13 @@ const Header = ({ isSoundOn, setIsSoundOn, inverted }) => {
             </div>
             <nav className="ys-header__nav">
                 <div className="ys-header__nav-left">
-                    <TransitionLink to="#courses" className="ys-header__link ys-header__link--special ys-magnetic">Courses</TransitionLink>
+                    <TransitionLink to="/courses" className="ys-header__link ys-header__link--special ys-magnetic">Courses</TransitionLink>
                 </div>
 
                 <div className="ys-header__nav-main">
                     <TransitionLink to="/" className="ys-header__link">Home</TransitionLink>
                     <TransitionLink to="/about" className="ys-header__link">About</TransitionLink>
-                    <TransitionLink to="#work" className="ys-header__link">Selected work</TransitionLink>
-                    <TransitionLink to="#resources" className="ys-header__link">Resources</TransitionLink>
-                    <TransitionLink to="#pricing" className="ys-header__link">Pricing</TransitionLink>
+                    <TransitionLink to="/shop" className="ys-header__link">Shop</TransitionLink>
                     <TransitionLink to="/contact" className="ys-header__link">Contact</TransitionLink>
                 </div>
 
