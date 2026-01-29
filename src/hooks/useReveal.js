@@ -1,16 +1,28 @@
+import { useEffect, useRef } from 'react';
 import { useGSAP, gsap, ScrollTrigger, SplitText } from '../gsap';
 
 /**
- * Global Reveal System v4 - UI/UX Pro Max
+ * Global Reveal System v5 - UI/UX Pro Max
  * 
  * Features:
  * 1. Mask-Only Reveals: Zero opacity fades. All reveals use geometric clip-paths.
  * 2. Precision Viewport: Strict intersection triggers (top 85%).
  * 3. Max Performance: Off-screen rendering suppression via visibility toggling.
  * 4. Human Easing: Custom tuned bezier curves for cinematic motion.
+ * 5. Robust State Management: Decoupled Setup (Path) vs Trigger (State) to prevent double-reveals.
  */
 export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal, appReady = true) => {
 
+    // Refs to access latest state inside frozen closures (Observer/GSAP)
+    const stateRef = useRef({ isPendingReveal, appReady });
+    const animateTriggerRef = useRef(null);
+
+    // Update refs whenever state changes
+    useEffect(() => {
+        stateRef.current = { isPendingReveal, appReady };
+    }, [isPendingReveal, appReady]);
+
+    // 1. SETUP & OBSERVER LOOP (Re-runs only on PATH change)
     useGSAP(() => {
         if (!containerRef.current) return;
 
@@ -26,9 +38,10 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                 // 1. General Mask Reveal
                 if (maskRevealElements.length > 0) {
                     gsap.set(maskRevealElements, {
-                        clipPath: "inset(0% 0% 100% 0%)",
+                        clipPath: "inset(-20% -20% 100% -20%)",
                         y: 30,
-                        opacity: 1
+                        opacity: 1,
+                        visibility: "hidden"
                     });
                     maskRevealElements.forEach(el => el.classList.add('ys-ready'));
                 }
@@ -36,30 +49,31 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                 // 2. Scale X Reveal
                 if (scaleXElements.length > 0) {
                     gsap.set(scaleXElements, {
-                        clipPath: "inset(0% 100% 0% 0%)",
-                        opacity: 1
+                        clipPath: "inset(-20% 100% -20% -20%)",
+                        opacity: 1,
+                        visibility: "hidden"
                     });
                     scaleXElements.forEach(el => el.classList.add('ys-ready'));
                 }
 
                 // 3. Image Reveal
                 if (imageElements.length > 0) {
-                    gsap.set(imageElements, { clipPath: "inset(100% 0% 0% 0%)", opacity: 1 });
+                    gsap.set(imageElements, { clipPath: "inset(100% 0% 0% 0%)", opacity: 1, visibility: "hidden" });
                     imageElements.forEach(el => el.classList.add('ys-ready'));
                 }
 
-                // 4. Text Reveal (UI UX Pro Max Nested Masking)
+                // 4. Text Reveal
                 textElements.forEach((el) => {
-                    // First split creates the "mask" containers (overflow: hidden)
                     const outerSplit = new SplitText(el, { type: "lines", linesClass: "line-outer" });
-                    // Second split creates the actual animatable content
+                    gsap.set(outerSplit.lines, { padding: "0.15em 0", margin: "-0.15em 0", overflow: "hidden" });
+
                     const innerSplit = new SplitText(outerSplit.lines, { type: "lines", linesClass: "line-inner" });
 
                     el._gsapOuterSplit = outerSplit;
-                    el._gsapSplit = innerSplit; // Store for shorthand access
+                    el._gsapSplit = innerSplit;
 
                     gsap.set(innerSplit.lines, { yPercent: 120, opacity: 1 });
-                    gsap.set(el, { opacity: 1 });
+                    gsap.set(el, { opacity: 1, visibility: "hidden" });
                     el.classList.add('ys-ready');
                 });
             }, scope);
@@ -72,7 +86,6 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                 const targets = gsap.utils.toArray("[data-ys-reveal].ys-ready:not(.ys-revealed)", scope);
                 if (targets.length === 0) return;
 
-                // Crucial refresh before mounting triggers
                 ScrollTrigger.refresh();
 
                 targets.forEach(el => {
@@ -80,11 +93,11 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                     const delay = parseFloat(el.getAttribute('data-ys-delay')) || 0;
 
                     const performanceConfig = {
+                        onEnter: () => { el.style.visibility = 'visible'; },
                         onLeave: () => { el.style.visibility = 'hidden'; },
                         onEnterBack: () => { el.style.visibility = 'visible'; }
                     };
 
-                    // We add ys-revealed immediately to prevent double-triggering
                     el.classList.add('ys-revealed');
 
                     if (type === 'text') {
@@ -100,10 +113,7 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                                     ...performanceConfig
                                 },
                                 delay: delay,
-                                overwrite: 'auto',
-                                onComplete: () => {
-                                    // Optional: Clear transforms if needed, but for text usually fine.
-                                }
+                                overwrite: 'auto'
                             });
                         }
                     } else if (type === 'image') {
@@ -138,7 +148,7 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                         }
                     } else if (type === 'fade-up' || type === 'fade') {
                         gsap.to(el, {
-                            clipPath: "inset(0% 0% 0% 0%)",
+                            clipPath: "inset(-20% -20% -20% -20%)",
                             y: 0,
                             duration: 1.2,
                             ease: "power3.out",
@@ -150,14 +160,13 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                             delay: delay,
                             overwrite: 'auto',
                             onComplete: () => {
-                                // CRITICAL: Remove clip-path so magnetic elements aren't cropped
-                                el.style.clipPath = '';
+                                gsap.set(el, { clearProps: "clipPath" });
                                 el.style.visibility = 'visible';
                             }
                         });
                     } else if (type === 'scale-x') {
                         gsap.to(el, {
-                            clipPath: "inset(0% 0% 0% 0%)",
+                            clipPath: "inset(-20% -20% -20% -20%)",
                             duration: 1.2,
                             ease: "expo.out",
                             scrollTrigger: {
@@ -166,7 +175,11 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                                 ...performanceConfig
                             },
                             delay: delay,
-                            overwrite: 'auto'
+                            overwrite: 'auto',
+                            onComplete: () => {
+                                gsap.set(el, { clearProps: "clipPath" });
+                                el.style.visibility = 'visible';
+                            }
                         });
                     }
                 });
@@ -174,11 +187,43 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
             return ctx;
         };
 
+        // --- HELPER: Expose Animate Trigger safely ---
+        // This function will be called by useEffect
+        animateTriggerRef.current = () => {
+            animateElements(containerRef.current);
+        };
 
-        // 1. Initial Prep
+        // --- HELPER: Sanitize Elements (Full Reset) ---
+        const sanitizeElements = (scope) => {
+            const elementsToClean = gsap.utils.toArray("[data-ys-reveal]", scope);
+            elementsToClean.forEach(el => {
+                gsap.killTweensOf(el);
+                if (el._gsapSplit) {
+                    gsap.killTweensOf(el._gsapSplit.lines);
+                    el._gsapSplit.revert();
+                    delete el._gsapSplit;
+                }
+                if (el._gsapOuterSplit) {
+                    el._gsapOuterSplit.revert();
+                    delete el._gsapOuterSplit;
+                }
+                const img = el.querySelector('img') || el.querySelector('.ys-simple-image');
+                if (img) gsap.killTweensOf(img);
+                el.classList.remove('ys-ready', 'ys-revealed');
+                gsap.set(el, { clearProps: "all" });
+            });
+            ScrollTrigger.getAll().forEach(st => {
+                if (st.trigger && scope.contains(st.trigger)) {
+                    st.kill();
+                }
+            });
+        };
+
+        // 1. Initial Sanitize & Prepare
+        sanitizeElements(containerRef.current);
         prepareElements(containerRef.current);
 
-        // 2. Observer
+        // 2. Observer for Dynamic Content
         const observer = new MutationObserver((mutations) => {
             let hasNewContent = false;
             mutations.forEach((mutation) => {
@@ -194,7 +239,11 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
             });
 
             if (hasNewContent) {
+                // Ignore observer if we are in the middle of a reset/nav
                 prepareElements(containerRef.current);
+
+                // Only auto-animate if app is strictly ready and idle
+                const { isPendingReveal, appReady } = stateRef.current;
                 if (!isPendingReveal && appReady) {
                     setTimeout(() => animateElements(containerRef.current), 150);
                 }
@@ -203,43 +252,24 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
 
         observer.observe(containerRef.current, { childList: true, subtree: true });
 
-        // 3. Activation Gate with SNAPPY Navigation Timing
-        if (!isPendingReveal && appReady) {
-            // Wait for transition to clear the view but don't stall
-            const timer = setTimeout(() => {
-                animateElements(containerRef.current);
-                ScrollTrigger.refresh();
-            }, 350);
-
-            return () => {
-                clearTimeout(timer);
-                observer.disconnect();
-            };
-        }
-
+        // Cleanup on PATH change (Context Revert handles GSAP, but we need to disconnect observer)
         return () => {
             observer.disconnect();
-            const elementsToClean = gsap.utils.toArray("[data-ys-reveal].ys-ready", containerRef.current);
-            elementsToClean.forEach(el => {
-                if (el._gsapSplit) {
-                    el._gsapSplit.revert();
-                    delete el._gsapSplit;
-                }
-                if (el._gsapOuterSplit) {
-                    el._gsapOuterSplit.revert();
-                    delete el._gsapOuterSplit;
-                }
-                el.classList.remove('ys-ready', 'ys-revealed');
-                el.style.visibility = '';
-                el.style.contentVisibility = '';
-                el.style.opacity = '';
-            });
-            ScrollTrigger.getAll().forEach(st => {
-                if (st.trigger && containerRef.current.contains(st.trigger)) {
-                    st.kill();
-                }
-            });
+            sanitizeElements(containerRef.current);
         };
 
-    }, { scope: containerRef, dependencies: [path, isAnimating, isPendingReveal, appReady] });
+    }, { scope: containerRef, dependencies: [path] }); // CRITICAL: Only reset when path changes
+
+    // 2. TRIGGER LOOP (Watches State)
+    useEffect(() => {
+        if (!isPendingReveal && appReady && animateTriggerRef.current) {
+            // UI UX Pro Max: Snappy timing. 
+            // Trigger reveals shortly after the transition shutters start opening for a seamless flow.
+            const timer = setTimeout(() => {
+                animateTriggerRef.current();
+                ScrollTrigger.refresh();
+            }, 350); // Reduced from 1000ms to match the About page flow
+            return () => clearTimeout(timer);
+        }
+    }, [isPendingReveal, appReady, path]); // Path included to ensure it runs on new page mount
 };
