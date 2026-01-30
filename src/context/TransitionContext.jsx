@@ -105,7 +105,6 @@ export const TransitionProvider = ({ children }) => {
 
         const tl = gsap.timeline({
             onStart: () => {
-                // FEATURE: Only play swoosh when navigating TO Home
                 if (to === '/' || to === '/yscreatives/') {
                     playSwoosh();
                 }

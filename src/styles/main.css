@@ -58,21 +58,7 @@
     font-display: block;
 }
 
-@font-face {
-    font-family: 'PP Editorial New';
-    src: url('/assets/fonts/PPEditorialNew-Regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-    font-display: block;
-}
-
-@font-face {
-    font-family: 'PP Editorial New';
-    src: url('/assets/fonts/PPEditorialNew-Italic.woff2') format('woff2');
-    font-weight: 400;
-    font-style: italic;
-    font-display: block;
-}
+/* Regular and Italic removed as per user request to keep only Ultralight */
 
 /* Reset */
 *,
@@ -454,6 +440,8 @@ img[loading="lazy"].loaded {
     inset: 0;
     z-index: -1;
     background-color: #000;
+    transform: scale(1.1);
+    /* Match start scale of intro animation */
 }
 
 .ys-hero__video {
@@ -466,7 +454,6 @@ img[loading="lazy"].loaded {
     object-fit: cover;
     pointer-events: none;
     opacity: 1;
-    /* Keep at 1, but we use cover to hide it */
     will-change: transform, opacity;
     backface-visibility: hidden;
 }
@@ -484,8 +471,9 @@ img[loading="lazy"].loaded {
     inset: 0;
     background-color: #000;
     z-index: 10;
-    /* Above the video, Below the text */
     pointer-events: none;
+    opacity: 1;
+    /* Opaque by default to prevent flash */
     will-change: opacity;
 }
 
@@ -759,7 +747,8 @@ img[loading="lazy"].loaded {
    METHODOLOGY
    ============================================================================= */
 .ys-methodology {
-    padding: var(--space-section) var(--grid-margin) 2vh;
+    padding: 2vh var(--grid-margin) 2vh;
+    /* Reduced from var(--space-section) */
     background: var(--void-black);
     position: relative;
 }

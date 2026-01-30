@@ -64,26 +64,41 @@ function InnerApp() {
       window.history.scrollRestoration = 'manual';
     }
 
-    // Force an absolute reset to the top (y:0)
-    if (smootherRef.current) {
-      // scrollTop(0) is an immediate jump, unlike scrollTo which can be smooth
-      smootherRef.current.scrollTop(0);
-    } else {
-      window.scrollTo(0, 0);
-    }
+    const hash = location.hash;
 
     // Refresh ScrollTrigger and Smoother after the new route renders
     const timer = setTimeout(() => {
       ScrollTrigger.refresh();
+
       if (smootherRef.current) {
         smootherRef.current.refresh();
-        // Final safety jump to absolute zero
-        smootherRef.current.scrollTop(0);
+
+        if (hash) {
+          // Robust scroll to hash with retry for lazy elements
+          const scrollToHash = () => {
+            const target = document.querySelector(hash);
+            if (target) {
+              smootherRef.current.scrollTo(target, true, "top top");
+              return true;
+            }
+            return false;
+          };
+
+          if (!scrollToHash()) {
+            // Retry once if target not found yet
+            setTimeout(scrollToHash, 200);
+          }
+        } else {
+          // Default: Absolute reset to the top
+          smootherRef.current.scrollTop(0);
+        }
+      } else if (!hash) {
+        window.scrollTo(0, 0);
       }
-    }, 150);
+    }, 250); // Increased from 150ms for better stability
 
     return () => clearTimeout(timer);
-  }, [location.pathname]);
+  }, [location.pathname, location.hash]); // Added hash dependency
 
   const [hasMounted, setHasMounted] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
@@ -162,7 +177,6 @@ function InnerApp() {
 
       <div id="smooth-wrapper" ref={wrapperRef} style={{ visibility: hasMounted ? 'visible' : 'hidden' }}>
         <div id="smooth-content" ref={contentRef}>
-          <div id="main-content" style={{ position: 'absolute', top: 0, left: 0 }} />
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
               <Route path="/" element={<Home appReady={hasMounted} isSoundOn={isSoundOn} />} />

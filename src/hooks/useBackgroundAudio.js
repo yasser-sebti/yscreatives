@@ -174,9 +174,9 @@ export const useBackgroundAudio = (isSoundOn) => {
             // Animate Volume Down
             tweenRef.current = gsap.to(activeTrack, {
                 volume: 0,
-                ease: "power2.in", // 'in' ease clears audio out cleanly
+                ease: "power2.inOut",
                 overwrite: true,
-                duration: 0.5, // Fast snappy fade out
+                duration: TOGGLE_FADE_DURATION, // Match fade in for symmetry
                 onComplete: () => {
                     // CRITICAL: Only pause if we are STILL supposed to be off.
                     // This prevents pausing if user toggled back ON mid-fade.

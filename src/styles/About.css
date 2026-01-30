@@ -5,7 +5,8 @@
 /* Hidden states removed for manual stability */
 
 .ys-about-intro {
-    padding: 160px 0 100px;
+    padding: 120px 0 60px;
+    /* Reduced from 160px top and 100px bottom */
     background: var(--void-black);
     color: var(--void-white);
     position: relative;

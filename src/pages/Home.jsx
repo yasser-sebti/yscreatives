@@ -2,8 +2,8 @@ import { useRef, useEffect, useState, memo, lazy, Suspense } from 'react';
 import { gsap, useGSAP, SplitText, ScrollTrigger } from '../gsap';
 import { useTransition } from '../context/TransitionContext';
 import TransitionLink from '../components/TransitionLink/TransitionLink';
-import SimpleImage from '../components/Image/SimpleImage';
 import LazySection from '../components/LazySection/LazySection';
+import InstagramFeed from '../components/InstagramFeed/InstagramFeed';
 import { useMagnetic } from '../hooks/useMagnetic';
 
 // Lazy load non-critical sections
@@ -11,27 +11,6 @@ const Brands = lazy(() => import('../components/Brands/Brands'));
 const Portfolio = lazy(() => import('../components/Portfolio/Portfolio'));
 const CTA = lazy(() => import('../components/CTA/CTA'));
 import SEO from '../components/SEO/SEO';
-
-const methodologyPhases = [
-    {
-        step: "Phase 01",
-        name: "Investigation",
-        desc: "Deep diving into the soul of your brand to uncover the core essence and strategic direction through meticulous research and intentional vision.",
-        img: "Image1.webp"
-    },
-    {
-        step: "Phase 02",
-        name: "Design",
-        desc: "Manually crafting every pixel and interaction to ensure a unique, human-centric visual language that creates true emotional resonance.",
-        img: "Image2.webp"
-    },
-    {
-        step: "Phase 03",
-        name: "Delivery",
-        desc: "Finalizing and launching a high-performance digital presence that elevates your brand and secures its position in the modern landscape.",
-        img: "Image3.webp"
-    }
-];
 
 /**
  * HOME PAGE
@@ -42,6 +21,7 @@ const Home = ({ appReady = true, isSoundOn }) => {
     const videoPrimaryRef = useRef(null);
     const videoSecondaryRef = useRef(null);
     const swooshRef = useRef(null);
+    const [videoReady, setVideoReady] = useState(false);
     const { isAnimating, isPendingReveal, hasIntroPlayed, setHasIntroPlayed } = useTransition();
 
     useMagnetic(containerRef, ".ys-magnetic", 0.4);
@@ -61,7 +41,6 @@ const Home = ({ appReady = true, isSoundOn }) => {
         swooshRef.current = audio;
 
         return () => {
-            // Fade out on unmount/navigate
             if (audio) {
                 gsap.to(audio, {
                     volume: 0,
@@ -78,47 +57,63 @@ const Home = ({ appReady = true, isSoundOn }) => {
         if (!audio) return;
 
         if (isSoundOn) {
-            // Fade IN if toggled ON (useful if mid-playback)
             gsap.to(audio, { volume: 0.6, duration: 0.5 });
         } else {
-            // Fade OUT if toggled OFF
             gsap.to(audio, { volume: 0, duration: 0.5 });
         }
     }, [isSoundOn]);
 
-    const playSwoosh = () => {
+    const isSoundOnRef = useRef(isSoundOn);
+    useEffect(() => { isSoundOnRef.current = isSoundOn; }, [isSoundOn]);
+
+    const triggerSwooshSafe = () => {
         const audio = swooshRef.current;
-        if (!audio || !isSoundOn) return;
+        if (!audio) return;
 
         audio.currentTime = 0;
-        audio.play().catch(() => { }); // Catch autoplay blocks
+        audio.play().catch(() => { });
 
-        // Quick fade-in for smoothness vs harsh cut
-        gsap.fromTo(audio, { volume: 0 }, { volume: 0.6, duration: 0.3 }); // 0.6 is a good relative mix
+        const targetVol = isSoundOnRef.current ? 0.6 : 0;
+        gsap.fromTo(audio, { volume: 0 }, { volume: targetVol, duration: 0.3 });
     };
 
-    // --- 1. SEAMLESS DUAL-VIDEO CROSSFADE (UI UX Pro Max) ---
+    const safePlay = async (video) => {
+        if (!video) return;
+        try {
+            if (video.readyState < 2) video.load();
+            await video.play();
+        } catch (err) {
+            console.warn("Video play blocked or failed:", err);
+            setTimeout(() => {
+                if (video) video.play().catch(() => { });
+            }, 500);
+        }
+    };
+
+    // --- 1. SEAMLESS DUAL-VIDEO CROSSFADE ---
     useEffect(() => {
         if (!appReady) return;
         const v1 = videoPrimaryRef.current;
         const v2 = videoSecondaryRef.current;
         if (!v1 || !v2) return;
 
+        v1.load();
+        v2.load();
+
         let activeVideo = v1;
         let inactiveVideo = v2;
         let isFading = false;
 
         const checkCrossfade = () => {
-            if (isFading || !activeVideo.duration) return;
+            if (isFading || !activeVideo.duration || isNaN(activeVideo.duration)) return;
 
             const fadePoint = activeVideo.duration - 0.6;
             if (activeVideo.currentTime >= fadePoint) {
                 isFading = true;
                 inactiveVideo.currentTime = 0;
-                inactiveVideo.play();
+                inactiveVideo.play().catch(() => { });
 
-                // TRIGGER: Play swoosh 1s after loop starts
-                // Use safe trigger that reads latest ref
+                // Loop Swoosh with Video (after 1s)
                 setTimeout(triggerSwooshSafe, 1000);
 
                 gsap.to(activeVideo, { opacity: 0, duration: 0.6, ease: "none" });
@@ -137,38 +132,16 @@ const Home = ({ appReady = true, isSoundOn }) => {
 
         gsap.ticker.add(checkCrossfade);
         return () => gsap.ticker.remove(checkCrossfade);
-    }, [appReady]); // Re-bind if sound setting changes to ensure latest state in closure? No, playSwoosh uses ref/prop, but closure might be stale.
-    // Actually playSwoosh is defined in render scope. useEffect closure captures it.
-    // Best to use a ref for isSoundOn or add it to dependency. Adding isSoundOn to dependency might reset video logic which isn't ideal.
-    // Better: Helper function inside useEffect or Ref for isSoundOn.
-
-    // UI UX Pro Max Optimization: Use Ref for isSoundOn to avoid re-binding video logic
-    const isSoundOnRef = useRef(isSoundOn);
-    useEffect(() => { isSoundOnRef.current = isSoundOn; }, [isSoundOn]);
-
-    // Internal play function - ALWAYS plays, just modulates volume
-    const triggerSwooshSafe = () => {
-        const audio = swooshRef.current;
-        if (!audio) return;
-
-        audio.currentTime = 0;
-        audio.play().catch(() => { });
-
-        // Only audible if sound is currently on
-        const targetVol = isSoundOnRef.current ? 0.6 : 0;
-        gsap.fromTo(audio, { volume: 0 }, { volume: targetVol, duration: 0.3 });
-    };
+    }, [appReady]);
 
     useGSAP(() => {
         if (!appReady || isPendingReveal) return;
 
-        // 2. MANUAL CINEMATIC INTRO (Optimized Speed - UI UX Pro Max)
         if (hasIntroPlayed) {
-            // --- INSTANT STATE (Return Visit) ---
-            // (We don't play sound on instant revisit unless user specifically asks for it, 
-            // but 'intro started playing' implies the animation sequence. 
-            // Logic: Only play if we run the animation keyframes below)
-            gsap.set(".ys-hero__cover", { opacity: 0 });
+            if (videoReady) {
+                gsap.to(".ys-hero__cover", { opacity: 0, duration: 0.5, ease: "power2.inOut" });
+            }
+
             gsap.set(".ys-hero__bg", { scale: 1 });
             gsap.set([
                 ".ys-hero__title",
@@ -181,14 +154,12 @@ const Home = ({ appReady = true, isSoundOn }) => {
                 y: 0,
                 opacity: 1
             });
-            videoPrimaryRef.current?.play();
+            safePlay(videoPrimaryRef.current);
         } else {
-            // --- ANIMATION SEQUENCE (First Visit) ---
             const tl = gsap.timeline({
                 onComplete: () => setHasIntroPlayed(true)
             });
 
-            // Initial States
             gsap.set(".ys-hero__cover", { opacity: 1 });
             gsap.set(".ys-hero__bg", { scale: 1.1 });
             gsap.set(".ys-hero__title", { y: 60, opacity: 0 });
@@ -198,8 +169,6 @@ const Home = ({ appReady = true, isSoundOn }) => {
             gsap.set(".ys-hero__cta", { opacity: 0, y: 10 });
             gsap.set(".ys-hero__scroll-indicator", { opacity: 0 });
 
-            // TRIGGER: Initial Swoosh (1s delay relative to start)
-            // Since we have a delayed start (0.2s delay on first tween), we can just schedule it.
             setTimeout(triggerSwooshSafe, 1000);
 
             tl.to(".ys-hero__cover", {
@@ -209,7 +178,7 @@ const Home = ({ appReady = true, isSoundOn }) => {
                 delay: 0.2
             })
                 .call(() => {
-                    videoPrimaryRef.current?.play();
+                    safePlay(videoPrimaryRef.current);
                 }, null, 0.2 + (1.2 * 0.5))
                 .to(".ys-hero__bg", {
                     scale: 1,
@@ -252,7 +221,6 @@ const Home = ({ appReady = true, isSoundOn }) => {
                 }, "-=0.2");
         }
 
-        // 3. PARALLAX
         gsap.to(".ys-hero__bg", {
             yPercent: 12,
             ease: "none",
@@ -264,7 +232,6 @@ const Home = ({ appReady = true, isSoundOn }) => {
             }
         });
 
-        // 4. SCROLL PULSE LOOP
         gsap.fromTo(".ys-hero__scroll-pulse",
             { y: "-100%" },
             {
@@ -275,12 +242,11 @@ const Home = ({ appReady = true, isSoundOn }) => {
             }
         );
 
-    }, { scope: containerRef, dependencies: [appReady, isPendingReveal] });
+    }, { scope: containerRef, dependencies: [appReady, isPendingReveal, videoReady] });
 
     return (
         <main ref={containerRef} className="ys-home-v2">
             <SEO title="Home" />
-            {/* --- HERO SECTION --- */}
             <section className={`ys-hero ${appReady ? 'is-loaded' : ''}`}>
                 <div className="ys-hero__bg">
                     <video
@@ -290,6 +256,7 @@ const Home = ({ appReady = true, isSoundOn }) => {
                         muted
                         playsInline
                         preload="auto"
+                        onCanPlay={() => setVideoReady(true)}
                     />
                     <video
                         ref={videoSecondaryRef}
@@ -330,42 +297,17 @@ const Home = ({ appReady = true, isSoundOn }) => {
                 </div>
             </section>
 
-            {/* --- METHODOLOGY SECTION --- */}
-            <section className="ys-methodology">
-                <header className="ys-methodology__header">
-                    <h2 className="ys-methodology__title" data-ys-reveal="text">Our Methodology</h2>
-                </header>
-
-                <div className="ys-methodology__grid">
-                    {methodologyPhases.map((phase, i) => (
-                        <article key={i} className="ys-methodology__phase">
-                            <div className="ys-methodology__image-container ys-image-mask" data-ys-reveal="image">
-                                <SimpleImage
-                                    src={`${import.meta.env.BASE_URL}assets/images/${phase.img}`}
-                                    alt={phase.name}
-                                    loading="lazy"
-                                    width={800}
-                                    height={500}
-                                    className="ys-methodology__image"
-                                />
-                            </div>
-                            <div className="ys-methodology__content">
-                                <span className="ys-methodology__step" data-ys-reveal="text" data-ys-delay="0.2">{phase.step}</span>
-                                <h3 className="ys-methodology__name" data-ys-reveal="text" data-ys-delay="0.3">{phase.name}</h3>
-                                <p className="ys-methodology__description" data-ys-reveal="text" data-ys-delay="0.4">{phase.desc}</p>
-                            </div>
-                        </article>
-                    ))}
-                </div>
-            </section>
+            <InstagramFeed />
 
             <LazySection height="300px">
                 <Brands />
             </LazySection>
 
-            <LazySection height="800px">
-                <Portfolio />
-            </LazySection>
+            <div id="portfolio">
+                <LazySection height="800px">
+                    <Portfolio />
+                </LazySection>
+            </div>
 
             <LazySection height="600px">
                 <CTA />
