@@ -1,0 +1,128 @@
+/* =============================================================================
+   NEWSLETTER
+   ============================================================================= */
+.ys-newsletter-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    position: relative;
+    z-index: 2;
+}
+
+.ys-newsletter__header {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--void-white);
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+
+.ys-newsletter__header.success {
+    color: var(--void-accent);
+}
+
+.ys-newsletter {
+    width: 100%;
+}
+
+.ys-newsletter__group {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.ys-newsletter__input {
+    flex: 1;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 0.75rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--void-white);
+    transition: border-color 0.3s ease;
+}
+
+.ys-newsletter__input::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.ys-newsletter__input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.ys-newsletter__button {
+    width: 50px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--void-white);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ys-newsletter__button:hover {
+    border-color: var(--void-white);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.ys-newsletter__button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.ys-newsletter__tooltip {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 0;
+    background: var(--void-white);
+    color: var(--void-black);
+    padding: 0.5rem 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(10px);
+    z-index: 10;
+}
+
+/* Inverted Newsletter */
+.ys-newsletter-container--inverted .ys-newsletter__header {
+    color: var(--void-black);
+}
+
+.ys-newsletter-container--inverted .ys-newsletter__input {
+    border-color: rgba(0, 0, 0, 0.15);
+    color: var(--void-black);
+}
+
+.ys-newsletter-container--inverted .ys-newsletter__input::placeholder {
+    color: rgba(0, 0, 0, 0.3);
+}
+
+.ys-newsletter-container--inverted .ys-newsletter__input:focus {
+    border-color: rgba(0, 0, 0, 0.4);
+}
+
+.ys-newsletter-container--inverted .ys-newsletter__button {
+    border-color: rgba(0, 0, 0, 0.15);
+    color: var(--void-black);
+}
+
+.ys-newsletter-container--inverted .ys-newsletter__button:hover {
+    border-color: var(--void-black);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.ys-newsletter-container--inverted .ys-newsletter__header.success {
+    color: #16a34a;
+}
+
+.ys-newsletter-container--inverted .ys-newsletter__tooltip {
+    background: var(--void-black);
+    color: var(--void-white);
+}

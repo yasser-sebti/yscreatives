@@ -2,11 +2,8 @@
    ABOUT PAGE - Editorial Architect Design
    ============================================================================= */
 
-/* Hidden states removed for manual stability */
-
 .ys-about-intro {
     padding: 120px 0 60px;
-    /* Reduced from 160px top and 100px bottom */
     background: var(--void-black);
     color: var(--void-white);
     position: relative;
@@ -23,7 +20,6 @@
             rgba(255, 255, 255, 0.08) 0%,
             transparent 50%);
     opacity: 1;
-    /* Fade in on load */
     transition: opacity 1s ease;
 }
 
@@ -49,13 +45,10 @@
     font-size: clamp(4rem, 11vw, 13rem);
     font-weight: 200;
     line-height: 1.15;
-    /* Increased to avoid cropping at largest scale */
     letter-spacing: -0.05em;
     white-space: nowrap;
     padding: 0.12em 0;
-    /* Optical headroom for the reveal mask */
     margin-top: -0.12em;
-    /* Align visually with original position */
 }
 
 /* Metadata Decorations */
@@ -87,21 +80,17 @@
 .ys-about-intro__layout {
     display: grid;
     grid-template-columns: 5fr 7fr;
-    /* Asymmetrical split */
     gap: 8vw;
     align-items: start;
     margin-top: var(--space-xl);
     position: relative;
 }
 
-/* Left Column: Image */
 .ys-about-intro__image-wrapper {
     position: relative;
     padding-top: 2rem;
-    /* Offset for asymmetry */
 }
 
-/* Crosshair Decoration corners */
 .ys-corner-decoration {
     position: absolute;
     width: 20px;
@@ -128,13 +117,11 @@
 .ys-about-intro__image-container {
     width: 100%;
     aspect-ratio: 4 / 5;
-    /* Slightly taller aspect ratio */
     overflow: hidden;
     background: #111;
     position: relative;
 }
 
-/* Signature Overlay - Top Right of Image with Difference Blend */
 .ys-signature-container {
     position: absolute;
     top: 1rem;
@@ -167,7 +154,6 @@
     transform: scale(1.05);
 }
 
-/* Right Column: Content */
 .ys-about-intro__content {
     display: flex;
     flex-direction: column;
@@ -177,7 +163,6 @@
 
 .ys-about-intro__name {
     font-size: clamp(2rem, 5.5vw, 4.5rem);
-    /* Reduced to fit one line */
     font-weight: 200;
     letter-spacing: -0.02em;
     margin: 0;
@@ -188,10 +173,8 @@
 
 .ys-about-intro__tag {
     display: table;
-    /* Fits highlight to content width */
     margin-top: 0.75rem;
     margin-left: 0.4rem;
-    /* Optical alignment with the stem of 'Y' */
     font-family: var(--font-mono);
     font-size: 2.2rem;
     color: var(--void-muted);
@@ -199,24 +182,9 @@
     letter-spacing: 0.05em;
     opacity: 1;
     text-transform: uppercase;
-
-    /* Minimal Rectangle Highlight */
     padding: 0.5rem 1.75rem;
     border: 1px solid rgba(255, 255, 255, 0.2);
     background: transparent;
-}
-
-/* Signature Styling (Placeholder for now) */
-.ys-signature {
-    font-family: 'Mrs Saint Delafield', cursive;
-    /* We might need to load this or use an SVG */
-    font-size: 4rem;
-    color: var(--void-white);
-    opacity: 0.8;
-    margin-top: -1rem;
-    margin-bottom: 1rem;
-    transform: rotate(-5deg);
-    display: inline-block;
 }
 
 .ys-about-intro__description {
@@ -229,7 +197,6 @@
     border-left: 1px solid var(--void-subtle);
     padding-left: var(--space-md);
     margin-left: 0.4rem;
-    /* Aligned with CEO tag rectangle */
 }
 
 .ys-about-intro__cta {
@@ -237,10 +204,8 @@
     display: flex;
     gap: var(--space-sm);
     margin-left: 0.4rem;
-    /* Aligned with description */
 }
 
-/* Vertical grid line decoration */
 .ys-grid-line {
     position: absolute;
     top: 0;
@@ -248,11 +213,101 @@
     width: 1px;
     background: var(--void-subtle);
     left: 41.66%;
-    /* Aligns with grid break */
     opacity: 0.3;
 }
 
-/* --- FAQ SECTION (Retained & Polished) --- */
+/* =============================================================================
+   METHODOLOGY
+   ============================================================================= */
+.ys-methodology {
+    padding: 2vh var(--grid-margin) 2vh;
+    background: var(--void-black);
+    position: relative;
+}
+
+.ys-methodology__header {
+    margin-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--void-subtle);
+    padding-bottom: var(--space-md);
+    text-align: left;
+}
+
+.ys-methodology__title {
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-weight: 200;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    padding: 0.12em 0;
+}
+
+.ys-methodology__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-lg);
+    width: 100%;
+}
+
+.ys-methodology__phase {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-md) 0;
+    border-top: 1px solid var(--void-subtle);
+    min-width: 0;
+    height: 100%;
+}
+
+.ys-methodology__image-container {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: transparent;
+    position: relative;
+    border: 1px solid var(--void-subtle);
+}
+
+.ys-methodology__image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    will-change: transform;
+    position: relative;
+}
+
+.ys-methodology__step {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--void-muted);
+    letter-spacing: 0.2em;
+}
+
+.ys-methodology__name {
+    font-size: clamp(2.7rem, 6.3vw, 5.4rem);
+    font-weight: 200;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    padding-right: 0.1em;
+    word-break: break-word;
+}
+
+.ys-methodology__content {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.ys-methodology__description {
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    color: var(--void-muted);
+    line-height: var(--line-height-body);
+    text-align: left;
+    text-wrap: pretty;
+}
+
+/* --- FAQ SECTION --- */
 .ys-faq {
     padding: var(--space-section) 0 5vh;
     background: var(--void-black);
@@ -346,178 +401,6 @@
     max-width: 800px;
 }
 
-/* =============================================================================
-   TESTIMONIALS SECTION
-   ============================================================================= */
-
-.ys-testimonials {
-    padding: var(--space-md) 0 var(--space-lg);
-    background: var(--void-black);
-    position: relative;
-    overflow: hidden;
-}
-
-.ys-testimonials__header {
-    padding: 0 var(--grid-margin);
-    margin-bottom: var(--space-lg);
-}
-
-/* Title - same size as FAQ title */
-.ys-testimonials__title {
-    font-family: var(--font-serif);
-    font-size: var(--text-display-md);
-    font-weight: 200;
-    color: var(--void-white);
-    letter-spacing: -0.02em;
-    opacity: 1;
-    /* For GSAP reveal */
-}
-
-.ys-testimonials__marquee {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-}
-
-/* Vignette fade edges */
-.ys-testimonials__vignette {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-    pointer-events: none;
-    background: linear-gradient(to right, #000 0%, transparent 15%, transparent 85%, #000 100%);
-}
-
-/* Testimonials track (marquee) */
-.ys-testimonials__track {
-    display: flex;
-    width: max-content;
-    gap: 3rem;
-    padding: 2rem 0;
-    will-change: transform;
-}
-
-.ys-testimonials__slider {
-    display: flex;
-    gap: 3rem;
-}
-
-.ys-testimonials__track:active {
-    cursor: grabbing;
-}
-
-/* Individual testimonial card - significantly larger */
-.ys-testimonial-card {
-    flex-shrink: 0;
-    width: calc(45vw - 2rem);
-    min-width: 500px;
-    max-width: 700px;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-/* Chat bubble - vertically larger */
-.ys-testimonial-card__bubble {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid var(--void-subtle);
-    border-radius: 0;
-    /* Sharp edges */
-    padding: 2.5rem 3rem;
-    min-height: 180px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    transition: background 0.3s ease, border-color 0.3s ease;
-}
-
-.ys-testimonial-card:hover .ys-testimonial-card__bubble {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Speech pointer (below bubble) - behind the chatbox */
-/* Speech pointer (below bubble) - Clipped to avoid transparency bleed */
-.ys-testimonial-card__pointer {
-    position: absolute;
-    bottom: -10px;
-    /* Half of the rotated square's height */
-    left: 50px;
-    width: 20px;
-    height: 20px;
-    background: #000000;
-    /* Black background to match the site's dark theme */
-    border-right: 1px solid var(--void-subtle);
-    border-bottom: 1px solid var(--void-subtle);
-    transform: rotate(45deg);
-    /* Clip the square so only the triangle protruding below the bubble is visible */
-    clip-path: polygon(100% 100%, 0% 100%, 100% 0%);
-    transition: border-color 0.3s ease;
-}
-
-.ys-testimonial-card:hover .ys-testimonial-card__pointer {
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Testimonial text - SF Mono, larger */
-.ys-testimonial-card__text {
-    font-family: var(--font-mono);
-    font-size: 1.25rem;
-    line-height: 1.8;
-    color: var(--void-muted);
-    margin: 0;
-}
-
-/* Author section - larger spacing */
-.ys-testimonial-card__author {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding-left: 20px;
-}
-
-/* Significantly bigger avatar */
-.ys-testimonial-card__avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--void-subtle);
-    transition: border-color 0.3s ease;
-}
-
-.ys-testimonial-card:hover .ys-testimonial-card__avatar {
-    border-color: rgba(255, 255, 255, 0.3);
-}
-
-.ys-testimonial-card__info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-}
-
-/* Name - PP Editorial New, significantly bigger */
-.ys-testimonial-card__name {
-    font-family: var(--font-serif);
-    font-size: 2rem;
-    font-weight: 200;
-    color: var(--void-white);
-    letter-spacing: -0.01em;
-}
-
-/* Role - significantly bigger */
-.ys-testimonial-card__role {
-    font-family: var(--font-mono);
-    font-size: 1.125rem;
-    color: var(--void-muted);
-    letter-spacing: 0.02em;
-}
-
-
-/* Responsive */
 @media (max-width: 900px) {
     .ys-about-intro__layout {
         grid-template-columns: 1fr;
@@ -528,10 +411,6 @@
         display: none;
     }
 
-    .ys-about-intro__image-container {
-        max-width: 100%;
-    }
-
     .ys-about-intro__header {
         flex-direction: column;
         align-items: flex-start;
@@ -540,5 +419,9 @@
 
     .ys-meta-group {
         align-items: flex-start;
+    }
+
+    .ys-methodology__grid {
+        grid-template-columns: 1fr;
     }
 }

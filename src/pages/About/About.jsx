@@ -1,16 +1,16 @@
 import { useRef, useState, useEffect, memo, lazy } from 'react';
-import { useTransition } from '../context/TransitionContext';
-import TransitionLink from '../components/TransitionLink/TransitionLink';
-import { gsap, useGSAP, SplitText } from '../gsap';
-import SimpleImage from '../components/Image/SimpleImage';
-import LazySection from '../components/LazySection/LazySection';
-import SEO from '../components/SEO/SEO';
-import '../styles/About.css';
+import { useTransition } from '../../context/TransitionContext';
+import TransitionLink from '../../components/TransitionLink/TransitionLink';
+import { gsap, useGSAP, SplitText } from '../../gsap';
+import SimpleImage from '../../components/Image/SimpleImage';
+import LazySection from '../../components/LazySection/LazySection';
+import SEO from '../../components/SEO/SEO';
+import './About.css';
 
-import { useMagnetic } from '../hooks/useMagnetic';
+import { useMagnetic } from '../../hooks/useMagnetic';
 
-const CTA = lazy(() => import('../components/CTA/CTA'));
-const Testimonials = lazy(() => import('../components/Testimonials/Testimonials'));
+const CTA = lazy(() => import('../../components/CTA/CTA'));
+const Testimonials = lazy(() => import('../../components/Testimonials/Testimonials'));
 
 const methodologyPhases = [
     {

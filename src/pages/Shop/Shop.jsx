@@ -1,10 +1,10 @@
 import { useRef, useState, useEffect } from 'react';
-import SEO from '../components/SEO/SEO';
-import { useTransition } from '../context/TransitionContext';
-import { products } from '../data/shopData';
-import ShopItem from '../components/ShopItem/ShopItem';
-import '../styles/Shop.css';
-import { gsap, ScrollTrigger } from '../gsap';
+import SEO from '../../components/SEO/SEO';
+import { useTransition } from '../../context/TransitionContext';
+import { products } from '../../data/shopData';
+import ShopItem from '../../components/ShopItem/ShopItem';
+import './Shop.css';
+import { gsap, ScrollTrigger } from '../../gsap';
 
 const Shop = () => {
     const containerRef = useRef(null);

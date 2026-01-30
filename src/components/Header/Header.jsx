@@ -2,6 +2,7 @@ import { useRef, memo } from 'react';
 import TransitionLink from '../TransitionLink/TransitionLink';
 import { useMagnetic } from '../../hooks/useMagnetic';
 import SoundWave from './SoundWave';
+import './Header.css';
 
 const Header = ({ isSoundOn, setIsSoundOn, inverted }) => {
     const headerRef = useRef(null);

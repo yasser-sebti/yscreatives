@@ -18,12 +18,12 @@ import './styles/main.css';
 // Lazy load pages for performance
 import SkipLink from './components/Accessibility/SkipLink';
 
-const Home = lazy(() => import('./pages/Home'));
-const About = lazy(() => import('./pages/About'));
-const Shop = lazy(() => import('./pages/Shop'));
-const Contact = lazy(() => import('./pages/Contact'));
-const Courses = lazy(() => import('./pages/Courses'));
-const NotFound = lazy(() => import('./pages/NotFound'));
+const Home = lazy(() => import('./pages/Home/Home'));
+const About = lazy(() => import('./pages/About/About'));
+const Shop = lazy(() => import('./pages/Shop/Shop'));
+const Contact = lazy(() => import('./pages/Contact/Contact'));
+const Courses = lazy(() => import('./pages/Courses/Courses'));
+const NotFound = lazy(() => import('./pages/NotFound/NotFound'));
 
 function InnerApp() {
   const wrapperRef = useRef(null);

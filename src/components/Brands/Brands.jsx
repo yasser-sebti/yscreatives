@@ -1,5 +1,6 @@
 import { useRef, memo } from 'react';
 import { gsap, useGSAP, ScrollTrigger } from '../../gsap';
+import './Brands.css';
 
 const LOGOS = [
     'Eli_Network.svg', 'Pandaify.svg', 'Order.svg', 'Tech Trendy.svg', 'Oldy.svg',

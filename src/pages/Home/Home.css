@@ -1,0 +1,193 @@
+/* =============================================================================
+   HERO v2 (HOME PAGE)
+   ============================================================================= */
+.ys-hero {
+    min-height: 110vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: var(--space-md) var(--grid-margin) var(--space-lg);
+    text-align: center;
+}
+
+.ys-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: #000;
+    transform: scale(1.1);
+}
+
+.ys-hero__video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    pointer-events: none;
+    opacity: 1;
+    will-change: transform, opacity;
+}
+
+.ys-hero__dark-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+    background-color: rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.ys-hero__cover {
+    position: absolute;
+    inset: 0;
+    background-color: #000;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 1;
+    will-change: opacity;
+}
+
+.ys-hero__container {
+    position: relative;
+    z-index: 20;
+    width: 100%;
+    max-width: 90vw;
+    margin-top: -5vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ys-hero__main-header {
+    margin-bottom: 1.5vh;
+}
+
+.ys-hero__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-display-hero);
+    font-weight: 200;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+    padding: 0.12em 0;
+    opacity: 0;
+}
+
+.ys-hero__name {
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    opacity: 0;
+    margin-top: 0;
+}
+
+.ys-hero__slogan {
+    margin-bottom: 2vh;
+}
+
+.ys-hero__slogan-title {
+    font-size: clamp(2.2rem, 5.5vw, 4rem);
+    font-weight: 200;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5vh;
+    opacity: 0;
+}
+
+.ys-hero__slogan-sub {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    opacity: 0;
+    letter-spacing: 0.1em;
+}
+
+.ys-hero__button {
+    display: inline-block;
+    padding: 1rem 2.2rem;
+    border: 1px solid var(--void-white);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--void-white);
+    transition: background 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo);
+}
+
+.ys-hero__button:hover {
+    background: var(--void-white);
+    color: var(--void-black);
+}
+
+.ys-hero__cta {
+    margin-top: 1vh;
+    opacity: 0;
+}
+
+.ys-hero__scroll-indicator {
+    position: absolute;
+    bottom: 8vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 2;
+    opacity: 0;
+}
+
+.ys-hero__scroll-label {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    opacity: 0.5;
+}
+
+.ys-hero__scroll-track {
+    width: 1px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.ys-hero__scroll-pulse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background: linear-gradient(to bottom, transparent, var(--void-white), transparent);
+}
+
+@media (max-width: 768px) {
+    .ys-hero {
+        min-height: 100vh;
+        padding-top: 120px;
+    }
+
+    .ys-hero__title {
+        font-size: clamp(3rem, 12vw, 6rem);
+        white-space: normal;
+    }
+
+    .ys-hero__name {
+        font-size: 0.8rem;
+        letter-spacing: 0.2em;
+    }
+
+    .ys-hero__slogan-title {
+        font-size: 1.5rem;
+    }
+
+    .ys-hero__container {
+        margin-top: 0;
+    }
+}

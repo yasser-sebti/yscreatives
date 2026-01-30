@@ -1,5 +1,6 @@
 import { useRef, memo } from 'react';
 import { gsap, useGSAP, ScrollTrigger, Draggable } from '../../gsap';
+import './Testimonials.css';
 
 const testimonialsData = [
     { name: "Alpha Programming", role: "Tech Company", img: "Alpha Programing.webp", text: "Yasser delivered exceptional results that exceeded our expectations. His attention to detail is unmatched." },

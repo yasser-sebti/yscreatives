@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, memo } from 'react';
 import { gsap, useGSAP } from '../../gsap';
+import './Newsletter.css';
 
 
 const Newsletter = ({ inverted = false }) => {

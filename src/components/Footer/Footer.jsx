@@ -1,6 +1,7 @@
 import { useState, useEffect, memo } from 'react';
 import TransitionLink from '../TransitionLink/TransitionLink';
 import Newsletter from '../Newsletter/Newsletter';
+import './Footer.css';
 
 const Footer = ({ inverted = false }) => {
     const [time, setTime] = useState(new Date());

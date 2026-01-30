@@ -1,0 +1,51 @@
+/* =============================================================================
+   CTA - SPACE EFFECT (COMPONENTS)
+   ============================================================================= */
+.ys-cta {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 5vh var(--grid-margin) 20vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #000;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.ys-cta__gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(to bottom, var(--void-black), transparent);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.ys-cta__stars {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.ys-cta__star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+}
+
+.ys-cta-magnetic {
+    font-size: var(--text-display-md);
+    font-weight: 200;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}

@@ -1,16 +1,17 @@
 import { useRef, useEffect, useState, memo, lazy, Suspense } from 'react';
-import { gsap, useGSAP, SplitText, ScrollTrigger } from '../gsap';
-import { useTransition } from '../context/TransitionContext';
-import TransitionLink from '../components/TransitionLink/TransitionLink';
-import LazySection from '../components/LazySection/LazySection';
-import InstagramFeed from '../components/InstagramFeed/InstagramFeed';
-import { useMagnetic } from '../hooks/useMagnetic';
+import './Home.css';
+import { gsap, useGSAP, SplitText, ScrollTrigger } from '../../gsap';
+import { useTransition } from '../../context/TransitionContext';
+import TransitionLink from '../../components/TransitionLink/TransitionLink';
+import LazySection from '../../components/LazySection/LazySection';
+import InstagramFeed from '../../components/InstagramFeed/InstagramFeed';
+import { useMagnetic } from '../../hooks/useMagnetic';
 
 // Lazy load non-critical sections
-const Brands = lazy(() => import('../components/Brands/Brands'));
-const Portfolio = lazy(() => import('../components/Portfolio/Portfolio'));
-const CTA = lazy(() => import('../components/CTA/CTA'));
-import SEO from '../components/SEO/SEO';
+const Brands = lazy(() => import('../../components/Brands/Brands'));
+const Portfolio = lazy(() => import('../../components/Portfolio/Portfolio'));
+const CTA = lazy(() => import('../../components/CTA/CTA'));
+import SEO from '../../components/SEO/SEO';
 
 /**
  * HOME PAGE

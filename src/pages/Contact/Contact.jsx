@@ -1,11 +1,11 @@
 import { useRef, useState, useEffect, useCallback, useMemo, memo } from 'react';
-import { useTransition } from '../context/TransitionContext';
-import { gsap, useGSAP, SplitText, ScrollTrigger, ScrollSmoother } from '../gsap';
+import { useTransition } from '../../context/TransitionContext';
+import { gsap, useGSAP, SplitText, ScrollTrigger, ScrollSmoother } from '../../gsap';
 
-import MessageSentOverlay from '../components/MessageSentOverlay/MessageSentOverlay';
-import SEO from '../components/SEO/SEO';
-import { useMagnetic } from '../hooks/useMagnetic';
-import '../styles/Contact.css';
+import MessageSentOverlay from '../../components/MessageSentOverlay/MessageSentOverlay';
+import SEO from '../../components/SEO/SEO';
+import { useMagnetic } from '../../hooks/useMagnetic';
+import './Contact.css';
 
 // --- Static Data & Helpers ---
 
@@ -263,7 +263,7 @@ const Contact = () => {
                     timezone
                 };
 
-                const { sendToDiscord } = await import('../utils/discord');
+                const { sendToDiscord } = await import('../../utils/discord');
                 await sendToDiscord(enrichedLead);
 
                 setStatus('success');

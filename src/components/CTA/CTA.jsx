@@ -2,6 +2,7 @@ import { useRef, memo, useCallback } from 'react';
 import { gsap, useGSAP } from '../../gsap';
 import { useTransition } from '../../context/TransitionContext';
 import { useMagnetic } from '../../hooks/useMagnetic';
+import './CTA.css';
 
 const CTA = () => {
     const containerRef = useRef(null);

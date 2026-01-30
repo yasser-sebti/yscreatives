@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, Suspense, memo } from 'react';
-import '../../styles/LazySection.css';
+import './LazySection.css';
 
 /**
  * LazySection Component

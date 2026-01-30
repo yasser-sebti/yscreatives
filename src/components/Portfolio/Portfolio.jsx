@@ -1,5 +1,6 @@
 import { useRef, memo } from 'react';
 import SimpleImage from '../Image/SimpleImage';
+import './Portfolio.css';
 
 const PROJECTS = [
     { id: '01', title: 'Eli Network', category: 'Data Call Center', img: 'Project1.webp' },
