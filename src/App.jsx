@@ -41,15 +41,17 @@ function InnerApp() {
 
 
 
-  // 1. Initialize ScrollSmoother ONCE to prevent "blank" frames or crashes during re-creation
+  // 1. Initialize ScrollSmoother ONCE (Desktop Only)
   useGSAP(() => {
+    // Completely disable on mobile/tablet to ensure native scroll
+    if (ScrollTrigger.isTouch === 1) return;
+
     smootherRef.current = ScrollSmoother.create({
       wrapper: wrapperRef.current,
       content: contentRef.current,
       smooth: 0.8,
       effects: true,
-      normalizeScroll: false,
-      smoothTouch: 0.1,
+      normalizeScroll: false, // Never normalize on desktop for this site
     });
 
     return () => {

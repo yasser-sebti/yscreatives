@@ -207,4 +207,16 @@
         align-items: flex-start;
         gap: 1.5rem;
     }
+
+    .ys-footer__copy-wrap {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .ys-footer__wordmark-img {
+        width: 100%;
+        max-width: 200px;
+    }
 }

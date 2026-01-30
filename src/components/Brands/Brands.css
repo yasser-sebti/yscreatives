@@ -93,4 +93,8 @@
     .ys-brands__item {
         width: 120px;
     }
+
+    .ys-brands__marquee {
+        padding: 2rem 0;
+    }
 }

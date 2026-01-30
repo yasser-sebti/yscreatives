@@ -403,8 +403,13 @@
 
 @media (max-width: 900px) {
     .ys-about-intro__layout {
-        grid-template-columns: 1fr;
-        gap: 60px;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 40px;
+    }
+
+    .ys-about-intro__image-wrapper {
+        width: 100%;
     }
 
     .ys-grid-line {
@@ -423,5 +428,16 @@
 
     .ys-methodology__grid {
         grid-template-columns: 1fr;
+    }
+
+    /* FAQ Mobile Optimization */
+    .ys-faq-item__header {
+        padding: 2rem 0;
+        /* Larger touch target */
+    }
+
+    .ys-faq-item__question {
+        font-size: 1.25rem;
+        padding-right: 1rem;
     }
 }

@@ -31,3 +31,9 @@
 .ys-scrollbar-track:hover {
     pointer-events: auto;
 }
+
+@media (max-width: 1024px) {
+    .ys-scrollbar-track {
+        display: none !important;
+    }
+}

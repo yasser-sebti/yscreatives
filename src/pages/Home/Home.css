@@ -169,7 +169,7 @@
 
 @media (max-width: 768px) {
     .ys-hero {
-        min-height: 100vh;
+        min-height: 100dvh;
         padding-top: 120px;
     }
 

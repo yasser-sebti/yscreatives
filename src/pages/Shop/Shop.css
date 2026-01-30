@@ -175,6 +175,10 @@
         gap: 1.5rem;
     }
 
+    .ys-shop__grid {
+        grid-template-columns: 1fr;
+    }
+
     .ys-shop-item__cart-btn {
         opacity: 1;
         /* Always show button on mobile */

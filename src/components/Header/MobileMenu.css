@@ -1,0 +1,125 @@
+/* =============================================================================
+   MOBILE MENU - Shutter Overlay
+   ============================================================================= */
+
+.ys-mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    /* Dynamic viewport height for mobile browsers */
+    z-index: 9000;
+    visibility: hidden;
+    pointer-events: none;
+    /* Allow clicks through when closed */
+}
+
+.ys-mobile-menu[style*="visible"] {
+    pointer-events: auto;
+}
+
+
+/* Shutters */
+.ys-mobile-menu__shutters {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    z-index: 1;
+}
+
+.ys-mobile-menu__shutter {
+    flex: 1;
+    height: 0%;
+    /* Animates to 100% */
+    background-color: var(--void-black);
+    transform-origin: top;
+    will-change: height;
+}
+
+
+/* Content Layer */
+.ys-mobile-menu__content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+
+/* Navigation Links */
+.ys-mobile-menu__nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.ys-mobile-menu__link {
+    text-decoration: none;
+    overflow: hidden;
+    /* For masking text reveal */
+    display: block;
+}
+
+/* Line Mask Container */
+.ys-mobile-menu__mask {
+    display: block;
+    overflow: hidden;
+    line-height: 1.2;
+    padding: 0.2rem 0;
+}
+
+.ys-mobile-menu__link-text {
+    display: block;
+    font-size: 3rem;
+    font-weight: 400;
+    color: var(--void-white);
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    /* Animation handled by GSAP (y transform) */
+    transform: translateY(110%);
+    transition: color 0.3s ease;
+}
+
+.ys-mobile-menu__link:hover .ys-mobile-menu__link-text {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.ys-mobile-menu__link.active .ys-mobile-menu__link-text {
+    color: var(--void-white);
+    /* Pure white active state */
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 8px;
+    opacity: 1;
+}
+
+
+/* Footer */
+.ys-mobile-menu__footer {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    opacity: 0;
+    /* Animated in */
+}
+
+.ys-mobile-menu__footer p {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin: 0;
+}

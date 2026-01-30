@@ -145,6 +145,8 @@ img[loading="lazy"] {
 ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
+    display: none;
+    /* Force hide */
 }
 
 * {
@@ -154,6 +156,13 @@ img[loading="lazy"] {
 
 html {
     scroll-behavior: smooth;
+}
+
+@media (max-width: 768px) {
+    html {
+        scroll-behavior: auto !important;
+        /* Disable smooth scroll on mobile */
+    }
 }
 
 /* ScrollSmoother Wrapper */
@@ -241,9 +250,11 @@ html {
     border-radius: 0;
 }
 
-.ys-button:hover {
-    background: var(--void-white);
-    color: var(--void-black);
+@media (hover: hover) {
+    .ys-button:hover {
+        background: var(--void-white);
+        color: var(--void-black);
+    }
 }
 
 .ys-button--outline {
@@ -322,5 +333,16 @@ html {
 @media (max-width: 768px) {
     :root {
         --grid-margin: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        /* Reduce minimum sizes for mobile */
+        --text-display-hero: clamp(3rem, 15vw, 6rem);
+        --text-display-xl: clamp(2.5rem, 12vw, 5rem);
+        --text-display-lg: clamp(2rem, 10vw, 4rem);
+        --text-display-md: clamp(1.75rem, 8vw, 3rem);
+        --text-display-sm: clamp(1.5rem, 6vw, 2.5rem);
     }
 }

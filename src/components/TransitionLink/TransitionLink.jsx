@@ -6,6 +6,9 @@ const TransitionLink = ({ to, children, className, ...props }) => {
     const { navigateWithTransition } = useTransition();
 
     const handleClick = (e) => {
+        // Allow external onClick to fire first (e.g., closing menus)
+        if (props.onClick) props.onClick(e);
+
         // Handle anchor links (hashes) properly via ScrollSmoother
         if (to.startsWith('#')) {
             e.preventDefault();
@@ -29,7 +32,7 @@ const TransitionLink = ({ to, children, className, ...props }) => {
     };
 
     return (
-        <a href={to} className={className} onClick={handleClick} {...props}>
+        <a href={to} className={className} {...props} onClick={handleClick}>
             {children}
         </a>
     );

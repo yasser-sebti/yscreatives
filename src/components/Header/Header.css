@@ -14,6 +14,15 @@
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.ys-header.is-menu-open {
+    z-index: 10000;
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom: none !important;
 }
 
 .ys-header.is-inverted {
@@ -45,6 +54,9 @@
 .ys-header__logo a {
     display: inline-block;
     line-height: 0;
+    position: relative;
+    z-index: 10001;
+    /* Above mobile menu */
 }
 
 .ys-header__logo-img {
@@ -146,12 +158,66 @@
 }
 
 .ys-header__link:hover::after {
-    width: 100%;
+    width: 0;
 }
 
-.ys-header__link:hover,
 .ys-header__link.active {
     opacity: 1;
+}
+
+@media (hover: hover) {
+    .ys-header__link:hover::after {
+        width: 100%;
+    }
+
+    .ys-header__link:hover {
+        opacity: 1;
+    }
+}
+
+/* HAMBURGER (Mobile Only) */
+.ys-header__hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 1rem;
+    margin-right: -1rem;
+    /* Align with grid */
+    z-index: 10001;
+    /* Above menu overlay */
+}
+
+.ys-hamburger__line {
+    width: 24px;
+    height: 2px;
+    background: var(--void-white);
+    transition: all 0.3s ease;
+}
+
+.ys-header.is-inverted .ys-hamburger__line {
+    background: var(--void-black);
+}
+
+/* Force white when menu is open, even on inverted pages */
+.ys-header.is-menu-open .ys-hamburger__line {
+    background: var(--void-white) !important;
+}
+
+/* Active State (X shape) */
+.ys-header__hamburger.is-active .ys-hamburger__line:first-child {
+    transform: translateY(4px) rotate(45deg);
+    background: var(--void-white) !important;
+    /* Always white in menu */
+}
+
+.ys-header__hamburger.is-active .ys-hamburger__line:last-child {
+    transform: translateY(-4px) rotate(-45deg);
+    background: var(--void-white) !important;
+    /* Always white in menu */
 }
 
 @media (max-width: 900px) {
@@ -161,6 +227,9 @@
 
     .ys-header__nav {
         display: none;
-        /* Mobile menu logic would go here if implemented */
+    }
+
+    .ys-header__hamburger {
+        display: flex;
     }
 }
