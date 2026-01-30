@@ -146,7 +146,7 @@
     height: 100%;
     object-fit: cover;
     filter: grayscale(100%) contrast(1.1);
-    transition: filter 0.8s var(--ease-out-expo), transform 1.5s var(--ease-out-expo);
+    transition: filter 0.8s var(--ease-out-expo);
 }
 
 .ys-about-intro__image-container:hover img {

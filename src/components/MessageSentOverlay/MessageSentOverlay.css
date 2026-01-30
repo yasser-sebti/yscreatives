@@ -84,7 +84,7 @@
     border: 1px solid var(--void-black);
     padding: 1rem 2.5rem;
     cursor: pointer;
-    transition: all 0.4s ease;
+    transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
 }
 
 .message-sent-overlay__button:hover {

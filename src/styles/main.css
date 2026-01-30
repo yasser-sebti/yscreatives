@@ -67,6 +67,8 @@
     padding: 0;
 }
 
+
+
 html {
     scroll-behavior: smooth;
 }
@@ -148,6 +150,10 @@ img[loading="lazy"] {
 * {
     scrollbar-width: none;
     -ms-overflow-style: none;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 /* ScrollSmoother Wrapper */

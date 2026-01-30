@@ -187,7 +187,7 @@
     padding: 1.5rem 1.75rem;
     /* Increased padding */
     outline: none;
-    transition: all 0.4s var(--ease-out-expo);
+    transition: background 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo), border-color 0.4s var(--ease-out-expo), box-shadow 0.4s var(--ease-out-expo);
     width: 100%;
 }
 
@@ -231,7 +231,7 @@
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    transition: all 0.4s var(--ease-out-expo);
+    transition: background 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo), border-color 0.4s var(--ease-out-expo);
 }
 
 .ys-contact__custom-dropdown.has-error .ys-contact__dropdown-trigger {
@@ -309,7 +309,7 @@
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
-    transition: all 0.4s var(--ease-out-expo);
+    transition: opacity 0.4s var(--ease-out-expo), visibility 0.4s var(--ease-out-expo), transform 0.4s var(--ease-out-expo);
     box-shadow: 0 40px 80px rgba(0, 0, 0, 0.2);
 }
 
@@ -327,7 +327,7 @@
     background-color: #ffffff;
     /* Solid bg for items */
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease;
     line-height: 1.2;
     border-bottom: 1px solid rgba(0, 0, 0, 0.03);
 }
@@ -359,7 +359,7 @@
     /* Rectangular style matching header */
     cursor: pointer;
     color: var(--void-black);
-    transition: all 0.4s var(--ease-out-expo);
+    transition: background 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo), border-color 0.4s var(--ease-out-expo), box-shadow 0.4s var(--ease-out-expo);
 }
 
 .ys-contact__currency-btn:hover {
@@ -442,7 +442,7 @@
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 0;
-    transition: all 0.4s var(--ease-out-expo);
+    transition: background 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo), border-color 0.4s var(--ease-out-expo), box-shadow 0.4s var(--ease-out-expo);
 }
 
 .ys-contact__budget-option:hover .ys-contact__budget-label {
@@ -509,7 +509,7 @@
     border-radius: 0;
     padding: 1.25rem 3.5rem;
     cursor: pointer;
-    transition: all 0.5s var(--ease-out-expo);
+    transition: background 0.5s var(--ease-out-expo), color 0.5s var(--ease-out-expo), border-color 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
 }
 
 .ys-contact__submit:hover {

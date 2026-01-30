@@ -110,6 +110,7 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                                 scrollTrigger: {
                                     trigger: el,
                                     start: "top 90%",
+                                    toggleActions: "play none none reverse", // Better hygiene
                                     ...performanceConfig
                                 },
                                 delay: delay,
@@ -121,15 +122,20 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                         const tl = gsap.timeline({
                             scrollTrigger: {
                                 trigger: el,
-                                start: "top 88%",
+                                start: "top 85%", // Slightly relaxed
                                 ...performanceConfig
                             },
                             onComplete: () => {
-                                el.style.contentVisibility = 'auto';
-                                el.style.containIntrinsicSize = `auto ${el.offsetHeight}px`;
-                                ScrollTrigger.refresh();
+                                // Optimized: Removed offsetHeight read to prevent layout thrashing
+                                // Use CSS contain-intrinsic-size if needed via class instead
+                                el.style.contentVisibility = 'visible';
+                                el.style.willChange = 'auto'; // Release GPU memory
+                                // removed ScrollTrigger.refresh() - expensive and rarely needed here
                             }
                         });
+
+                        // Set hint before animation
+                        el.style.willChange = 'clip-path, transform';
 
                         tl.to(el, {
                             clipPath: "inset(0% 0% 0% 0%)",
@@ -140,6 +146,7 @@ export const useGlobalReveal = (containerRef, path, isAnimating, isPendingReveal
                         });
 
                         if (img) {
+                            // Independent transform, no layout impact
                             tl.fromTo(img,
                                 { yPercent: 15, scale: 1.1 },
                                 { yPercent: 0, scale: 1, duration: 1.6, ease: "power2.out" },

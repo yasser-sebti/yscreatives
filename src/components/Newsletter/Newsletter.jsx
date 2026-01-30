@@ -45,7 +45,7 @@ const Newsletter = ({ inverted = false }) => {
         return null;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const error = validateEmail(email);
 
@@ -58,17 +58,46 @@ const Newsletter = ({ inverted = false }) => {
                 setStatus(prev => prev === 'error' ? 'idle' : prev);
             }, 3000);
         } else {
-            setStatus('success');
-            // Success effect
-            const tl = gsap.timeline();
-            tl.to(headerRef.current, { color: '#4ade80', duration: 0.4 })
-                .to(buttonRef.current, { scale: 0.95, duration: 0.1, yoyo: true, repeat: 1 });
+            setStatus('loading');
+            try {
+                const scriptUrl = import.meta.env.VITE_NEWSLETTER_URL;
 
-            setTimeout(() => {
-                setStatus('idle');
-                setEmail('');
-                gsap.to(headerRef.current, { color: 'rgba(255,255,255,0.7)', duration: 0.6 });
-            }, 3000);
+                if (!scriptUrl) {
+                    throw new Error("Backend URL not configured");
+                }
+
+                const response = await fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+
+                // With no-cors, we can't check response.ok, so we assume success if no error is thrown
+                setStatus('success');
+
+                // Success effect
+                const tl = gsap.timeline();
+                tl.to(headerRef.current, { color: '#4ade80', duration: 0.4 })
+                    .to(buttonRef.current, { scale: 0.95, duration: 0.1, yoyo: true, repeat: 1 });
+
+                setTimeout(() => {
+                    setStatus('idle');
+                    setEmail('');
+                    gsap.to(headerRef.current, { color: 'rgba(255,255,255,0.7)', duration: 0.6 });
+                }, 3000);
+
+            } catch (err) {
+                console.error("Newsletter submission error:", err);
+                setErrMsg("Connection failed. Try again?");
+                setStatus('error');
+
+                setTimeout(() => {
+                    setStatus('idle');
+                }, 3000);
+            }
         }
     };
 

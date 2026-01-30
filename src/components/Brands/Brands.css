@@ -63,7 +63,7 @@
     justify-content: center;
     opacity: 0.5;
     filter: grayscale(1) brightness(1.2);
-    transition: all 0.5s var(--ease-out-expo);
+    transition: opacity 0.5s var(--ease-out-expo), filter 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
     position: relative;
 }
 
